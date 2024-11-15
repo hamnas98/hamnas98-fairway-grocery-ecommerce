@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="icon" href="img/logo.png" type="image/png">
+      <title>Foodmart - Food & Grocery Delivery Mobile Template</title>
+      <!-- Bootstrap Css -->
+      <link rel="stylesheet" href="vender/bootstrap/css/bootstrap.min.css">
+      <!-- Icofont -->
+      <link rel="stylesheet" href="vender/icofont/icofont.min.css">
+      <!-- Sidebar css -->
+      <link rel="stylesheet" href="vender/sidebar/demo.css">
+      <!-- Custom Css -->
+      <link rel="stylesheet" href="css/style.css">
+   </head>
+   <body class="bg-light">
+      <div class="cart d-flex flex-column vh-100">
+         <!-- navbar -->
+         <div class="bg-white mb-auto">
+            <div class="d-flex align-items-center gap-3 p-3 bg-primary">
+               <a href="product-detail.html" class="text-white"><i class="bi bi-arrow-left fs-5"></i></a>
+               <div>
+                  <h6 class="fw-bold text-white mb-0">Review Cart</h6>
+                  <p class="text-white-50 small m-0">Foodmart</p>
+               </div>
+               <div class="d-flex align-items-center gap-2 ms-auto">
+                  <a href="profile.html" class="link-dark">
+                     <div class="bg-dark bg-opacity-75 rounded-circle user-icon"><i class="bi bi-person d-flex m-0 h4 text-white"></i></div>
+                  </a>
+                  <a class="toggle" href="#">
+                  <b class="bg-dark bg-opacity-75 rounded-circle user-icon">
+                  <i class="bi bi-list d-flex m-0 h4 text-white"></i>
+                  </b>
+                  </a>
+               </div>
+            </div>
+            <div class="bg-success bg-opacity-25 px-3 py-2 d-flex align-items-center">
+               <p class="text-success fw-bold mb-0">
+                  $20 Savings
+               </p>
+               <p class="text-success ms-auto mb-0">
+                  <b>FREE DELIVERY</b> <small>applied on this order</small>
+               </p>
+            </div>
+         </div>
+         <!-- body -->
+         <div class="my-auto vh-100 overflow-auto p-3">
+            <!-- coupon -->
+            <a href="#" class="link-dark" data-bs-toggle="offcanvas" data-bs-target="#applycoupon"
+               aria-controls="applycoupon">
+               <div class="bg-white d-flex align-items-center gap-3 p-3 mb-2 shadow-sm rounded-3">
+                  <i class="icofont-sale-discount icofont-2x"></i>
+                  <div>
+                     <h6 class="fw-bold text-black osahan-mb-1">Apply Coupons</h6>
+                     <p class="small text-primary m-0">Save more with coupons available for you</p>
+                  </div>
+                  <div class="ms-auto"><i class="bi bi-chevron-right fs-5"></i></div>
+               </div>
+            </a>
+            <!-- review items -->
+            <div class="bg-white p-3 mb-2 shadow-sm rounded-3">
+               <div class="d-flex align-items-center gap-3 mb-3">
+                  <i class="icofont-food-basket icofont-2x"></i>
+                  <div>
+                     <h6 class="fw-bold text-black osahan-mb-1">Review Items</h6>
+                     <p class="small text-muted m-0">1 item</p>
+                  </div>
+               </div>
+               <div class="d-flex align-items-center gap-3 justify-content-between">
+                  <img src="img/uncle-chips.png" alt="" class="img-fluid bg-light p-1 border rounded-3 cart-product">
+                  <div class="me-auto">
+                     <p class="osahan-mb-1 fw-bold">Uncle Chipps Spicy Treat</p>
+                     <p class="text-muted small m-0">50 g</p>
+                  </div>
+                  <div class="osahan-count d-flex align-items-center justify-content-between border border-dark-subtle rounded-pill h6 m-0 p-1">
+                     <span class="text-muted minus d-flex"><i class="icofont-minus-circle"></i></span>
+                     <input type="text" class="lh-sm small text-black text-center box border-0" value="1">
+                     <span class="text-muted plus d-flex"><i class="icofont-plus-circle"></i></span>
+                  </div>
+                  <h6 class="m-0 text-primary">$20</h6>
+               </div>
+            </div>
+            <!-- order door or gate -->
+            <div class="bg-white p-3 mb-2 shadow-sm rounded-3">
+               <div class="d-flex align-items-center justify-content-between gap-3">
+                  <div>
+                     <p class="fw-bold mb-1">Leave the order at door or gate</p>
+                     <p class="text-muted small m-0">Opt for no-contact delivery & our delivery partner will leave it at
+                        your door/gate.
+                     </p>
+                  </div>
+                  <span>
+                  <input type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
+                  <label class="btn btn-outline-dark btn-sm d-flex p-0 btn-pill" for="btn-check-outlined"><i class="icofont-check-alt"></i></label>
+                  </span>
+               </div>
+            </div>
+            <!-- bill -->
+            <div class="bg-white p-3 mb-2 shadow-sm rounded-3">
+               <h6 class="fw-bold text-black mb-3">Bill Details</h6>
+               <div class="border-bottom">
+                  <div class="d-flex align-items-center justify-content-between mb-2">
+                     <p class="m-0">MRP Total</p>
+                     <p class="m-0">$20</p>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between mb-2">
+                     <p class="m-0">Delivery Partner Fee</p>
+                     <p class="m-0">$1</p>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between mb-3">
+                     <p class="text-info m-0">Handling Fee</p>
+                     <p class="m-0">$2</p>
+                  </div>
+               </div>
+               <div class="d-flex align-items-center justify-content-between pt-3">
+                  <h6 class="text-primary m-0">Subtotal</h6>
+                  <h6 class="fw-bold text-primary m-0">$23</h6>
+               </div>
+            </div>
+            <!-- cancellation policy -->
+            <div class="bg-white shadow-sm p-3 rounded-3">
+               <h6 class="fw-bold text-black mb-3">Cancellation policy</h6>
+               <div>
+                  <div class="d-flex align-items-center gap-3 mb-3 border bg-light p-3 rounded-3">
+                     <i class="icofont-stopwatch icofont-2x text-danger"></i>
+                     <p class="m-0">Orders cannot be cancelled and are non-refundable once packed for delivery.</p>
+                  </div>
+                  <div class="d-flex align-items-center gap-3 mb-3 border bg-light p-3 rounded-3">
+                     <i class="icofont-file-alt icofont-2x text-danger"></i>
+                     <p class="m-0">In case of unexpected delays or issues, a refund will be provided.</p>
+                  </div>
+               </div>
+               <p class="mb-0 small text-muted">Check your order and address details before placing the order. <a href="#" class="text-decoration-underline text-primary">Read policy</a></p>
+            </div>
+         </div>
+         <!-- footer -->
+         <div class="mt-auto shadow-sm border-top">
+            <div class="bg-light d-flex align-items-center border-bottom justify-content-between px-3 py-2">
+               <p class="m-0">Subtotal: $23</p>
+               <p class="text-primary small m-0">VIEW BILL & SAVINGS</p>
+            </div>
+            <div class="bg-white p-3">
+               <div class="d-flex align-items-center justify-content-between">
+                  <div data-bs-toggle="offcanvas" data-bs-target="#homelocation" aria-controls="homelocation" class="w-75">
+                     <h6 class="mb-0">Delivery to <span class="fw-bold">HOME</span></h6>
+                     <p class="text-muted text-truncate m-0">H.No. 2834 Street, 784 Sector, Ludhiana, Punjab</p>
+                  </div>
+                  <a href="#" class="btn btn-outline-success border-dark-subtle fw-bold shadow-sm user-icon rounded-pill fs-6"
+                     data-bs-toggle="offcanvas" data-bs-target="#homelocation" aria-controls="homelocation"><i
+                     class="icofont-ui-home"></i></a>
+               </div>
+               <div class="pt-3">
+                  <a href="#" class="btn btn-success w-100 text-uppercase btn-lg fw-bold" data-bs-toggle="offcanvas"
+                     data-bs-target="#deliveryoption" aria-controls="deliveryoption">Select delivery option</a>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- offcanvas location -->
+      <div class="offcanvas offcanvas-bottom border-0 h-100" tabindex="-1" id="homelocation"
+         aria-labelledby="homelocationLabel">
+         <div class="offcanvas-header bg-transparent p-0">
+            <a href="#" class="bg-primary text-white rounded-circle shadow-sm icon-sm m-3 position-absolute z-0 top-0"
+               data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="bi bi-arrow-left fs-5"></i>
+            </a>
+            <div class="ratio ratio-4x3 postion-relative z-n1">
+               <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3501748.249032638!2d73.16727014620984!3d31.00740966166808!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391964aa569e7355%3A0x8fbd263103a38861!2sPunjab!5e0!3m2!1sen!2sin!4v1674302805615!5m2!1sen!2sin" class="border-0 w-100" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+         </div>
+         <div class="offcanvas-body p-0">
+            <div class="d-flex align-items-center bg-light p-3 gap-3 py-3 border-top border-bottom">
+               <i class="icofont-map-pins icofont-2x text-primary"></i>
+               <div class="text-truncate">
+                  <h6 class="mb-0">Delivery to <span class="fw-bold">HOME</span></h6>
+                  <p class="text-muted text-truncate m-0">H.No. 2834 Street, 784 Sector, Ludhiana, Punjab</p>
+               </div>
+               <div class="ms-auto">
+                  <a href="#" class="btn btn-light btn-sm bg-white border text-primary fw-bold text-uppercase">Change</a>
+               </div>
+            </div>
+            <form class="p-3">
+               <div class="mb-3">
+                  <input type="text" class="form-control bg-transparent border-0 rounded-0 border-bottom py-2 px-0"
+                     placeholder="Enter House/Flat No.">
+               </div>
+               <div class="mb-3">
+                  <input type="text" class="form-control bg-transparent border-0 rounded-0 border-bottom py-2 px-0"
+                     placeholder="Enter Landmark">
+               </div>
+               <div class="mb-3">
+                  <div class="d-flex gap-3 align-items-center justify-content-between">
+                     <input type="radio" class="btn-check" name="btnradio" id="btnradio1d" autocomplete="off" checked>
+                     <label class="btn btn-outline-dark col py-2 rounded-2" for="btnradio1d"><i class="icofont-ui-home me-2"></i>Home</label>
+                     <input type="radio" class="btn-check" name="btnradio" id="btnradio2d" autocomplete="off">
+                     <label class="btn btn-outline-dark col py-2 rounded-2" for="btnradio2d"><i class="icofont-bag-alt me-2"></i>Work</label>
+                     <input type="radio" class="btn-check" name="btnradio" id="btnradio3d" autocomplete="off">
+                     <label class="btn btn-outline-dark col py-2 rounded-2" for="btnradio3d"><i class="icofont-location-pin me-2"></i>Other</label>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <div class="offcanvas-footer">
+            <a href="#" class="btn btn-success text-uppercase w-100 btn-lg fw-bold" data-bs-dismiss="offcanvas"
+               aria-label="Close">Save & proceed</a>
+         </div>
+      </div>
+      <!-- offcanvas delivery option -->
+      <div class="offcanvas offcanvas-bottom bg-light border-0 h-75" tabindex="-1" id="deliveryoption"
+         aria-labelledby="deliveryoptionLabel">
+         <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold text-black" id="deliveryoptionLabel">Select a delivery option</h5>
+         </div>
+         <div class="offcanvas-body p-0">
+            <div class="bg-white shadow-sm p-3 border-bottom border-top">
+               <div class="form-check form-check-reverse">
+                  <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1"
+                     value="option1">
+                  <label class="form-check-label d-flex align-items-center gap-2" for="exampleRadios1">
+                     <i class="icofont-free-delivery icofont-3x text-primary"></i>
+                     <div class="text-start">
+                        <h6 class="fw-bold mb-0">Delivery now - <span class="text-success"><del
+                           class="text-muted">$25</del> Free</span></h6>
+                        <p class="text-primary small m-0">Get in next 25 - 30 mins</p>
+                     </div>
+                  </label>
+               </div>
+            </div>
+            <div class="bg-white shadow-sm p-3">
+               <div class="form-check form-check-reverse mb-3">
+                  <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2"
+                     value="option2" checked>
+                  <label class="form-check-label d-flex align-items-center gap-2" for="exampleRadios2">
+                     <i class="icofont-delivery-time icofont-3x text-primary"></i>
+                     <div class="text-start">
+                        <h6 class="fw-bold mb-0">Delivery later - <span class="text-success"><del
+                           class="text-muted">$15</del> Free</span></h6>
+                        <p class="text-primary small m-0">Earliest slot: 1:00 PM - 2:00 PM Today</p>
+                     </div>
+                  </label>
+               </div>
+               <div class="row row-cols-2 g-2 custom-checkbox">
+                  <div class="col">
+                     <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+                     <label class="btn btn-outline-danger btn-sm w-100" for="btnradio1">1:00 PM - 2:00 PM</label>
+                  </div>
+                  <div class="col">
+                     <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+                     <label class="btn btn-outline-danger btn-sm w-100" for="btnradio2">2:00 PM - 3:00 PM</label>
+                  </div>
+                  <div class="col">
+                     <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
+                     <label class="btn btn-outline-danger btn-sm w-100" for="btnradio3">3:00 PM - 4:00 PM</label>
+                  </div>
+                  <div class="col">
+                     <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off">
+                     <label class="btn btn-outline-danger btn-sm w-100" for="btnradio4">4:00 PM - 5:00 PM</label>
+                  </div>
+                  <div class="col">
+                     <input type="radio" class="btn-check" name="btnradio" id="btnradio5" autocomplete="off">
+                     <label class="btn btn-outline-danger btn-sm w-100" for="btnradio5">5:00 PM - 6:00 PM</label>
+                  </div>
+                  <div class="col">
+                     <input type="radio" class="btn-check" name="btnradio" id="btnradio6" autocomplete="off">
+                     <label class="btn btn-outline-danger btn-sm w-100" for="btnradio6">6:00 PM - 7:00 PM</label>
+                  </div>
+                  <div class="col">
+                     <input type="radio" class="btn-check" name="btnradio" id="btnradio7" autocomplete="off">
+                     <label class="btn btn-outline-danger btn-sm w-100" for="btnradio7">7:00 PM - 8:00 PM</label>
+                  </div>
+                  <div class="col">
+                     <input type="radio" class="btn-check" name="btnradio" id="btnradio8" autocomplete="off">
+                     <label class="btn btn-outline-danger btn-sm w-100" for="btnradio8">8:00 PM - 9:00 PM</label>
+                  </div>
+                  <div class="col">
+                     <input type="radio" class="btn-check" name="btnradio" id="btnradio9" autocomplete="off">
+                     <label class="btn btn-outline-danger btn-sm w-100" for="btnradio9">9:00 PM - 10:00 PM</label>
+                  </div>
+                  <div class="col">
+                     <input type="radio" class="btn-check" name="btnradio" id="btnradio10" autocomplete="off">
+                     <label class="btn btn-outline-danger btn-sm w-100" for="btnradio10">10:00 PM - 11:00 PM</label>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="offcanvas-footer bg-white shadow-sm border-top">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+               <p class="m-0">Total Order Value</p>
+               <p class="m-0">$163</p>
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+               <p class="text-success m-0">Total Savings</p>
+               <p class="m-0"><span class="bg-success bg-opacity-25 text-success rounded small p-1">-$33</span></p>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mt-2 mb-3">
+               <p class="text-primary fw-bold m-0">Delivery Partner Fee</p>
+               <p class="text-success fw-bold m-0"><del class="text-muted me-1">$15</del>FREE</p>
+            </div>
+            <a href="payment-option.html" class="btn btn-success text-uppercase w-100 btn-lg fw-bold">Make Payment - $130</a>
+         </div>
+      </div>
+      <!-- coupon offcanvas -->
+      <div class="offcanvas offcanvas-end bg-light border-0 w-100" tabindex="-1" id="applycoupon"
+         aria-labelledby="applycouponLabel">
+         <div class="offcanvas-header bg-primary d-block bg-white shadow-sm">
+            <div class="d-flex align-items-center justify-content-start gap-3">
+               <a href="#" data-bs-dismiss="offcanvas" aria-label="Close"><i class="bi bi-arrow-left text-white fs-5"></i></a>
+               <h5 class="offcanvas-title text-white fw-bold" id="applycouponLabel">Apply Coupon</h5>
+            </div>
+            <!-- search -->
+            <div class="pt-3">
+               <input type="text" class="form-control rounded-3 border-0 py-2" placeholder="Enter Coupon Code" aria-label="Enter Coupon Code" aria-describedby="search">
+            </div>
+         </div>
+         <div class="offcanvas-body bg-light">
+            <!-- Available coupons -->
+            <p class="text-black text-uppercase small mb-3">availbale coupons</p>
+            <div class="coupons-page">
+               <!-- 1st coupon -->
+               <div class="bg-white rounded-3 shadow-sm mb-3 osahan-coupons-main">
+                  <div class="d-flex align-items-start justify-content-between border-bottom p-3 position-relative">
+                     <span class="coupon-top-shape-2 position-absolute"></span>
+                     <span class="coupon-bottom-shape-2 position-absolute"></span>
+                     <div>
+                        <div
+                           class="d-flex align-items-center bg-success osahan-coupons-code mb-2 position-relative rounded-3">
+                           <i class="icofont-sale-discount text-warning fs-5 border-end p-2"></i>
+                           <span
+                              class="d-flex align-items-center text-white fw-bold justify-content-center position-relative flex-grow-1 h-100 fs-6 px-3">
+                           FRDEL99
+                           <span class="coupon-top-shape position-absolute"></span>
+                           <span class="coupon-bottom-shape position-absolute"></span>
+                           </span>
+                        </div>
+                        <h6 class="m-0">Flat <span class="fw-bold">$25 off</span></h6>
+                     </div>
+                     <a href="#" class="text-primary fw-bold" data-bs-dismiss="offcanvas" aria-label="Close">APPLY</a>
+                  </div>
+                  <div class="p-3">
+                     <p class="text-muted mb-2">Use code FRDEL99 & get free delivery on order above $99 on your first
+                        5 orders on Foodmart
+                     </p>
+                     <a data-bs-toggle="collapse" class="text-primary" href="#collapseone" role="button" aria-expanded="false" aria-controls="collapseone">
+                     + MORE
+                     </a>
+                     <div class="collapse" id="collapseone">
+                        <div class="card card-body border-0 px-0 pb-0">
+                           <p class="text-black mb-2">Terms and Conditions</p>
+                           <ul class="d-grid gap-1 text-muted px-3 mb-0">
+                              <li>Valid only on your first 5 orders on Foodmart</li>
+                              <li>Minimum order value - 99</li>
+                              <li>This free delivery waiver is applicable only on delivery fee</li>
+                              <li>Other T&Cs may apply</li>
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <!-- 2nd coupon -->
+               <div class="bg-white rounded-3 shadow-sm mb-3 osahan-coupons-main">
+                  <div class="d-flex align-items-start justify-content-between border-bottom p-3 position-relative">
+                     <span class="coupon-top-shape-2 position-absolute"></span>
+                     <span class="coupon-bottom-shape-2 position-absolute"></span>
+                     <div>
+                        <div
+                           class="d-flex align-items-center bg-success osahan-coupons-code mb-2 position-relative rounded-3">
+                           <i class="icofont-visa text-warning fs-5 border-end p-2"></i>
+                           <span
+                              class="d-flex align-items-center text-white fw-bold justify-content-center position-relative flex-grow-1 h-100 fs-6 px-3">
+                           ORDERNOW
+                           <span class="coupon-top-shape position-absolute"></span>
+                           <span class="coupon-bottom-shape position-absolute"></span>
+                           </span>
+                        </div>
+                        <h6 class="m-0">Flat <span class="fw-bold">$25 off</span></h6>
+                     </div>
+                     <a href="#" class="text-primary fw-bold" data-bs-dismiss="offcanvas" aria-label="Close">APPLY</a>
+                  </div>
+                  <div class="p-3">
+                     <p class="text-muted mb-2">Use code ORDERNOW get flat $25 off on order above $249</p>
+                     <a data-bs-toggle="collapse" class="text-primary" href="#collapsetwo" role="button" aria-expanded="false"
+                        aria-controls="collapsetwo">
+                     + MORE
+                     </a>
+                     <div class="collapse" id="collapsetwo">
+                        <div class="card card-body border-0 px-0 pb-0">
+                           <p class="text-black mb-2">Terms and Conditions</p>
+                           <ul class="d-grid gap-1 text-muted px-3 mb-0">
+                              <li>Valid only on your first 5 orders on Foodmart</li>
+                              <li>Minimum order value - 99</li>
+                              <li>This free delivery waiver is applicable only on delivery fee</li>
+                              <li>Other T&Cs may apply</li>
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <!-- 3rd coupon -->
+               <div class="bg-white rounded-3 shadow-sm mb-3 osahan-coupons-main">
+                  <div class="d-flex align-items-start justify-content-between border-bottom p-3 position-relative">
+                     <span class="coupon-top-shape-2 position-absolute"></span>
+                     <span class="coupon-bottom-shape-2 position-absolute"></span>
+                     <div>
+                        <div
+                           class="d-flex align-items-center bg-success osahan-coupons-code mb-2 position-relative rounded-3">
+                           <i class="icofont-bank-alt text-warning fs-5 border-end p-2"></i>
+                           <span
+                              class="d-flex align-items-center text-white fw-bold justify-content-center position-relative flex-grow-1 h-100 fs-6 px-3">
+                           DFEYI10F
+                           <span class="coupon-top-shape position-absolute"></span>
+                           <span class="coupon-bottom-shape position-absolute"></span>
+                           </span>
+                        </div>
+                        <h6 class="m-0">Flat <span class="fw-bold">$50 off</span></h6>
+                     </div>
+                     <a href="#" class="text-primary fw-bold" data-bs-dismiss="offcanvas" aria-label="Close">APPLY</a>
+                  </div>
+                  <div class="p-3">
+                     <p class="text-muted mb-2">Use code DFEYI10F get flat $50 off on order above $449</p>
+                     <a data-bs-toggle="collapse" class="text-primary" href="#collapsethree" role="button" aria-expanded="false"
+                        aria-controls="collapsethree">
+                     + MORE
+                     </a>
+                     <div class="collapse" id="collapsethree">
+                        <div class="card card-body border-0 px-0 pb-0">
+                           <p class="text-black mb-2">Terms and Conditions</p>
+                           <ul class="d-grid gap-1 text-muted px-3 mb-0">
+                              <li>Valid only on your first 5 orders on Foodmart</li>
+                              <li>Minimum order value - 99</li>
+                              <li>This free delivery waiver is applicable only on delivery fee</li>
+                              <li>Other T&Cs may apply</li>
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <!-- 4rth coupon -->
+               <div class="bg-white rounded-3 shadow-sm mb-3 osahan-coupons-main">
+                  <div class="d-flex align-items-start justify-content-between border-bottom p-3 position-relative">
+                     <span class="coupon-top-shape-2 position-absolute"></span>
+                     <span class="coupon-bottom-shape-2 position-absolute"></span>
+                     <div>
+                        <div
+                           class="d-flex align-items-center bg-success osahan-coupons-code mb-2 position-relative rounded-3">
+                           <i class="icofont-apple-pay text-warning fs-5 border-end p-2"></i>
+                           <span
+                              class="d-flex align-items-center text-white fw-bold justify-content-center position-relative flex-grow-1 h-100 fs-6 px-3">
+                           BOIDC120
+                           <span class="coupon-top-shape position-absolute"></span>
+                           <span class="coupon-bottom-shape position-absolute"></span>
+                           </span>
+                        </div>
+                        <h6 class="m-0">Discount <span class="fw-bold">$50 off</span></h6>
+                     </div>
+                     <a href="#" class="text-primary fw-bold" data-bs-dismiss="offcanvas" aria-label="Close">APPLY</a>
+                  </div>
+                  <div class="p-3">
+                     <p class="text-muted mb-2">Use code BOIDC120 get 20% discount on order above $149</p>
+                     <a data-bs-toggle="collapse" class="text-primary" href="#collapsefour" role="button" aria-expanded="false"
+                        aria-controls="collapsefour">
+                     + MORE
+                     </a>
+                     <div class="collapse" id="collapsefour">
+                        <div class="card card-body border-0 px-0 pb-0 mb-0">
+                           <p class="text-black mb-2">Terms and Conditions</p>
+                           <ul class="d-grid gap-1 text-muted px-3">
+                              <li>Valid only on your first 5 orders on Foodmart</li>
+                              <li>Minimum order value - 99</li>
+                              <li>This free delivery waiver is applicable only on delivery fee</li>
+                              <li>Other T&Cs may apply</li>
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- sidebar nav -->
+      <nav id="main-nav">
+         <ul class="second-nav">
+            <li class="osahan-user-profile bg-primary">
+               <div class="d-flex align-items-center gap-2">
+                  <img src="img/delivery-boy.jpg" alt="" class="rounded-pill img-fluid">
+                  <div class="ps-1">
+                     <h5 class="fw-bold text-white osahan-mb-1">Black Smith</h5>
+                     <p class="text-white-50 m-0">+91 12345-67890</p>
+                  </div>
+               </div>
+            </li>
+            <li><a href="index.html"><i class="bi bi-house me-3"></i>Homepage</a></li>
+            <li><a href="listing.html"><i class="bi bi-grid me-3"></i>Listing</a></li>
+            <li><a href="product-detail.html"><i class="bi bi-file-break me-3"></i>Product Detail</a></li>
+            <li><a href="cart.html"><i class="bi bi-basket me-3"></i>Cart</a></li>
+            <li><a href="payment-option.html"><i class="bi bi-credit-card me-3"></i>Payment Option</a></li>
+            <li><a href="payment-details.html"><i class="bi bi-stopwatch me-3"></i>Payment Time</a></li>
+            <li><a href="order-received.html"><i class="bi bi-check-circle me-3"></i>Order Received</a></li>
+            <li><a href="track-order.html"><i class="bi bi-truck me-3"></i>Track Order</a></li>
+            <li><a href="track-delivery-boy.html"><i class="bi bi-person-vcard me-3"></i>Track Delivery Boy</a></li>
+            <li><a href="profile.html"><i class="bi bi-person me-3"></i>Profile</a></li>
+            <li><a href="order-detail.html"><i class="bi bi-receipt me-3"></i>Order Details</a></li>
+            <li>
+               <a href="#"><i class='bi bi-link me-3'></i>Example Multi Link</a>
+               <ul>
+                  <li><a href="#">Link</a></li>
+                  <li><a href="#">Link</a></li>
+               </ul>
+            </li>
+         </ul>
+         <ul class="bottom-nav">
+            <li class="home">
+               <a href="index.html" class="text-primary">
+                  <p class="h5 m-0"><i class="bi bi-house"></i></p>
+                  Home
+               </a>
+            </li>
+            <li class="cart">
+               <a href="cart.html">
+                  <p class="h5 m-0"><i class="bi bi-basket"></i></p>
+                  Cart
+               </a>
+            </li>
+            <li class="profile">
+               <a href="profile.html">
+                  <p class="h5 m-0"><i class="bi bi-person"></i></p>
+                  Profile
+               </a>
+            </li>
+         </ul>
+      </nav>
+      <!-- Bootstrap Bundle Js -->
+      <script src="vender/bootstrap/js/bootstrap.bundle.min.js"></script>
+      <!-- Jquery -->
+      <script src="vender/jquery/jquery.min.js"></script>
+      <!-- Sidebar js -->
+      <script src="vender/sidebar/hc-offcanvas-nav.js"></script>
+      <!-- Custom Js -->
+      <script src="js/custom.js"></script>
+   </body>
+</html>

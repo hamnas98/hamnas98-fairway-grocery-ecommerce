@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="icon" href="img/logo.png" type="image/png">
+      <title>Foodmart - Food & Grocery Delivery Mobile Template</title>
+      <!-- Bootstrap Css -->
+      <link rel="stylesheet" href="vender/bootstrap/css/bootstrap.min.css">
+      <!-- Icofont -->
+      <link rel="stylesheet" href="vender/icofont/icofont.min.css">
+      <!-- Sidebar css -->
+      <link rel="stylesheet" href="vender/sidebar/demo.css">
+      <!-- Custom Css -->
+      <link rel="stylesheet" href="css/style.css">
+   </head>
+   <body class="bg-light">
+      <div class="listing d-flex flex-column vh-100">
+         <!-- navbar -->
+         <div class="listing-navbar bg-primary d-flex align-items-center gap-3 shadow-sm mb-auto p-3">
+            <a href="index.html"><i class="bi bi-arrow-left text-white fs-5"></i></a>
+            <a href="#" class="text-white" data-bs-toggle="modal"
+               data-bs-target="#categories">
+               <div class="d-flex align-items-center gap-2">
+                  <span class="bg-white rounded p-1">
+                  <img src="img/category-1.png" alt="" class="img-fluid">
+                  </span>
+                  <div>
+                     <h6 class="fw-bold text-white mb-0">Hot Deals</h6>
+                     <p class="text-white-50 small m-0">175 items</p>
+                  </div>
+               </div>
+            </a>
+            <div class="d-flex align-items-center gap-2 ms-auto">
+               <a href="#" class="link-dark bg-light rounded-circle user-icon" data-bs-toggle="offcanvas" data-bs-target="#searchoffcanvas"
+                  aria-controls="searchoffcanvas"><i
+                  class="icofont-search-1 fs-6"></i></a>
+               <a class="toggle" href="#">
+               <b class="link-dark bg-light rounded-circle user-icon">
+               <i class="bi bi-list d-flex m-0 h4"></i>
+               </b>
+               </a>
+            </div>
+         </div>
+         <!-- body -->
+         <div class="vh-100 my-auto overflow-auto p-1">
+            <div class="d-flex gap-1">
+               <div class="listing-left">
+                  <div class="bg-white rounded shadow-sm sticky-top overflow-hidden p-2">
+                     <div class="nav flex-column osahan-item-sidebar nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                        <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">
+                           <div>
+                              <img src="img/tab-1.png" alt="" class="img-fluid bg-light rounded">
+                              <p class="pt-2 m-0 small">Hot Deals</p>
+                           </div>
+                        </button>
+                        <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">
+                           <div>
+                              <img src="img/tab-2.png" alt="" class="img-fluid bg-light rounded">
+                              <p class="pt-2 m-0 small">Rice, Atta & Dal</p>
+                           </div>
+                        </button>
+                        <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">
+                           <div>
+                              <img src="img/tab-3.png" alt="" class="img-fluid bg-light rounded">
+                              <p class="pt-2 m-0 small">Oils, Masalas & more</p>
+                           </div>
+                        </button>
+                        <button class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                           <div>
+                              <img src="img/tab-4.png" alt="" class="img-fluid bg-light rounded">
+                              <p class="pt-2 m-0 small">Breakfast & Snaks</p>
+                           </div>
+                        </button>
+                     </div>
+                  </div>
+               </div>
+               <div class="listing-right">
+                  <div class="bg-white rounded shadow-sm">
+                     <div class="tab-content" id="v-pills-tabContent">
+                        <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab" tabindex="0">
+                           <div class="border-bottom p-2">
+                              <div class="rounded-3 ps-3 shadow-sm d-flex gap-1 align-items-center bg-success bg-gradient justify-content-between">
+                                 <div class="py-3">
+                                    <small class="text-white-50 d-flex align-items-center"><i class="bi bi-basket me-1 d-flex"></i> UPTO</small>
+                                    <h3 class="fw-bold text-warning mb-0">20% OFF</h3>
+                                    <p class="text-white mb-2">Fruits & Vegetables</p>
+                                    <a href="listing.html" class="btn btn-light text-success fw-bold rounded-3 shadow-sm btn-sm border-0">SHOP NOW</a>
+                                 </div>
+                                 <img src="img/banner2.png" alt="" class="img-fluid mt-auto osahan-offer-banner-2">
+                              </div>
+                              <p class="text-muted pt-2 mb-0"><span class="fw-bold text-dark">42 items</span> in Hot Deals
+                              </p>
+                           </div>
+                           <div class="row border-bottom g-0">
+                              <div class="col-6 border-end">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <div class="bg-success position-absolute top-0 text-white osahan-badge text-center"><b>4%</b><br>OFF</div>
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-1.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Kissan</small>
+                                       <p class="card-title fw-bold mb-0">Mixed Fruit Jam</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">700 g</p>
+                                          <del class="text-muted small">$245</del>
+                                          <p class="fw-bold m-0">$225</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-6">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-2.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Ashirvaad</small>
+                                       <p class="card-title fw-bold mb-0">Shubh Chakki Atta</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">10 Kg</p>
+                                          <del class="text-muted small">$448</del>
+                                          <p class="fw-bold m-0">$430</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row border-bottom g-0">
+                              <div class="col-6 border-end">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <div class="bg-primary position-absolute top-0 text-white osahan-badge text-center"><b>5%</b><br>OFF</div>
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-3.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Fortune</small>
+                                       <p class="card-title fw-bold mb-0">Basan Flour</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">500 g</p>
+                                          <del class="text-muted small">$70</del>
+                                          <p class="fw-bold m-0">$51</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-6">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-4.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Coca-Cola</small>
+                                       <p class="card-title fw-bold mb-0">Coca Cola (Bottle)</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">2 L x 2</p>
+                                          <del class="text-muted small">$190</del>
+                                          <p class="fw-bold m-0">$173</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row border-bottom g-0">
+                              <div class="col-6 border-end">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-5.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Tata Tea</small>
+                                       <p class="card-title fw-bold mb-0">Tata Premium Tea</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">1 Kg</p>
+                                          <del class="text-muted small">$510</del>
+                                          <p class="fw-bold m-0">$469</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-6">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-6.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Nescafe</small>
+                                       <p class="card-title fw-bold mb-0">Clasic Instant Coffee Powder (Jar)</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">95 g</p>
+                                          <del class="text-muted small">$330</del>
+                                          <p class="fw-bold m-0">$307</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row g-0">
+                              <div class="col-6 border-end">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-7.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Britannia</small>
+                                       <p class="card-title fw-bold mb-0">Good Day Rich Cashew Cookies</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">600 g</p>
+                                          <del class="text-muted small">$240</del>
+                                          <p class="fw-bold m-0">$199</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-6">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <div class="bg-warning position-absolute top-0 text-black osahan-badge text-center"><b>5%</b><br>OFF</div>
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-8.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Dettol</small>
+                                       <p class="card-title fw-bold mb-0">Orignal Germ Protection Bathing..</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">500 g</p>
+                                          <del class="text-muted small">$322</del>
+                                          <p class="fw-bold m-0">$306</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab" tabindex="0">
+                           <div class="border-bottom p-2">
+                              <div class="rounded-3 ps-3 shadow-sm d-flex gap-1 align-items-center bg-warning bg-gradient justify-content-between">
+                                 <div class="py-3">
+                                    <small class="text-primary d-flex align-items-center"><i class="bi bi-basket me-1 d-flex"></i> UPTO</small>
+                                    <h3 class="fw-bold text-success mb-0">20% OFF</h3>
+                                    <p class="text-dark mb-2">Fruits & Vegetables</p>
+                                    <a href="listing.html" class="btn btn-light text-success fw-bold rounded-3 shadow-sm btn-sm border-0">SHOP NOW</a>
+                                 </div>
+                                 <img src="img/banner2.png" alt="" class="img-fluid mt-auto osahan-offer-banner-2">
+                              </div>
+                              <p class="text-muted pt-3 mb-0"><span class="fw-bold text-dark">16 items</span> Rice, Atta & Dal
+                              </p>
+                           </div>
+                           <div class="row border-bottom g-0">
+                              <div class="col-6 border-end">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-3.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Fortune</small>
+                                       <p class="card-title fw-bold mb-0">Basan Flour</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">500 g</p>
+                                          <del class="text-muted small">$70</del>
+                                          <p class="fw-bold m-0">$51</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-6">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-4.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Coca-Cola</small>
+                                       <p class="card-title fw-bold mb-0">Coca Cola (Bottle)</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">2 L x 2</p>
+                                          <del class="text-muted small">$190</del>
+                                          <p class="fw-bold m-0">$173</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row border-bottom g-0">
+                              <div class="col-6">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-2.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Ashirvaad</small>
+                                       <p class="card-title fw-bold mb-0">Shubh Chakki Atta</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">10 Kg</p>
+                                          <del class="text-muted small">$448</del>
+                                          <p class="fw-bold m-0">$430</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-6 border-end">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-1.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Kissan</small>
+                                       <p class="card-title fw-bold mb-0">Mixed Fruit Jam</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">700 g</p>
+                                          <del class="text-muted small">$245</del>
+                                          <p class="fw-bold m-0">$225</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row border-bottom g-0">
+                              <div class="col-6 border-end">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-5.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Tata Tea</small>
+                                       <p class="card-title fw-bold mb-0">Tata Premium Tea</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">1 Kg</p>
+                                          <del class="text-muted small">$510</del>
+                                          <p class="fw-bold m-0">$469</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-6">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-6.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Nescafe</small>
+                                       <p class="card-title fw-bold mb-0">Clasic Instant Coffee Powder (Jar)</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">95 g</p>
+                                          <del class="text-muted small">$330</del>
+                                          <p class="fw-bold m-0">$307</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row g-0">
+                              <div class="col-6 border-end">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-7.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Britannia</small>
+                                       <p class="card-title fw-bold mb-0">Good Day Rich Cashew Cookies</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">600 g</p>
+                                          <del class="text-muted small">$240</del>
+                                          <p class="fw-bold m-0">$199</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-6">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-8.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Dettol</small>
+                                       <p class="card-title fw-bold mb-0">Orignal Germ Protection Bathing..</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">500 g</p>
+                                          <del class="text-muted small">$322</del>
+                                          <p class="fw-bold m-0">$306</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab" tabindex="0">
+                           <div class="border-bottom p-2">
+                              <div class="rounded-3 ps-3 shadow-sm d-flex gap-1 align-items-center bg-success bg-gradient justify-content-between">
+                                 <div class="py-3">
+                                    <small class="text-white-50 d-flex align-items-center"><i class="bi bi-basket me-1 d-flex"></i> UPTO</small>
+                                    <h3 class="fw-bold text-warning mb-0">20% OFF</h3>
+                                    <p class="text-white mb-2">Fruits & Vegetables</p>
+                                    <a href="listing.html" class="btn btn-light text-success fw-bold rounded-3 shadow-sm btn-sm border-0">SHOP NOW</a>
+                                 </div>
+                                 <img src="img/banner2.png" alt="" class="img-fluid mt-auto osahan-offer-banner-2">
+                              </div>
+                              <p class="text-muted pt-3 mb-0"><span class="fw-bold text-dark">30 items</span> Oils, Masalas & more
+                              </p>
+                           </div>
+                           <div class="row border-bottom g-0">
+                              <div class="col-6 border-end">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-5.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Tata Tea</small>
+                                       <p class="card-title fw-bold mb-0">Tata Premium Tea</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">1 Kg</p>
+                                          <del class="text-muted small">$510</del>
+                                          <p class="fw-bold m-0">$469</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-6">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-6.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Nescafe</small>
+                                       <p class="card-title fw-bold mb-0">Clasic Instant Coffee Powder (Jar)</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">95 g</p>
+                                          <del class="text-muted small">$330</del>
+                                          <p class="fw-bold m-0">$307</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row border-bottom g-0">
+                              <div class="col-6 border-end">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-1.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Kissan</small>
+                                       <p class="card-title fw-bold mb-0">Mixed Fruit Jam</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">700 g</p>
+                                          <del class="text-muted small">$245</del>
+                                          <p class="fw-bold m-0">$225</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-6">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-2.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Ashirvaad</small>
+                                       <p class="card-title fw-bold mb-0">Shubh Chakki Atta</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">10 Kg</p>
+                                          <del class="text-muted small">$448</del>
+                                          <p class="fw-bold m-0">$430</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row border-bottom g-0">
+                              <div class="col-6 border-end">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-3.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Fortune</small>
+                                       <p class="card-title fw-bold mb-0">Basan Flour</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">500 g</p>
+                                          <del class="text-muted small">$70</del>
+                                          <p class="fw-bold m-0">$51</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-6">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-4.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Coca-Cola</small>
+                                       <p class="card-title fw-bold mb-0">Coca Cola (Bottle)</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">2 L x 2</p>
+                                          <del class="text-muted small">$190</del>
+                                          <p class="fw-bold m-0">$173</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row g-0">
+                              <div class="col-6 border-end">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-7.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Britannia</small>
+                                       <p class="card-title fw-bold mb-0">Good Day Rich Cashew Cookies</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">600 g</p>
+                                          <del class="text-muted small">$240</del>
+                                          <p class="fw-bold m-0">$199</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-6">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-8.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Dettol</small>
+                                       <p class="card-title fw-bold mb-0">Orignal Germ Protection Bathing..</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">500 g</p>
+                                          <del class="text-muted small">$322</del>
+                                          <p class="fw-bold m-0">$306</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab" tabindex="0">
+                           <div class="border-bottom p-2">
+                              <div class="rounded-3 ps-3 shadow-sm d-flex gap-1 align-items-center bg-warning bg-gradient justify-content-between">
+                                 <div class="py-3">
+                                    <small class="text-primary d-flex align-items-center"><i class="bi bi-basket me-1 d-flex"></i> UPTO</small>
+                                    <h3 class="fw-bold text-success mb-0">20% OFF</h3>
+                                    <p class="text-dark mb-2">Fruits & Vegetables</p>
+                                    <a href="listing.html" class="btn btn-light text-success fw-bold rounded-3 shadow-sm btn-sm border-0">SHOP NOW</a>
+                                 </div>
+                                 <img src="img/banner2.png" alt="" class="img-fluid mt-auto osahan-offer-banner-2">
+                              </div>
+                              <p class="text-muted pt-3 mb-0"><span class="fw-bold text-dark">25 items</span> Breakfast & Snaks
+                              </p>
+                           </div>
+                           <div class="row g-0">
+                              <div class="col-6 border-end">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-7.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Britannia</small>
+                                       <p class="card-title fw-bold mb-0">Good Day Rich Cashew Cookies</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">600 g</p>
+                                          <del class="text-muted small">$240</del>
+                                          <p class="fw-bold m-0">$199</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-6">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-8.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Dettol</small>
+                                       <p class="card-title fw-bold mb-0">Orignal Germ Protection Bathing..</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">500 g</p>
+                                          <del class="text-muted small">$322</del>
+                                          <p class="fw-bold m-0">$306</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row border-bottom g-0">
+                              <div class="col-6 border-end">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-1.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Kissan</small>
+                                       <p class="card-title fw-bold mb-0">Mixed Fruit Jam</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">700 g</p>
+                                          <del class="text-muted small">$245</del>
+                                          <p class="fw-bold m-0">$225</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-6">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-2.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Ashirvaad</small>
+                                       <p class="card-title fw-bold mb-0">Shubh Chakki Atta</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">10 Kg</p>
+                                          <del class="text-muted small">$448</del>
+                                          <p class="fw-bold m-0">$430</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row border-bottom g-0">
+                              <div class="col-6 border-end">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-3.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Fortune</small>
+                                       <p class="card-title fw-bold mb-0">Basan Flour</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">500 g</p>
+                                          <del class="text-muted small">$70</del>
+                                          <p class="fw-bold m-0">$51</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-6">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-4.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Coca-Cola</small>
+                                       <p class="card-title fw-bold mb-0">Coca Cola (Bottle)</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">2 L x 2</p>
+                                          <del class="text-muted small">$190</del>
+                                          <p class="fw-bold m-0">$173</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row border-bottom g-0">
+                              <div class="col-6 border-end">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-5.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Tata Tea</small>
+                                       <p class="card-title fw-bold mb-0">Tata Premium Tea</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">1 Kg</p>
+                                          <del class="text-muted small">$510</del>
+                                          <p class="fw-bold m-0">$469</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-6">
+                                 <div class="card bg-transparent border-0 p-2 h-100">
+                                    <a href="product-detail.html">
+                                    <img src="img/listing-6.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                                    </a>
+                                    <div class="card-body p-0 mb-3">
+                                       <small class="text-muted">Nescafe</small>
+                                       <p class="card-title fw-bold mb-0">Clasic Instant Coffee Powder (Jar)</p>
+                                    </div>
+                                    <div
+                                       class="card-footer bg-transparent border-0 d-flex align-items-end justify-content-between p-0">
+                                       <div>
+                                          <p class="text-muted mb-1">95 g</p>
+                                          <del class="text-muted small">$330</del>
+                                          <p class="fw-bold m-0">$307</p>
+                                       </div>
+                                       <a href="cart.html"
+                                          class="btn btn-outline-success btn-sm border-dark-subtle fw-bold rounded-3 shadow-sm px-3">ADD</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- Search Offcanvas -->
+      <div class="offcanvas offcanvas-bottom border-0 h-100" tabindex="-1" id="searchoffcanvas"
+         aria-labelledby="searchoffcanvasLabel">
+         <div class="offcanvas-header">
+            <div class="input-group bg-white rounded-3 border p-0">
+               <a href="#" class="input-group-text bg-transparent border-0 rounded-0" id="search"
+                  data-bs-dismiss="offcanvas" aria-label="Close">
+               <i class="bi bi-arrow-left fs-5"></i>
+               </a>
+               <input type="text" class="form-control bg-transparent border-0 rounded-0"
+                  placeholder="Search for groceries and more" aria-label="Search for groceries and more"
+                  aria-describedby="search" value="Chips">
+            </div>
+         </div>
+         <div class="offcanvas-body p-0">
+            <div class="row g-0">
+               <div class="col-12 border-bottom">
+                  <h6 class="px-3 pb-3 m-0">139 result for <span class="fw-bold">"Chips"</span></h6>
+               </div>
+            </div>
+            <div class="row border-bottom g-0">
+               <div class="col-6 border-end">
+                  <div class="card bg-transparent border-0 p-3">
+                     <a href="product-detail.html">
+                     <img src="img/uncle-chips.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                     </a>
+                     <div class="card-body p-0">
+                        <small class="text-muted">Uncle Chipps</small>
+                        <h6 class="card-title fw-bold">Spicy Treat</h6>
+                        <p class="card-text text-muted">50 g</p>
+                     </div>
+                     <div
+                        class="card-footer bg-transparent border-0 d-flex align-items-center justify-content-between p-0">
+                        <h6 class="fw-bold m-0">$20</h6>
+                        <a href="cart.html"
+                           class="btn btn-outline-success fw-bold rounded-3 shadow-sm btn-sm">ADD</a>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-6">
+                  <div class="card bg-transparent border-0 p-3">
+                     <a href="product-detail.html">
+                     <img src="img/kurkure.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                     </a>
+                     <div class="card-body p-0">
+                        <small class="text-muted">Kurkura</small>
+                        <h6 class="card-title fw-bold">Masala Munch Crips</h6>
+                        <p class="card-text text-muted">40 g</p>
+                     </div>
+                     <div
+                        class="card-footer bg-transparent border-0 d-flex align-items-center justify-content-between p-0">
+                        <h6 class="fw-bold m-0">$10</h6>
+                        <a href="cart.html"
+                           class="btn btn-outline-success fw-bold rounded-3 shadow-sm btn-sm">ADD</a>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="row border-bottom g-0">
+               <div class="col-6 border-end">
+                  <div class="card bg-transparent border-0 p-3">
+                     <a href="product-detail.html">
+                     <img src="img/lays-cream.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                     </a>
+                     <div class="card-body p-0">
+                        <small class="text-muted">Lay'S</small>
+                        <h6 class="card-title fw-bold">Lay's Amarican Cream & Onion</h6>
+                        <p class="card-text text-muted">73 g</p>
+                     </div>
+                     <div
+                        class="card-footer bg-transparent border-0 d-flex align-items-center justify-content-between p-0">
+                        <h6 class="fw-bold m-0">$30</h6>
+                        <a href="cart.html"
+                           class="btn btn-outline-success fw-bold rounded-3 shadow-sm btn-sm">ADD</a>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-6">
+                  <div class="card bg-transparent border-0 p-3">
+                     <a href="product-detail.html">
+                     <img src="img/lays-masala.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                     </a>
+                     <div class="card-body p-0">
+                        <small class="text-muted">Lay'S</small>
+                        <h6 class="card-title fw-bold">Lay's India's Magic Masala Chips</h6>
+                        <p class="card-text text-muted">50 g</p>
+                     </div>
+                     <div
+                        class="card-footer bg-transparent border-0 d-flex align-items-center justify-content-between p-0">
+                        <h6 class="fw-bold m-0">$20</h6>
+                        <a href="#"
+                           class="btn btn-outline-success fw-bold rounded-3 shadow-sm btn-sm">ADD</a>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="row border-bottom g-0">
+               <div class="col-6 border-end">
+                  <div class="card bg-transparent border-0 p-3">
+                     <a href="product-detail.html">
+                     <img src="img/lays-potato.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                     </a>
+                     <div class="card-body p-0">
+                        <small class="text-muted">Lay'S</small>
+                        <h6 class="card-title fw-bold">Lay's Hot N Sweet Chiili Potato Chips</h6>
+                        <p class="card-text text-muted">50 g</p>
+                     </div>
+                     <div
+                        class="card-footer bg-transparent border-0 d-flex align-items-center justify-content-between p-0">
+                        <h6 class="fw-bold m-0">$20</h6>
+                        <a href="cart.html"
+                           class="btn btn-outline-success fw-bold rounded-3 shadow-sm btn-sm">ADD</a>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-6">
+                  <div class="card bg-transparent border-0 p-3">
+                     <a href="product-detail.html">
+                     <img src="img/lays-hot-potato.png" alt="" class="img-fluid w-75 d-block mx-auto">
+                     </a>
+                     <div class="card-body p-0">
+                        <small class="text-muted">Lay'S</small>
+                        <h6 class="card-title fw-bold">Lay's India's Magic Masala Chips</h6>
+                        <p class="card-text text-muted">100 g</p>
+                     </div>
+                     <div
+                        class="card-footer bg-transparent border-0 d-flex align-items-center justify-content-between p-0">
+                        <h6 class="fw-bold m-0">$70</h6>
+                        <a href="cart.html"
+                           class="btn btn-outline-success fw-bold rounded-3 shadow-sm btn-sm">ADD</a>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- Categories Modal -->
+      <div class="modal fade" id="categories" tabindex="-1" aria-labelledby="categoriesLabel" aria-hidden="true">
+         <div class="modal-dialog modal-dialog-centered modal-sm modal-dialog-scrollable">
+            <div class="modal-content border-0 rounded-4 h-75">
+               <div class="modal-header border-0 px-4">
+                  <div class="modal-title" id="categoriesLabel">
+                     <h5 class="fw-bold text-black mb-1">Shop by categories</h5>
+                     <p class="mb-0">24 categories</p>
+                  </div>
+               </div>
+               <div class="modal-body border-top p-4">
+                  <div class="row row-cols-3 gy-3">
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-1.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Foodmart Hot Deals</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-2.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Fruits and Vegetables</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-3.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Atta, Rice and Dals</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-4.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Dry fruits and Masalas</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-5.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Dairy, Bread and Eggs</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-6.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Foodmart Instant Food</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-7.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Chocklates & Desserts</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-8.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Foodmart Munchies</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-9.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Cold Drinks and Juices</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-10.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Cereals and Breakfast</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-11.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Sauces and Spreads</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-12.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Tea, Coffee and More</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-13.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Foodmart Biscuits</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-14.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Bath, Body and Hair</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-15.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Cleaning Essentials</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-16.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Beauty and Grooming</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-17.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Home and Kitchens</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-18.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Sationary and Electrical</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-19.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Hygiene and Wellness</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-20.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Foodmart Baby Care</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-21.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">New Pet Supplies</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-22.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Paan Corner items</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-23.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Foodmart Fresh Meat</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="col">
+                        <a href="listing.html" class="link-dark">
+                           <div class="card bg-transparent border-0 text-center">
+                              <img src="img/category-24.png" alt="" class="card-img-top rounded-4 mb-2">
+                              <div class="card-body p-0">
+                                 <p class="card-title m-0">Foodmart Bakery items</p>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- sidebar nav -->
+      <nav id="main-nav">
+         <ul class="second-nav">
+            <li class="osahan-user-profile bg-primary">
+               <div class="d-flex align-items-center gap-2">
+                  <img src="img/delivery-boy.jpg" alt="" class="rounded-pill img-fluid">
+                  <div class="ps-1">
+                     <h5 class="fw-bold text-white osahan-mb-1">Black Smith</h5>
+                     <p class="text-white-50 m-0">+91 12345-67890</p>
+                  </div>
+               </div>
+            </li>
+            <li><a href="index.html"><i class="bi bi-house me-3"></i>Homepage</a></li>
+            <li><a href="listing.html"><i class="bi bi-grid me-3"></i>Listing</a></li>
+            <li><a href="product-detail.html"><i class="bi bi-file-break me-3"></i>Product Detail</a></li>
+            <li><a href="cart.html"><i class="bi bi-basket me-3"></i>Cart</a></li>
+            <li><a href="payment-option.html"><i class="bi bi-credit-card me-3"></i>Payment Option</a></li>
+            <li><a href="payment-details.html"><i class="bi bi-stopwatch me-3"></i>Payment Time</a></li>
+            <li><a href="order-received.html"><i class="bi bi-check-circle me-3"></i>Order Received</a></li>
+            <li><a href="track-order.html"><i class="bi bi-truck me-3"></i>Track Order</a></li>
+            <li><a href="track-delivery-boy.html"><i class="bi bi-person-vcard me-3"></i>Track Delivery Boy</a></li>
+            <li><a href="profile.html"><i class="bi bi-person me-3"></i>Profile</a></li>
+            <li><a href="order-detail.html"><i class="bi bi-receipt me-3"></i>Order Details</a></li>
+            <li>
+               <a href="#"><i class='bi bi-link me-3'></i>Example Multi Link</a>
+               <ul>
+                  <li><a href="#">Link</a></li>
+                  <li><a href="#">Link</a></li>
+               </ul>
+            </li>
+         </ul>
+         <ul class="bottom-nav">
+            <li class="home">
+               <a href="index.html" class="text-primary">
+                  <p class="h5 m-0"><i class="bi bi-house"></i></p>
+                  Home
+               </a>
+            </li>
+            <li class="cart">
+               <a href="cart.html">
+                  <p class="h5 m-0"><i class="bi bi-basket"></i></p>
+                  Cart
+               </a>
+            </li>
+            <li class="profile">
+               <a href="profile.html">
+                  <p class="h5 m-0"><i class="bi bi-person"></i></p>
+                  Profile
+               </a>
+            </li>
+         </ul>
+      </nav>
+      <!-- Bootstrap Bundle Js -->
+      <script src="vender/bootstrap/js/bootstrap.bundle.min.js"></script>
+      <!-- Jquery -->
+      <script src="vender/jquery/jquery.min.js"></script>
+      <!-- Sidebar js -->
+      <script src="vender/sidebar/hc-offcanvas-nav.js"></script>
+      <!-- Custom Js -->
+      <script src="js/custom.js"></script>
+   </body>
+</html>

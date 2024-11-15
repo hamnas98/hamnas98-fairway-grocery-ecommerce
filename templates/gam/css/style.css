@@ -1,0 +1,341 @@
+/*
+Template Name: Foodmart - Food & Grocery Delivery Mobile Template
+Author: Askbootstrap
+Author URI: https://themeforest.net/user/askbootstrap
+Version: 0.1
+*/
+
+/*
+- Body
+- Custom Bootstrap
+- Scroll Bar
+- Typography
+- Index
+- Cart
+- Track Order
+- Track Delivery Boy
+- Listing
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap');
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css");
+:root {
+    --green: #0d8420;
+    --yellow: #ffe241;
+    --orange: #ec6436;
+    --light: #8292B4;
+    --light-black: #444444;
+}
+/* Body */
+body {
+    font-family: 'Rubik', sans-serif;
+    font-size: 12px;
+    color: var(--light-black);
+}
+a {
+    text-decoration: none;
+}
+p {
+    font-size: 12px;
+}
+
+/* Custom Bootstrap */
+.h6, h6 {
+    font-size: 14px;
+    line-height: 20px;
+}
+.h5, h5 {
+    font-size: 17px;
+    line-height: 20px;
+}
+.btn {
+    font-size: 12px;
+}
+.form-control{
+    font-size: 15px;
+}
+.text-muted {
+    color: var(--light) !important;
+}
+.link-dark {
+    color: var(--light-black) !important;
+}
+.osahan-mb-1 {
+    margin-bottom: 1px;
+}
+.fw-bold {
+    font-weight: 500!important;
+}
+.small, small {
+    font-size: 10px;
+}
+.bg-primary {
+    background-color: var(--orange) !important;
+}
+.text-primary {
+    color: var(--orange) !important;
+}
+.btn-primary{
+    background-color: var(--orange) !important;
+    border-color: var(--orange) !important;
+}
+.btn-outline-success{
+    border-color: var(--green) !important;
+    color: var(--green) !important;
+    background: #f1fff3 !important;
+}
+.btn-sm {
+    padding: 6px 19px;
+}
+.btn-lg {
+    font-size: 14px;
+    padding: 15px 15px;
+}
+.form-control {
+    box-shadow: none !important;
+}
+.offcanvas-footer{
+    padding: 1rem;
+}
+.form-check .form-check-input:focus{
+    box-shadow: none !important;
+}
+.form-check .form-check-input:checked {
+    background-color: #FC8019;
+    border-color: #FC8019;
+}
+.shadow, .shadow-sm {
+    -webkit-box-shadow: 0px 4px 10px rgb(0 77 255 / 4%) !important;
+    box-shadow: 0px 4px 10px rgb(0 77 255 / 4%) !important;
+}
+.border {
+    border: 1px solid #EAF1F5 !important;
+}
+.border-bottom {
+    border-bottom: 1px solid #EAF1F5 !important;
+}
+.border-top {
+    border-top: 1px solid #EAF1F5 !important;
+}
+.border-start {
+    border-left: 1px solid #EAF1F5 !important;
+}
+.border-end {
+    border-right: 1px solid #EAF1F5 !important;
+}
+.accordion-item {
+    border-color: #eaf1f6;
+}
+.icon-sm{
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.icon-lg{
+    height: 55px;
+    width: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.all-cate.slick-initialized, .top-picks.slick-initialized, .coupons.slick-initialized, .product-slider.slick-initialized {
+    visibility: visible;
+    opacity: 1;  
+}
+.all-cate, .top-picks, .coupons, .product-slider {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease;
+    -webkit-transition: opacity 1s ease;
+}
+
+/* Scroll Bar */
+html ::-webkit-resizer {
+    background-color: #ffffff;
+}
+html ::-webkit-scrollbar {
+    width: 5px;
+    overflow: visible;
+}
+html ::-webkit-scrollbar-button {
+    display: none;
+}
+html ::-webkit-scrollbar-corner {
+    background-color: #ffffff;
+}
+html ::-webkit-scrollbar-thumb {
+    background-color: rgba(138, 138, 138, 0.4);
+    border-radius: 7px;
+}
+html ::-webkit-scrollbar-track-piece {
+    background-color: #ffffff;
+}
+
+/* Index */
+.user-icon {
+    height: 35px;
+    width: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.product-box{
+    height: 110px;
+    width: auto;
+    border: 1px solid #e5e5e5;
+}
+.btn-category{
+    position: absolute;
+    bottom: 6rem;
+    right: 1rem;
+}
+.osahan-badge {
+    font-size: 8px;
+    letter-spacing: 0.4px;
+    line-height: 10px;
+    padding: 5px 4px 4px 4px;
+    border-radius: 0 0 6px 6px;
+}
+.osahan-badge b {
+    font-size: 12px;
+    font-weight: 500;
+}
+.all-cate p.card-title {
+    line-height: 14px;
+}
+.osahan-offer-banner {
+    height: 160px;
+}
+.osahan-offer-banner-2 {
+    height: 112px;
+}
+
+/* Cart */
+.cart-product{
+    width: 50px;
+}
+.custom-checkbox .btn-outline-danger{
+    border-color: #d1d1d1 !important;
+    color: #000 !important;
+}
+.custom-checkbox .btn-check:checked+.btn-outline-danger {
+    background-color: #fdac6a4f !important;
+    border-color: #FC8019 !important;
+    color: #FC8019 !important;
+}
+.osahan-count input {
+    width: 22px;
+}
+
+/* Track Order */
+.tracking-time {
+    margin-top: -65px;
+    position: relative;
+}
+.order-time{
+    height: 80px;
+    width: 80px;
+    border: 5px solid #FC8019;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Track Delivery Boy */
+.delivery-boy-img{
+    min-width: 38px;
+    max-width: 38px;
+}
+.osahan-user-profile img {
+    height: 50px;
+}
+.nav-wrapper.nav-wrapper-0 .nav-content h2 {
+    display: none;
+}
+li.nav-parent.level-open h2 {
+    display: block !important;
+}
+
+/* Listing */
+.listing-left {
+    width: 75px;
+    max-width: 75px;
+    min-width: 75px;
+}
+.listing-navbar img{
+    width: 30px;
+}
+.osahan-item-sidebar .nav-link {
+    padding: 0px;
+    position: relative;
+    margin: 7px 0px;
+}
+.osahan-item-sidebar .nav-link img {
+    height: 45px;
+    width: 45px;
+    object-fit: contain;
+    padding: 3px;
+}
+.osahan-item-sidebar .nav-link p {
+    color: #8292b4;
+}
+.osahan-item-sidebar .nav-link.active p {
+    color: #ed6337;
+}
+.osahan-item-sidebar .nav-link.active {
+    background: none;
+}
+.osahan-item-sidebar .nav-link.active:after {
+    content: "";
+    position: absolute;
+    width: 6px;
+    background: #ed6337;
+    top: 0;
+    bottom: 0;
+    right: -10px;
+    border-radius: 9px;
+}
+.osahan-item-sidebar .nav-link.active img {
+    background: #ffe9e2 !important;
+}
+.coupon-top-shape {
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    left: -5px;
+    top: -11px;
+    border-radius: 50px;
+}
+.coupon-bottom-shape {
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    left: -5px;
+    bottom: -11px;
+    border-radius: 50px;
+}
+.coupon-top-shape-2 {
+    width: 25px;
+    height: 25px;
+    background: #f8f9fa;
+    left: -11px;
+    bottom: -12px;
+    border-radius: 50px;
+    box-shadow: 1px 0px 1px #e0e0e0;
+}
+.coupon-bottom-shape-2 {
+    width: 25px;
+    height: 25px;
+    background: #f8f9fa;
+    right: -11px;
+    bottom: -12px;
+    border-radius: 50px;
+    box-shadow: -1px 0px 1px #e0e0e0;
+}
+.osahan-coupons-code .border-end{
+    border-right-style: dashed !important;
+    border-color: #fff !important;
+}

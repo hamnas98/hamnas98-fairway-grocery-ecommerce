@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="icon" href="img/logo.png" type="image/png">
+      <title>Foodmart - Food & Grocery Delivery Mobile Template</title>
+      <!-- Bootstrap Css -->
+      <link rel="stylesheet" href="vender/bootstrap/css/bootstrap.min.css">
+      <!-- Icofont -->
+      <link rel="stylesheet" href="vender/icofont/icofont.min.css">
+      <!-- Sidebar css -->
+      <link rel="stylesheet" href="vender/sidebar/demo.css">
+      <!-- Custom Css -->
+      <link rel="stylesheet" href="css/style.css">
+   </head>
+   <body class="bg-light">
+      <div class="payment-option d-flex flex-column vh-100">
+         <!-- navbar -->
+         <div class="bg-white mb-auto shadow-sm border-bottom">
+            <div class="d-flex align-items-center gap-3 p-3">
+               <a href="cart.html" class="text-primary"><i class="bi bi-arrow-left fs-5"></i></a>
+               <div>
+                  <h6 class="fw-bold mb-0">Payment Option</h6>
+                  <p class="text-muted small m-0">3 items. Total: 130</p>
+               </div>
+               <div class="d-flex align-items-center gap-2 ms-auto">
+                  <a class="toggle" href="#">
+                  <b class="bg-dark bg-opacity-75 rounded-circle user-icon">
+                  <i class="bi bi-list d-flex m-0 h4 text-white"></i>
+                  </b>
+                  </a>
+               </div>
+            </div>
+         </div>
+         <!-- body -->
+         <div class="mt-auto overflow-auto vh-100">
+            <!-- upi -->
+            <div class="p-3">
+               <!-- add upi -->
+               <div class="mb-4">
+                  <h6 class="fw-bold text-black mb-3">Details</h6>
+                  <div class="bg-white rounded-3 shadow-sm p-3">
+                     <div class="d-flex gap-3 align-items-center mb-2">
+                        <i class="icofont-food-cart fs-5 text-muted"></i>
+                        <span>
+                           <p class="m-0 small text-muted">Foodmart</p>
+                           <p class="m-0">Lower GF 1, Sandhu Tower 2, Gurudev</p>
+                        </span>
+                     </div>
+                     <div class="d-flex gap-3 align-items-center mb-2">
+                        <i class="icofont-clock-time fs-5 text-muted"></i>
+                        <span>
+                           <p class="m-0 small text-muted">Delivery Time</p>
+                           <p class="m-0">Today, 1:00 PM - 2:00 PM</p>
+                        </span>
+                     </div>
+                     <div class="d-flex gap-3 align-items-center mb-0">
+                        <i class="icofont-ui-home fs-5 text-muted"></i>
+                        <span>
+                           <p class="m-0 small text-muted">Home</p>
+                           <p class="m-0">Phase 1, Urban Estate Dugri, Ludhiana, Punjab</p>
+                        </span>
+                     </div>
+                  </div>
+               </div>
+               <!-- add upi -->
+               <div class="mb-4">
+                  <h6 class="fw-bold text-black mb-3">UPI</h6>
+                  <a href="#" class="link-dark" data-bs-toggle="offcanvas" data-bs-target="#addUpiId"
+                     aria-controls="addUpiId">
+                     <div class="bg-white d-flex align-items-center gap-3 rounded-3 shadow-sm p-3">
+                        <div>
+                           <i class="icofont-plus-circle text-primary fs-5"></i>
+                        </div>
+                        <div>
+                           <h6 class="text-primary fw-bold osahan-mb-1">Add New UPI ID</h6>
+                           <p class="text-muted small m-0">You need to have a registered UPI ID</p>
+                        </div>
+                     </div>
+                  </a>
+               </div>
+               <!-- add card -->
+               <div class="mb-4">
+                  <h6 class="fw-bold text-black mb-3">Credit & Debit cards</h6>
+                  <a href="#" class="link-dark" data-bs-toggle="offcanvas" data-bs-target="#addNewCard"
+                     aria-controls="addNewCard">
+                     <div class="bg-white d-flex align-items-center gap-3 rounded-3 shadow-sm p-3">
+                        <div>
+                           <i class="icofont-plus-circle text-primary fs-5"></i>
+                        </div>
+                        <div>
+                           <h6 class="text-primary fw-bold osahan-mb-1">Add New Card</h6>
+                           <p class="text-muted small m-0">Save and Pay via Cards</p>
+                        </div>
+                     </div>
+                  </a>
+               </div>
+               <!-- more payment options -->
+               <div class="mb-4">
+                  <h6 class="fw-bold text-black mb-3">More Payment Options</h6>
+                  <div class="bg-white rounded-3 shadow-sm">
+                     <div class="border-bottom p-3">
+                        <a href="#" class="link-dark" data-bs-toggle="offcanvas"
+                           data-bs-target="#morepaymentoptions" aria-controls="morepaymentoptions">
+                           <div class="d-flex align-items-center gap-3">
+                              <div>
+                                 <span
+                                    class="border rounded d-flex align-items-center justify-content-center p-2"><i
+                                    class="icofont-wallet fs-5 text-muted"></i></span>
+                              </div>
+                              <div class="text-truncate">
+                                 <h6 class="osahan-mb-1">Wallets</h6>
+                                 <p class="text-muted small text-truncate m-0">Paytm, PhonePe, Amazon Pay & more</p>
+                              </div>
+                              <div class="ms-auto"><i class="icofont-rounded-right text-muted fs-5"></i></div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="border-bottom p-3">
+                        <a href="#" class="link-dark" data-bs-toggle="offcanvas"
+                           data-bs-target="#morepaymentoptions" aria-controls="morepaymentoptions">
+                           <div class="d-flex align-items-center gap-3">
+                              <div>
+                                 <span
+                                    class="border rounded d-flex align-items-center justify-content-center p-2"><i
+                                    class="icofont-credit-card fs-5 text-muted"></i></span>
+                              </div>
+                              <div class="text-truncate">
+                                 <h6 class="osahan-mb-1">Sodexo</h6>
+                                 <p class="text-muted small text-truncate m-0">Sodex card valid only on Restaurant &
+                                    Insta
+                                 </p>
+                              </div>
+                              <div class="ms-auto"><i class="icofont-rounded-right text-muted fs-5"></i></div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="border-bottom p-3">
+                        <a href="#" class="link-dark" data-bs-toggle="offcanvas"
+                           data-bs-target="#morepaymentoptions" aria-controls="morepaymentoptions">
+                           <div class="d-flex align-items-center gap-3">
+                              <div>
+                                 <span
+                                    class="border rounded d-flex align-items-center justify-content-center p-2"><i
+                                    class="icofont-court fs-5 text-muted"></i></span>
+                              </div>
+                              <div class="text-truncate">
+                                 <h6 class="osahan-mb-1">Netbanking</h6>
+                                 <p class="text-muted small text-truncate m-0">Select from a list of banks</p>
+                              </div>
+                              <div class="ms-auto"><i class="icofont-rounded-right text-muted fs-5"></i></div>
+                           </div>
+                        </a>
+                     </div>
+                     <div class="p-3">
+                        <a href="#" class="link-dark" data-bs-toggle="offcanvas"
+                           data-bs-target="#morepaymentoptions" aria-controls="morepaymentoptions">
+                           <div class="d-flex align-items-center gap-3">
+                              <div>
+                                 <span
+                                    class="border rounded d-flex align-items-center justify-content-center p-2"><i
+                                    class="icofont-mastercard-alt fs-5 text-muted"></i></span>
+                              </div>
+                              <div class="text-truncate">
+                                 <h6 class="osahan-mb-1">CRED pay</h6>
+                                 <p class="text-muted small text-truncate m-0">Pay using UPI on CRED</p>
+                              </div>
+                              <div class="ms-auto"><i class="icofont-rounded-right text-muted fs-5"></i></div>
+                           </div>
+                        </a>
+                     </div>
+                  </div>
+               </div>
+               <!-- pay on delivery -->
+               <div class="mb-4">
+                  <h6 class="fw-bold text-black mb-3">Pay on Delivery</h6>
+                  <div class="bg-white rounded-3 shadow-sm p-3">
+                     <div class="form-check mx-2">
+                        <input class="form-check-input fs-5 my-0" type="checkbox" value="" id="flexCheckDefault">
+                        <label class="form-check-label" for="flexCheckDefault">
+                           <h6 class="fw-bold osahan-mb-1">Cash/Pay on Delivery</h6>
+                           <p class="text-muted small m-0">Cash on delivery is not available. Please use other payment
+                              modes.
+                           </p>
+                        </label>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- offcanvas upiid -->
+      <div class="offcanvas offcanvas-end border-0" tabindex="-1" id="addUpiId" aria-labelledby="addUpiIdLabel">
+         <div class="offcanvas-header d-flex align-items-center justify-content-start gap-3 border-bottom">
+            <a href="#" data-bs-dismiss="offcanvas" aria-label="Close"><i
+               class="bi bi-arrow-left fs-5 text-primary"></i></a>
+            <div>
+               <h6 class="offcanvas-title text-black osahan-mb-1" id="addUpiIdLabel">Add new UPI ID</h6>
+               <p class="text-muted m-0">3 items. Total: $130</p>
+            </div>
+         </div>
+         <div class="offcanvas-body">
+            <form class="mb-4">
+               <input type="text" class="form-control border rounded-3 py-2 mb-3" placeholder="Enter your UPI ID"
+                  value="GPay@1234">
+               <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked>
+                  <label class="form-check-label" for="flexCheckDefault">
+                  Securely save VPA for future use
+                  </label>
+               </div>
+            </form>
+         </div>
+         <div class="offcanvas-footer">
+            <a href="payment-details.html" class="btn btn-primary rounded-3 btn-lg w-100">Verify and Pay</a>
+         </div>
+      </div>
+      <!-- offcanvas add credit card -->
+      <div class="offcanvas offcanvas-end border-0" tabindex="-1" id="addNewCard" aria-labelledby="addNewCardLabel">
+         <div class="offcanvas-header d-flex align-items-center justify-content-start gap-3 border-bottom">
+            <a href="#" data-bs-dismiss="offcanvas" aria-label="Close"><i
+               class="bi bi-arrow-left fs-5 text-primary"></i></a>
+            <div>
+               <h6 class="offcanvas-title text-black osahan-mb-1" id="addNewCardLabel">Add New Card</h6>
+               <p class="text-muted m-0">3 items. Total: $130</p>
+            </div>
+         </div>
+         <div class="offcanvas-body">
+            <form>
+               <div class="mb-3">
+                  <input type="number" class="form-control rounded-3 py-2" placeholder="Card Number">
+               </div>
+               <div class="row mb-3">
+                  <div class="col-8">
+                     <input type="month" class="form-control rounded-3 py-2" placeholder="Valid Thought (MM/YY)">
+                  </div>
+                  <div class="col-4">
+                     <input type="text" class="form-control rounded-3 py-2" placeholder="CVV">
+                  </div>
+               </div>
+               <div class="mb-3">
+                  <input type="text" class="form-control rounded-3 py-2" placeholder="Name on Card">
+               </div>
+               <div class="mb-3">
+                  <input type="text" class="form-control rounded-3 py-2"
+                     placeholder="Card Nickname (for easy identification)">
+               </div>
+               <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1" checked>
+                  <label class="form-check-label" for="flexCheckDefault1">
+                  Secure this card. <span class="text-decoration-underline">Why is it important?</span>
+                  </label>
+               </div>
+            </form>
+         </div>
+         <div class="offcanvas-footer">
+            <a href="payment-details.html" class="btn btn-primary rounded-3 btn-lg w-100">Proceed</a>
+         </div>
+      </div>
+      <!-- Select wallet -->
+      <div class="offcanvas offcanvas-end bg-light border-0" tabindex="-1" id="morepaymentoptions"
+         aria-labelledby="morepaymentoptionsLabel">
+         <div class="offcanvas-header d-flex align-items-center justify-content-start gap-3 bg-white shadow-sm">
+            <a href="#" data-bs-dismiss="offcanvas" aria-label="Close"><i
+               class="bi bi-arrow-left fs-5 text-primary"></i></a>
+            <div>
+               <h6 class="offcanvas-title text-black osahan-mb-1" id="morepaymentoptionsLabel">Select a wallet</h6>
+               <p class="text-muted m-0">3 items. Total: $130</p>
+            </div>
+         </div>
+         <div class="offcanvas-body">
+            <div class="bg-white rounded-3 shadow-sm">
+               <div class="border-bottom p-3">
+                  <div class="d-flex align-items-center gap-3">
+                     <div>
+                        <span class="border rounded d-flex align-items-center justify-content-center p-2"><i class="icofont-brand-paypal icofont-2x"></i></span>
+                     </div>
+                     <h5 class="m-0">Paytm</h5>
+                     <a href="payment-details.html" class="text-primary ms-auto">Link Account</a>
+                  </div>
+               </div>
+               <div class="border-bottom p-3">
+                  <div class="d-flex align-items-center gap-3">
+                     <div>
+                        <span class="border rounded d-flex align-items-center justify-content-center p-2"><i class="icofont-apple-pay icofont-2x"></i></span>
+                     </div>
+                     <h5 class="m-0">PhonePe</h5>
+                     <a href="payment-details.html" class="text-primary ms-auto">Link Account</a>
+                  </div>
+               </div>
+               <div class="border-bottom p-3">
+                  <div class="d-flex align-items-center gap-3">
+                     <div>
+                        <span class="border rounded d-flex align-items-center justify-content-center p-2"><i class="icofont-brand-amazon icofont-2x"></i></span>
+                     </div>
+                     <h5 class="m-0">Amazon Pay</h5>
+                     <a href="payment-details.html" class="text-primary ms-auto">Link Account</a>
+                  </div>
+               </div>
+               <div class="border-bottom p-3">
+                  <div class="d-flex align-items-center gap-3">
+                     <div>
+                        <span class="border rounded d-flex align-items-center justify-content-center p-2"><i class="icofont-pay icofont-2x"></i></span>
+                     </div>
+                     <h5 class="m-0">MobiKwik</h5>
+                     <a href="payment-details.html" class="text-primary ms-auto">Link Account</a>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- sidebar nav -->
+      <nav id="main-nav">
+         <ul class="second-nav">
+            <li class="osahan-user-profile bg-primary">
+               <div class="d-flex align-items-center gap-2">
+                  <img src="img/delivery-boy.jpg" alt="" class="rounded-pill img-fluid">
+                  <div class="ps-1">
+                     <h5 class="fw-bold text-white osahan-mb-1">Black Smith</h5>
+                     <p class="text-white-50 m-0">+91 12345-67890</p>
+                  </div>
+               </div>
+            </li>
+            <li><a href="index.html"><i class="bi bi-house me-3"></i>Homepage</a></li>
+            <li><a href="listing.html"><i class="bi bi-grid me-3"></i>Listing</a></li>
+            <li><a href="product-detail.html"><i class="bi bi-file-break me-3"></i>Product Detail</a></li>
+            <li><a href="cart.html"><i class="bi bi-basket me-3"></i>Cart</a></li>
+            <li><a href="payment-option.html"><i class="bi bi-credit-card me-3"></i>Payment Option</a></li>
+            <li><a href="payment-details.html"><i class="bi bi-stopwatch me-3"></i>Payment Time</a></li>
+            <li><a href="order-received.html"><i class="bi bi-check-circle me-3"></i>Order Received</a></li>
+            <li><a href="track-order.html"><i class="bi bi-truck me-3"></i>Track Order</a></li>
+            <li><a href="track-delivery-boy.html"><i class="bi bi-person-vcard me-3"></i>Track Delivery Boy</a></li>
+            <li><a href="profile.html"><i class="bi bi-person me-3"></i>Profile</a></li>
+            <li><a href="order-detail.html"><i class="bi bi-receipt me-3"></i>Order Details</a></li>
+            <li>
+               <a href="#"><i class='bi bi-link me-3'></i>Example Multi Link</a>
+               <ul>
+                  <li><a href="#">Link</a></li>
+                  <li><a href="#">Link</a></li>
+               </ul>
+            </li>
+         </ul>
+         <ul class="bottom-nav">
+            <li class="home">
+               <a href="index.html" class="text-primary">
+                  <p class="h5 m-0"><i class="bi bi-house"></i></p>
+                  Home
+               </a>
+            </li>
+            <li class="cart">
+               <a href="cart.html">
+                  <p class="h5 m-0"><i class="bi bi-basket"></i></p>
+                  Cart
+               </a>
+            </li>
+            <li class="profile">
+               <a href="profile.html">
+                  <p class="h5 m-0"><i class="bi bi-person"></i></p>
+                  Profile
+               </a>
+            </li>
+         </ul>
+      </nav>
+      <!-- Bootstrap Bundle Js -->
+      <script src="vender/bootstrap/js/bootstrap.bundle.min.js"></script>
+      <!-- Jquery -->
+      <script src="vender/jquery/jquery.min.js"></script>
+      <!-- Sidebar js -->
+      <script src="vender/sidebar/hc-offcanvas-nav.js"></script>
+      <!-- Custom Js -->
+      <script src="js/custom.js"></script>
+   </body>
+</html>
