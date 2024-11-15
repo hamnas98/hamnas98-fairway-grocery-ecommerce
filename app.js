@@ -7,6 +7,7 @@ const userRoutes = require('./routes/userRoutes');
 
 
 
+
 // Load environment variables
 dotenv.config();
 
@@ -19,8 +20,8 @@ const app = express();
 app.set('view engine', 'ejs');
 
 // Set the views directory 
-app.set('views', path.join(__dirname, 'views/user'));
-app.set('views', path.join(__dirname, 'views/admin'));
+app.set('views', [ path.join(__dirname, 'views/user'), path.join(__dirname, 'views/admin')]);
+
 
 
 // Serve static files 
@@ -28,8 +29,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Middlewares
 app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 
-app.use('/api/users', userRoutes);
+app.use('/', userRoutes);
 
 const PORT = process.env.PORT || 5000;
 

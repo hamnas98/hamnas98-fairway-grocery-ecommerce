@@ -1,23 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-   <head>
-      <meta charset="UTF-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link rel="icon" href="img/logo.png" type="image/png">
-      <title>Foodmart - Food & Grocery Delivery Mobile Template</title>
-      <!-- Bootstrap Css -->
-      <link rel="stylesheet" href="vender/bootstrap/css/bootstrap.min.css">
-      <!-- Icofont -->
-      <link rel="stylesheet" href="vender/icofont/icofont.min.css">
-      <!-- Slick SLider Css -->
-      <link rel="stylesheet" href="vender/slick/slick/slick.css">
-      <link rel="stylesheet" href="vender/slick/slick/slick-theme.css">
-      <!-- Sidebar css -->
-      <link rel="stylesheet" href="vender/sidebar/demo.css">
-      <!-- Custom Css -->
-      <link rel="stylesheet" href="css/style.css">
-   </head>
+   
+   <%-include("../../views/partials/user/header")%>
+
    <body>
       <div class="homepage d-flex flex-column vh-100">
          <!-- navbar -->
@@ -1189,15 +1174,6 @@
             </li>
          </ul>
       </nav>
-      <!-- Bootstrap Bundle Js -->
-      <script src="vender/bootstrap/js/bootstrap.bundle.min.js"></script>
-      <!-- Jquery -->
-      <script src="vender/jquery/jquery.min.js"></script>
-      <!-- Slick Slider Js -->
-      <script src="vender/slick/slick/slick.min.js"></script>
-      <!-- Sidebar js -->
-      <script src="vender/sidebar/hc-offcanvas-nav.js"></script>
-      <!-- Custom Js -->
-      <script src="js/custom.js"></script>
+      <%-include("../../views/partials/user/footer")%>
    </body>
 </html>
