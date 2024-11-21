@@ -1,8 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-   
-   <%-include("../../views/partials/user/header")%>
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="icon" href="img/logo.png" type="image/png">
+      <title>FIARWAY</title>
+      <!-- Bootstrap Css -->
+      <link rel="stylesheet" href="vender fd/bootstrap/css/bootstrap.min.css">
+      <!-- Icofont -->
+      <link rel="stylesheet" href="vender fd/icofont/icofont.min.css">
+      <!-- Slick SLider Css -->
+      <link rel="stylesheet" href="vender fd/slick/slick/slick.css">
+      <link rel="stylesheet" href="vender fd/slick/slick/slick-theme.css">
+      <!-- Sidebar css -->
+      <link rel="stylesheet" href="vender fd/sidebar/demo.css">
+      <!-- Custom Css -->
+      <link rel="stylesheet" href="css fd/style.css">
+      <!-- SweetAlert CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+   </head>
    <body>
       <div class="homepage d-flex flex-column vh-100">
          <!-- navbar -->
@@ -17,7 +35,7 @@
                   </span>
                </a>
                <div class="d-flex align-items-center gap-2 ms-auto">
-                  <a href="profile.html" class="link-dark">
+                  <a href="/signup" class="link-dark">
                      <div class="bg-dark bg-opacity-75 rounded-circle user-icon"><i class="bi bi-person d-flex m-0 h4 text-white"></i></div>
                   </a>
                   <a class="toggle" href="#">
@@ -1174,6 +1192,15 @@
             </li>
          </ul>
       </nav>
-      <%-include("../../views/partials/user/footer")%>
+      <!-- Bootstrap Bundle Js -->
+      <script src="vender fd/bootstrap/js/bootstrap.bundle.min.js"></script>
+      <!-- Jquery -->
+      <script src="vender fd/jquery/jquery.min.js"></script>
+      <!-- Slick Slider Js -->
+      <script src="vender fd/slick/slick/slick.min.js"></script>
+      <!-- Sidebar js -->
+      <script src="vender fd/sidebar/hc-offcanvas-nav.js"></script>
+      <!-- Custom Js -->
+      <script src="js fd/custom.js"></script>
    </body>
 </html>

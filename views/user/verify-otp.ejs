@@ -1,0 +1,236 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, shrink-to-fit=9">
+		<meta name="description" content="Gambolthemes">
+		<meta name="author" content="Gambolthemes">		
+		<title>Fairway Otp Verification</title>
+		
+		<!-- Favicon Icon -->
+		<link rel="icon" type="image/png" href="images gm/fav.png">
+		
+		<!-- Stylesheets -->
+		<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		<link href='vendor gm/unicons-2.0.1/css/unicons.css' rel='stylesheet'>
+		<link href="css gm/style.css" rel="stylesheet">
+		<link href="css gm/responsive.css" rel="stylesheet">
+		<link href="css gm/night-mode.css" rel="stylesheet">
+		<link href="css gm/step-wizard.css" rel="stylesheet">
+		
+		<!-- Vendor Stylesheets -->
+		<link href="vendor gm/fontawesome-free/css/all.min.css" rel="stylesheet">
+		<link href="vendor gm/OwlCarousel/assets/owl.carousel.css" rel="stylesheet">
+		<link href="vendor gm/OwlCarousel/assets/owl.theme.default.min.css" rel="stylesheet">
+		<link href="vendor gm/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="vendor gm/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">
+		
+	</head>
+
+
+<body>
+	<div class="sign-inup">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-lg-5">
+					<div class="sign-form">
+						<div class="sign-inner">
+							<div class="sign-logo" id="logo">
+								<a href="index.html"><img src="images /logo.svg" alt=""></a>
+								<a href="index.html"><img class="logo-inverse" src="images/dark-logo.svg" alt=""></a>
+							</div>
+							<div class="form-dt">
+								<div class="form-inpts checout-address-step">
+									<form method="post" action='/otp-verification' id="otpForm" onsubmit="return validateOTPForm()">
+										<div class="form-title"><h6>Enter OTP</h6></div>
+									
+										<!-- OTP Timer -->
+										<div id="otp-timer">OTP expires in <span id="timer">60</span> seconds</div>
+									
+										<div class="form-group pos_rel mb-3">
+											<ul class="code-alrt-inputs signup-code-list">
+												<li><input id="code1" name="number1" type="text" class="form-control input-md otp-input" maxlength="1"></li>
+												<li><input id="code2" name="number2" type="text" class="form-control input-md otp-input" maxlength="1"></li>
+												<li><input id="code3" name="number3" type="text" class="form-control input-md otp-input" maxlength="1"></li>
+												<li><input id="code4" name="number4" type="text" class="form-control input-md otp-input" maxlength="1"></li>
+												<li><input id="code5" name="number5" type="text" class="form-control input-md otp-input" maxlength="1"></li>
+												<li><input id="code6" name="number6" type="text" class="form-control input-md otp-input" maxlength="1"></li>
+											</ul>
+									
+											<!-- Resend OTP Button (Initially hidden) -->
+											<a class="chck-btn hover-btn code-btn145 mt-2" id="resend-otp-btn" style="display: none;" onclick="resendOTP()">Resend OTP</a>
+										</div>
+									
+										<input type="hidden" name="otp" id="consolidatedOtp">
+										<button class="login-btn hover-btn" type="submit">Verify OTP</button>
+									</form>
+									
+									
+									
+								</div>
+								<div class="signup-link">
+									
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="copyright-text text-center mt-4">
+						<i class="uil uil-copyright"></i>Copyright 2024 <b>Fairway</b> . All rights reserved
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Javascripts -->
+	<script src="js gm/jquery.min.js"></script>
+	<script src="vendor gm/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="vendor gm/bootstrap-select/js/bootstrap-select.min.js"></script>
+	<script src="vendor gm/OwlCarousel/owl.carousel.js"></script>
+	<script src="js gm/jquery.countdown.min.js"></script>
+	<script src="js gm/custom.js"></script>
+	<script src="js gm/product.thumbnail.slider.js"></script>
+	<script src="js gm/offset_overlay.js"></script>
+	<script src="js gm/night-mode.js"></script>
+	<!-- SweetAlert CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+let timer = 60; // Initial timer set to 60 seconds
+const timerElement = document.getElementById('timer');
+const resendButton = document.getElementById('resend-otp-btn');
+const otpInputs = document.querySelectorAll('.otp-input');
+const otpForm = document.getElementById('otpForm');
+const consolidatedOtpInput = document.getElementById('consolidatedOtp');
+
+// Countdown function for OTP timer
+function countdown() {
+    if (timer > 0) {
+        timer--;
+        timerElement.textContent = timer;
+		resendButton.style.display = 'none';
+    } else {
+        // OTP expired, display resend button
+        clearInterval(countdownInterval);
+        resendButton.style.display = 'block'; // Show resend OTP button
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.disabled = true; // Disable OTP input fields after expiration
+        });
+    }
+}
+
+// Start the countdown
+const countdownInterval = setInterval(countdown, 1000);
+
+// Automatically move to the next input field when a character is entered
+otpInputs.forEach((input, index) => {
+    input.addEventListener('input', () => {
+        if (input.value.length === 1 && index < otpInputs.length - 1) {
+            otpInputs[index + 1].focus(); // Move focus to next field
+        }
+    });
+});
+
+function validateOTPForm(event) {
+    const otp = Array.from(otpInputs).map(input => input.value.trim()).join('');
+    consolidatedOtpInput.value = otp;
+
+    if (!otp || otp.length < otpInputs.length) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Incomplete OTP',
+            text: 'Please enter all OTP digits.',
+        });
+        return false;
+    }
+
+    // AJAX request to validate OTP
+    $.ajax({
+        type: 'POST',
+        url: '/otp-verification',
+        data: { otp },
+        success: function (response) {
+            console.log('Server Response:', response);
+
+            if (response.success) {
+                // Show success alert before redirecting
+                Swal.fire({
+                    icon: 'success',
+                    title: 'OTP Verified Successfully',
+                    showConfirmButton: false,
+                    timer: 1500,
+                }).then(() => {
+                    // Redirect after SweetAlert
+                    if (response.redirectUrl) {
+                        window.location.href = response.redirectUrl;
+                    } else {
+                        console.error('Redirect URL is missing in the response.');
+                    }
+                });
+            } else {
+                // Show error alert for invalid OTP
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid OTP',
+                    text: response.message || 'Please try again.',
+                });
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('AJAX Error:', xhr, status, error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Something went wrong. Please try again later.',
+            });
+        },
+    });
+
+    return false; // Prevent the default form submission
+}
+
+	function resendOTP(){
+		clearInterval(countdownInterval);
+		timer=60
+		countdown();
+		document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.disabled = false; // Disable OTP input fields after expiration
+        });
+
+		$.ajax({
+        type: 'POST',
+        url: '/resend-otp',
+        success: function (response) {
+            console.log('Server Response:', response);
+
+            if (response.success) {
+                // Show success alert before redirecting
+                Swal.fire({
+                    icon: 'success',
+                    title: 'OTP Resend Successfully',
+                    showConfirmButton: false,
+                    timer: 1500,
+                })
+            } else {
+                // Show error alert for invalid OTP
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid OTP',
+                    text: response.message || 'Please try again.',
+                });
+            }
+        },
+    });
+	return false;
+
+	}
+
+		</script>
+		
+	
+	
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Page</title>
+</head>
+<body>
+    <% if (errors && errors.length > 0) { %>
+        <% errors.forEach(error => { %>
+            <div class="error-message">
+                <%= error.msg %>
+            </div>
+        <% }) %>
+    <% } %>
+</body>
+</html>
