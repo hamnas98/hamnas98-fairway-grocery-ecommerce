@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const path = require('path')
 const session = require('express-session');
+const passport = require('./config/passport');
 
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
@@ -28,6 +29,9 @@ app.use(session({
     } 
 }));
 
+// Initialize passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Set EJS as the view engine
 app.set('view engine', 'ejs');
@@ -44,6 +48,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Routes
 
 app.use('/', userRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 

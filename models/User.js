@@ -22,12 +22,9 @@ const userSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    sparse: true,  // Allow sparse indexing for phone numbers
+    sparse: true,
     default: null,
-  },
-  isVerified: {
-    type: Boolean,
-    default: false, // Track if user has verified their email
+    required:false
   },
   isBlocked: { 
     type: Boolean, 
@@ -38,16 +35,20 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  googleId: { 
+    type: String, 
+    unique: true 
+  },
   
 
 });
 
-// Hash password before saving
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
+// // Hash password before saving
+// userSchema.pre('save', async function(next) {
+//   if (!this.isModified('password')) return next();
+//   this.password = await bcrypt.hash(this.password, 10);
+//   next();
+// });
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
