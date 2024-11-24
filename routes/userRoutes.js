@@ -43,11 +43,7 @@ router.get('/update-password', (req, res) => {
 });
 
 
-router.post('/update-password', updatePassword);
-
-
-
-
+router.post('update-password', updatePassword);
 
 // Route to start Google Sign-In
 router.get('/auth/google',
