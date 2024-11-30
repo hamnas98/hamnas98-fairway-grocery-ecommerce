@@ -2,12 +2,10 @@ const express = require('express');
 const dotenv = require('dotenv');
 const path = require('path')
 const session = require('express-session');
-const passport = require('./config/passport');
 const flash = require('connect-flash');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
-
 
 // Load environment variables
 dotenv.config();
@@ -17,53 +15,46 @@ connectDB();
 
 const app = express();
 
-//Middlewares
+// Middleware
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({extended: true}));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Session configuration
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'secret',
+    secret: process.env.SESSION_SECRET || 'your-secret-key',
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: { 
-        secure: false,
-        httpOnly:true, 
-        maxAge: 72*60*60*1000 //72 hrs
-    } 
+        maxAge: 72 * 60 * 60 * 1000 // 72 hours
+    }
 }));
 
-// Flash middleware
+// Flash messages
 app.use(flash());
-
-// Middleware to make flash messages available in views
 app.use((req, res, next) => {
-    res.locals.successMessage = req.flash('success');
-    res.locals.errorMessage = req.flash('error');
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    res.locals.user = req.session.user || null;
     next();
 });
 
-// Initialize passport
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Set EJS as the view engine
-app.set('view engine', 'ejs');
-
 // View engine setup
 app.set('view engine', 'ejs');
-app.set('views', [path.join(__dirname, 'views/user'), path.join(__dirname, 'views/admin')]);
-
-
-
-// Serve static files 
-app.use(express.static(path.join(__dirname, 'public')));
-
+app.set('views', [
+    path.join(__dirname, 'views/admin'),
+    path.join(__dirname, 'views/user')
+]);
 
 // Routes
-
 app.use('/', userRoutes);
-app.use('/admin',adminRoutes)
+app.use('/admin', adminRoutes);
 
+// Error handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).render('error', { error: err });
+});
 
-const PORT = process.env.PORT || 5000;
-
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
