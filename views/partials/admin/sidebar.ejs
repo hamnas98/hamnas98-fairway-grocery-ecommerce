@@ -1,0 +1,41 @@
+<div id="layoutSidenav_nav">
+    <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+        <div class="sb-sidenav-menu">
+            <div class="nav">
+                <a class="nav-link <%= path === '/admin/dashboard' ? 'active' : '' %>" href="/admin/dashboard">
+                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                    Dashboard
+                </a>
+                
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseCategories" aria-expanded="false" aria-controls="collapseCategories">
+                    <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
+                    Categories
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse <%= path.includes('/admin/categories') ? 'show' : '' %>" id="collapseCategories" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                    <nav class="sb-sidenav-menu-nested nav">
+                        <a class="nav-link sub_nav_link <%= path === '/admin/categories' ? 'active' : '' %>" href="/admin/categories">All Categories</a>
+                        <a class="nav-link sub_nav_link <%= path === '/admin/categories/add' ? 'active' : '' %>" href="/admin/categories/add">Add Category</a>
+                    </nav>
+                </div>
+            
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseProducts" aria-expanded="false" aria-controls="collapseProducts">
+                    <div class="sb-nav-link-icon"><i class="fas fa-box"></i></div>
+                    Products
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse <%= path.includes('/admin/products') ? 'show' : '' %>" id="collapseProducts" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                    <nav class="sb-sidenav-menu-nested nav">
+                        <a class="nav-link sub_nav_link <%= path === '/admin/products' ? 'active' : '' %>" href="/admin/products">All Products</a>
+                        <a class="nav-link sub_nav_link <%= path === '/admin/products/add' ? 'active' : '' %>" href="/admin/products/add">Add Product</a>
+                    </nav>
+                </div>
+            
+                <a class="nav-link <%= path === '/admin/customers' ? 'active' : '' %>" href="/admin/customers">
+                    <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                    Customers
+                </a>
+            </div>
+        </div>
+    </nav>
+</div>

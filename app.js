@@ -6,6 +6,7 @@ const flash = require('connect-flash');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const multerErrorHandler = require('./middleware/multerErrorHandler');
 
 // Load environment variables
 dotenv.config();
@@ -19,6 +20,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(multerErrorHandler);
 
 // Session configuration
 app.use(session({

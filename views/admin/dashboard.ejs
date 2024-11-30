@@ -1,97 +1,72 @@
-<%- include('../partials/admin/header') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/admin/styles') %>
+  
 
-<main>
-    <div class="container-fluid">
-        <h2 class="mt-30 page-title">Dashboard</h2>
-        <ol class="breadcrumb mb-30">
-            <li class="breadcrumb-item active">Dashboard</li>
-        </ol>
-        <div class="row">
-            <div class="col-xl-3 col-md-6">
-                <div class="dashboard-report-card purple">
-                    <div class="card-content">
-                        <span class="card-title">Orders Pending</span>
-                        <span class="card-count" id="pendingOrders">0</span>
-                    </div>
-                    <div class="card-media">
-                        <i class="fab fa-rev"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-md-6">
-                <div class="dashboard-report-card red">
-                    <div class="card-content">
-                        <span class="card-title">Orders Cancelled</span>
-                        <span class="card-count" id="cancelledOrders">0</span>
-                    </div>
-                    <div class="card-media">
-                        <i class="far fa-times-circle"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-md-6">
-                <div class="dashboard-report-card info">
-                    <div class="card-content">
-                        <span class="card-title">Orders Processing</span>
-                        <span class="card-count" id="processingOrders">0</span>
-                    </div>
-                    <div class="card-media">
-                        <i class="fas fa-sync-alt rpt_icon"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-md-6">
-                <div class="dashboard-report-card success">
-                    <div class="card-content">
-                        <span class="card-title">Today's Income</span>
-                        <span class="card-count" id="todayIncome">₹0.00</span>
-                    </div>
-                    <div class="card-media">
-                        <i class="fas fa-money-bill rpt_icon"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Chart will be added here -->
-            <div class="col-xl-12 col-md-12">
-                <div class="card card-static-1 mb-30">
-                    <div class="card-body">
-                        <div id="earningGraph"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Orders Table -->
-            <div class="col-xl-12 col-md-12">
-                <div class="card card-static-2 mb-30">
-                    <div class="card-title-2 pb-3">
-                        <h4>Recent Orders</h4>
-                        <a href="/admin/orders" class="view-btn hover-btn">View All</a> 
-                    </div>
-                    <div class="card-body-table">
-                        <div class="table-responsive">
-                            <table class="table ucp-table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th style="width:130px">Order ID</th>
-                                        <th>Item</th>
-                                        <th style="width:200px">Date</th>
-                                        <th style="width:300px">Address</th>
-                                        <th style="width:130px">Status</th>
-                                        <th style="width:130px">Total</th>
-                                        <th style="width:100px">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="recentOrdersTable">
-                                    <!-- Orders will be loaded dynamically -->
-                                </tbody>
-                            </table>
+</head>
+<body class="sb-nav-fixed">
+    <%- include('../partials/admin/topnav') %>
+    
+    <div id="layoutSidenav">
+        <%- include('../partials/admin/sidebar', { path: '/admin/dashboard' }) %>
+        
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid">
+                    <h2 class="mt-30 page-title">Dashboard</h2>
+                    <ol class="breadcrumb mb-30">
+                        <li class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                    
+                    <!-- Dashboard Content -->
+                    <div class="row">
+                        <!-- Stats Cards -->
+                        <div class="col-xl-3 col-md-6">
+                            <div class="dashboard-report-card purple">
+                                <div class="card-content">
+                                    <span class="card-title">Orders Pending</span>
+                                    <span class="card-count" id="pendingOrders">0</span>
+                                </div>
+                                <div class="card-media">
+                                    <i class="fab fa-rev"></i>
+                                </div>
+                            </div>
                         </div>
+                        <!-- Add other stats cards similarly -->
+                        
+                        <!-- Charts and Tables -->
+                        <!-- Add your dashboard content here -->
                     </div>
                 </div>
-            </div>
+            </main>
+            
+            <%- include('../partials/admin/footer') %>
         </div>
     </div>
-</main>
 
-<%- include('../partials/admin/footer') %>
+    <%- include('../partials/admin/scripts') %>
+    
+    <!-- Dashboard specific scripts -->
+    <script src="/admin/js/chart.js"></script>
+    <script>
+        // Add your dashboard specific JavaScript here
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('/admin/api/dashboard-data');
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('pendingOrders').textContent = data.pendingOrders;
+                    // Update other stats
+                }
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        // Load dashboard data on page load
+        loadDashboardData();
+    </script>
+</body>
+</html>

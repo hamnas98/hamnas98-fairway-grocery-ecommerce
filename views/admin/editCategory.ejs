@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Add Category - Fairway Supermarket Admin</title>
+    <link href="/admin/css/styles.css" rel="stylesheet">
+    <link href="/admin/css/admin-style.css" rel="stylesheet">
+    <link href="/admin/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="sb-nav-fixed">
+    <!-- Include your header/nav partial here -->
+    <%- include('../partials/admin/topnav') %>
+    
+    <div id="layoutSidenav">
+        <!-- Include your sidebar partial here -->
+        <%- include('../partials/admin/sidebar') %>
+        
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid">
+                    <h2 class="mt-30 page-title">Categories</h2>
+                    <ol class="breadcrumb mb-30">
+                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/categories">Categories</a></li>
+                        <li class="breadcrumb-item active">Edit Category</li>
+                    </ol>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="card card-static-2 mb-30">
+                                <div class="card-title-2">
+                                    <h4>Edit Category</h4>
+                                </div>
+                                <div class="card-body-table">
+                                    <form id="categoryForm">
+                                        <div class="news-content-right pd-20">
+                                            <div class="form-group">
+                                                <label class="form-label">Name*</label>
+                                                <input type="text" class="form-control" name="name" placeholder="Category Name" value="<%= category.name %>" required>
+                                            </div>
+        
+                                            <div class="form-group">
+                                                <label class="form-label">Parent Category</label>
+                                                <select class="form-control" name="parent">
+                                                    <option value="">Select Parent Category</option>
+                                                    <% parentCategories.forEach(parentCat => { %>
+                                                        <option value="<%= parentCat._id %>" 
+                                                            <%= category.parent && category.parent.toString() === parentCat._id.toString() ? 'selected' : '' %>>
+                                                            <%= parentCat.name %>
+                                                        </option>
+                                                    <% }) %>
+                                                </select>
+                                            </div>
+        
+                                            <div class="form-group">
+                                                <label class="form-label">Status*</label>
+                                                <select id="listed" name="listed" class="form-control">
+                                                    <option value="true" <%= category.listed ? 'selected' : '' %>>Active</option>
+                                                    <option value="false" <%= !category.listed ? 'selected' : '' %>>Inactive</option>
+                                                </select>
+                                            </div>
+        
+                                            <div class="form-group">
+                                                <label class="form-label">Discount (%)</label>
+                                                <input type="number" class="form-control" name="discount" min="0" max="100" value="<%= category.discount || 0 %>">
+                                            </div>
+        
+                                            <div class="form-group">
+                                                <label class="form-label">Category Image</label>
+                                                <div class="input-group">
+                                                    <div class="custom-file">
+                                                        <input type="file" class="custom-file-input" id="image" name="image" accept="image/*">
+                                                        <label class="custom-file-label" for="image">Choose Image</label>
+                                                    </div>
+                                                </div>
+                                                <div class="add-cate-img" id="imagePreview">
+                                                    <img src="<%= category.image || '/admin/images/category/icon-1.svg' %>" alt="<%= category.name %>">
+                                                </div>
+                                            </div>
+        
+                                            <button class="save-btn hover-btn" type="submit">Update Category</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <%- include('../partials/admin/footer') %>
+        </div>
+    </div>
+
+    <script src="/admin/js/jquery.min.js"></script>
+    <script src="/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/admin/js/scripts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Image preview
+        document.getElementById('image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" alt="preview" class="img-fluid">
+                    `;
+                }
+                reader.readAsDataURL(file);
+                document.querySelector('.custom-file-label').textContent = file.name;
+            }
+        });
+        
+        // Form submission
+        document.getElementById('categoryForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('/admin/categories/edit/<%= category._id %>', {
+                    method: 'POST',
+                    body: formData
+                });
+        
+                const data = await response.json();
+        
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = data.redirectUrl;
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong'
+                });
+            }
+        });
+        </script>
+</body>
+</html>
