@@ -244,15 +244,16 @@ const listingCategory = async (req, res) => {
             message: `Category ${category.listed ? 'listed' : 'unlisted'} successfully`
         });
     } catch (error) {
-        console.error('Toggle category listing error:', error);
+        console.error('Toggle category status error:', error);
         res.json({
             success: false,
-            message: 'Error updating category listing'
+            message: 'Error updating category status'
         });
     }
 };
 
-const deleteCategory = async (req, res) => {
+
+const deleteCategory = deleteCategory: async (req, res) => {
     try {
         const category = await Category.findById(req.params.id);
         
