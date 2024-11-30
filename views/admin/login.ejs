@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description-gambolthemes" content="">
+	<meta name="author-gambolthemes" content="">
+	<title>Fairway Supermarket Admin</title>
+	<link href="/admin/css/styles.css" rel="stylesheet">
+	<link href="/admin/css/admin-style.css" rel="stylesheet">
+	
+	<!-- Vendor Stylesheets -->
+	<link href="/admin/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+	
+</head>
+
+    <body class="bg-sign">
+        <div id="layoutAuthentication">
+            <div id="layoutAuthentication_content">
+                <main>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-5">
+                                <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                    <div class="card-header card-sign-header">
+										<h3 class="text-center font-weight-light my-4">Login</h3>
+									</div>
+                                    <div class="card-body">
+                                        <form id="loginForm">
+                                            <div class="form-group">
+                                                <label class="form-label" for="inputEmailAddress">Email*</label>
+                                                <input class="form-control py-3" id="inputEmailAddress" type="email" placeholder="Enter email address" required />
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label" for="inputPassword">Password*</label>
+                                                <input class="form-control py-3" id="inputPassword" type="password" placeholder="Enter password" required />
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
+                                                    <label class="custom-control-label" for="rememberPasswordCheck">Remember password</label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
+                                                <button type="submit" class="btn btn-sign hover-btn">Login</button>
+                                            </div>
+                                        </form>
+                                        
+                                        
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+		 <script src=""></script>
+        <script src="/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="/admin/js/scripts.js"></script>	
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+                                            // Handle form submission using JavaScript (AJAX)
+                                            document.getElementById('loginForm').addEventListener('submit', async function(event) {
+                                                event.preventDefault(); // Prevent default form submission
+                                        
+                                                const email = document.getElementById('inputEmailAddress').value;
+                                                const password = document.getElementById('inputPassword').value;
+                                                const rememberPassword = document.getElementById('rememberPasswordCheck').checked;
+                                        
+                                                try {
+                                                    const response = await fetch('/admin/login', {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                        },
+                                                        body: JSON.stringify({ email, password, rememberPassword }),
+                                                    });
+                                        
+                                                    const data = await response.json();
+                                        
+                                                    if (data.success) {
+                                                        // Display success message and redirect
+                                                        Swal.fire({
+                                                            icon: 'success',
+                                                            title: 'Login Successful',
+                                                            showConfirmButton: false,
+                                                            timer: 1500,
+                                                        }).then(() => {
+                                                            window.location.href = data.redirectUrl || '/admin/dashboard'; // Redirect to the dashboard or specified URL
+                                                        });
+                                                    } else {
+                                                        // Display error message
+                                                        Swal.fire({
+                                                            icon: 'error',
+                                                            title: 'Login Failed',
+                                                            text: data.message,
+                                                        });
+                                                    }
+                                                } catch (error) {
+                                                    console.error('Error:', error);
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error',
+                                                        text: 'Something went wrong. Please try again later.',
+                                                    });
+                                                }
+                                            });
+                                        </script>	
+		
+    </body>
+</html>
