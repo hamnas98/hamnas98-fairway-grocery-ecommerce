@@ -236,6 +236,7 @@ const listingCategory = async (req, res) => {
             });
         }
 
+        // Toggle the listed status
         category.listed = !category.listed;
         await category.save();
 
@@ -252,8 +253,7 @@ const listingCategory = async (req, res) => {
     }
 };
 
-
-const deleteCategory = deleteCategory: async (req, res) => {
+const deleteCategory = async (req, res) => {
     try {
         const category = await Category.findById(req.params.id);
         
@@ -270,13 +270,13 @@ const deleteCategory = deleteCategory: async (req, res) => {
 
         res.json({
             success: true,
-            message: 'Category deleted successfully'
+            message: 'Category removed successfully'
         });
     } catch (error) {
         console.error('Delete category error:', error);
         res.json({
             success: false,
-            message: 'Error deleting category'
+            message: 'Error removing category'
         });
     }
 };

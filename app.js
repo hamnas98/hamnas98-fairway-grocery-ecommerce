@@ -42,11 +42,21 @@ app.use((req, res, next) => {
 });
 
 // View engine setup
+// app.js
 app.set('view engine', 'ejs');
 app.set('views', [
     path.join(__dirname, 'views/admin'),
     path.join(__dirname, 'views/user')
 ]);
+
+// Error handler should include admin data
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).render('error', { 
+        error: err.message,
+        admin: req.session.admin 
+    });
+});
 
 // Routes
 app.use('/', userRoutes);

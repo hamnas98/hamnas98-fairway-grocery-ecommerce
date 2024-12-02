@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Add Product - Fairway Supermarket Admin</title>
+    <link href="/admin/css/styles.css" rel="stylesheet">
+    <link href="/admin/css/admin-style.css" rel="stylesheet">
+    <link href="/admin/css/admin-custom.css" rel="stylesheet">
+    <link href="/admin/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+</head>
+
+<body class="sb-nav-fixed">
+    <%- include('../partials/admin/topnav') %>
+    
+    <div id="layoutSidenav">
+        <%- include('../partials/admin/sidebar') %>
+        
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid">
+                    <h2 class="mt-30 page-title">Products</h2>
+                    <ol class="breadcrumb mb-30">
+                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/products">Products</a></li>
+                        <li class="breadcrumb-item active">Add Product</li>
+                    </ol>
+
+                    <div class="row">
+                        <div class="col-lg-8 col-md-8">
+                            <div class="card card-static-2 mb-30">
+                                <div class="card-title-2">
+                                    <h4>Add New Product</h4>
+                                </div>
+                                <div class="card-body-table">
+                                    <div class="news-content-right pd-20">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label">Product Name*</label>
+                                                    <input type="text" id="name" class="form-control" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label">Brand</label>
+                                                    <input type="text" id="brand" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label">Parent Category*</label>
+                                                    <select id="parentCategory" class="form-control" required>
+                                                        <option value="" disabled selected>-- Select Parent Category --</option>
+                                                        <% Object.values(categoryStructure).forEach(({ parent }) => { %>
+                                                            <option value="<%= parent._id %>"><%= parent.name %></option>
+                                                        <% }) %>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label">Category*</label>
+                                                    <select id="category" class="form-control" required disabled>
+                                                        <option value="" disabled selected>-- Select Category --</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                
+                                            </div>
+                                           
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">MRP Price (₹)*</label>
+                                                        <input type="number" id="price" class="form-control" min="0" step="0.01" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Discount Type</label>
+                                                        <select id="discountType" class="form-control" onchange="handleDiscountTypeChange()">
+                                                            <option value="">No Discount</option>
+                                                            <option value="price">Discount Price</option>
+                                                            <option value="percentage">Discount Percentage</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div id="discountPriceField" style="display: none;">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Discount Price (₹)</label>
+                                                            <input type="number" id="discountPrice" class="form-control" min="0" step="0.01">
+                                                            <small class="text-success" id="calculatedPercentage"></small>
+                                                        </div>
+                                                    </div>
+                                                    <div id="discountPercentageField" style="display: none;">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Discount Percentage (%)</label>
+                                                            <input type="number" id="discountPercentage" class="form-control" min="0" max="100" step="0.1">
+                                                            <small class="text-success" id="calculatedPrice"></small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Stock*</label>
+                                                    <input type="number" id="stock" class="form-control" min="0" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label">Unit*</label>
+                                                    <select id="unit" class="form-control" required>
+                                                        <option value="">Select Unit</option>
+                                                        <option value="kg">Kilogram (kg)</option>
+                                                        <option value="g">Gram (g)</option>
+                                                        <option value="pcs">Pieces (pcs)</option>
+                                                        <option value="bundle">Bundle</option>
+                                                        <option value="litre">Litre</option>
+                                                        <option value="ml">Millilitre (ml)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label">Quantity*</label>
+                                                    <input type="number" id="quantity" class="form-control" min="0" step="0.01" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label">About Product*</label>
+                                            <div class="card card-editor">
+                                                <div class="content-editor">
+                                                    <textarea id="aboutProduct" class="form-control" rows="4" required></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label">Highlights</label>
+                                            <div class="card card-editor">
+                                                <div class="content-editor">
+                                                    <textarea id="highlights" class="form-control" rows="4" placeholder="Enter each highlight in a new line"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label">Product Images* (Select up to 5 images)</label>
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input" id="productImages" accept="image/*" multiple>
+                                                    <label class="custom-file-label" for="productImages">Choose Images</label>
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">Click on an image to crop it. First image will be the main product image.</small>
+                                            <div class="crop-container" style="margin-top: 15px;">
+                                                <img id="productImagePreview" style="max-width: 100%; display: none;" />
+                                            </div>
+                                            <ul class="add-produc-imgs" id="preview"></ul>
+                                            <button type="button" id="cropButton" class="btn btn-primary save-btn hover-btn" style="margin-top: 15px; display: none;">
+                                                Crop & Add
+                                            </button>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label">Status*</label>
+                                            <select id="listed" class="form-control" required>
+                                                <option value="true">Listed</option>
+                                                <option value="false">Unlisted</option>
+                                            </select>
+                                        </div>
+
+                                        <button type="button" onclick="addProduct()" class="save-btn hover-btn">Add New Product</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <%- include('../partials/admin/footer') %>
+        </div>
+    </div>
+
+    <script src="/admin/js/jquery.min.js"></script>
+    <script src="/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/admin/js/scripts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+    <script>
+        function handleDiscountTypeChange() {
+    const discountType = document.getElementById('discountType').value;
+    const discountPriceField = document.getElementById('discountPriceField');
+    const discountPercentageField = document.getElementById('discountPercentageField');
+    
+    // Reset values
+    document.getElementById('discountPrice').value = '';
+    document.getElementById('discountPercentage').value = '';
+    document.getElementById('calculatedPercentage').textContent = '';
+    document.getElementById('calculatedPrice').textContent = '';
+
+    // Show/hide appropriate fields
+    discountPriceField.style.display = discountType === 'price' ? 'block' : 'none';
+    discountPercentageField.style.display = discountType === 'percentage' ? 'block' : 'none';
+}
+
+// Handle discount price input
+document.getElementById('discountPrice').addEventListener('input', function() {
+    const price = parseFloat(document.getElementById('price').value);
+    const discountPrice = parseFloat(this.value);
+
+    if (!price) {
+        this.value = '';
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please enter MRP price first'
+        });
+        return;
+    }
+
+    if (discountPrice >= price) {
+        this.value = '';
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid Discount',
+            text: 'Discount price must be less than MRP price'
+        });
+        return;
+    }
+
+    if (price && discountPrice) {
+        const percentage = ((price - discountPrice) / price) * 100;
+        document.getElementById('calculatedPercentage').textContent = 
+            `Saving: ${percentage.toFixed(1)}%`;
+    }
+});
+
+// Handle discount percentage input
+document.getElementById('discountPercentage').addEventListener('input', function() {
+    const price = parseFloat(document.getElementById('price').value);
+    const percentage = parseFloat(this.value);
+
+    if (!price) {
+        this.value = '';
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please enter MRP price first'
+        });
+        return;
+    }
+
+    if (percentage >= 100) {
+        this.value = '';
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid Discount',
+            text: 'Discount percentage cannot be 100% or more'
+        });
+        return;
+    }
+
+    if (price && percentage) {
+        const discountedPrice = price - (price * (percentage / 100));
+        document.getElementById('calculatedPrice').textContent = 
+            `Final Price: ₹${discountedPrice.toFixed(2)}`;
+    }
+});
+
+const formData = new FormData();
+
+
+
+
+
+
+
+// Handle category dropdown
+document.getElementById('parentCategory').addEventListener('change', async function() {
+    const categorySelect = document.getElementById('category');
+    const parentId = this.value;
+    
+    categorySelect.innerHTML = '<option value="" disabled selected>-- Select Category --</option>';
+    categorySelect.disabled = true;
+    
+    if (!parentId) return;
+
+    try {
+        const response = await fetch(`/admin/categories/${parentId}/subcategories`);
+        const data = await response.json();
+
+        if (data.success) {
+            data.categories.forEach(category => {
+                categorySelect.innerHTML += `
+                    <option value="${category._id}">${category.name}</option>
+                `;
+            });
+            categorySelect.disabled = false;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to load categories'
+        });
+    }
+});
+
+// Handle image upload
+let cropper;
+let croppedImages = [];
+
+document.getElementById('productImages').addEventListener('change', function(e) {
+    const files = Array.from(this.files);
+    const previewContainer = document.getElementById('preview');
+    const currentImages = previewContainer.querySelectorAll('li').length;
+
+    // Check total images count
+    if (currentImages + files.length > 5) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Too many images',
+            text: `You can only add ${5 - currentImages} more image(s). Maximum 5 images allowed.`
+        });
+        this.value = '';
+        return;
+    }
+
+    files.forEach((file, index) => {
+        if (!file.type.startsWith('image/')) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid file',
+                text: 'Please upload only images'
+            });
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const li = document.createElement('li');
+            const newIndex = currentImages + index;
+            
+            li.innerHTML = `
+                <img src="${e.target.result}" class="preview-image" data-index="${newIndex}">
+                <span class="remove-image">&times;</span>
+                <div class="crop-status">Original</div>
+            `;
+
+            // Store original file
+            croppedImages[newIndex] = file;
+
+            li.querySelector('.preview-image').addEventListener('click', function() {
+                initCropper(this.src, newIndex);
+            });
+
+            li.querySelector('.remove-image').addEventListener('click', function() {
+                const remainingImages = previewContainer.querySelectorAll('li').length - 1;
+                if (remainingImages < 3) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Cannot Remove',
+                        text: 'Minimum 3 images required'
+                    });
+                    return;
+                }
+                li.remove();
+                croppedImages[newIndex] = null;
+                updateImageCount();
+            });
+
+            previewContainer.appendChild(li);
+            updateImageCount();
+        };
+        reader.readAsDataURL(file);
+    });
+    
+    this.value = ''; // Reset input to allow selecting same files again
+});
+
+function updateImageCount() {
+    const totalImages = document.getElementById('preview').querySelectorAll('li').length;
+    const label = document.querySelector('.custom-file-label');
+    label.textContent = totalImages >= 5 ? 'Maximum limit reached' : 'Choose Images';
+    
+    // Update counter if exists, create if doesn't
+    let counter = document.getElementById('imageCounter');
+    if (!counter) {
+        counter = document.createElement('div');
+        counter.id = 'imageCounter';
+        counter.className = 'mt-2 small';
+        document.querySelector('.custom-file').after(counter);
+    }
+    counter.textContent = `${totalImages}/5 images selected`;
+    counter.style.color = totalImages >= 3 ? '#28a745' : '#ffc107';
+}
+
+function initCropper(imageSrc, index) {
+    const preview = document.getElementById('productImagePreview');
+    preview.src = imageSrc;
+    preview.style.display = 'block';
+    document.getElementById('cropButton').style.display = 'block';
+
+    if (cropper) {
+        cropper.destroy();
+    }
+
+    cropper = new Cropper(preview, {
+        aspectRatio: 1,
+        viewMode: 2,
+        minCropBoxWidth: 100,
+        minCropBoxHeight: 100,
+        ready() {
+            preview.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+
+    document.getElementById('cropButton').onclick = () => cropImage(index);
+}
+
+async function cropImage(index) {
+    if (!cropper) return;
+
+    const croppedCanvas = cropper.getCroppedCanvas({
+        width: 500,
+        height: 500
+    });
+
+    const blob = await new Promise(resolve => croppedCanvas.toBlob(resolve, 'image/jpeg', 0.8));
+    croppedImages[index] = new File([blob], `product-image-${index}.jpg`, { type: 'image/jpeg' });
+
+    // Update preview
+    const previewImage = document.querySelector(`[data-index="${index}"]`);
+    if (previewImage) {
+        previewImage.src = croppedCanvas.toDataURL();
+        const status = previewImage.parentElement.querySelector('.crop-status');
+        status.textContent = 'Cropped';
+        status.style.color = '#28a745';
+    }
+
+    // Reset cropper
+    cropper.destroy();
+    cropper = null;
+    document.getElementById('productImagePreview').style.display = 'none';
+    document.getElementById('cropButton').style.display = 'none';
+
+    Swal.fire({
+        icon: 'success',
+        title: 'Image Cropped',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1500
+    });
+}
+
+// Add to form submission
+function validateImages() {
+    const totalImages = document.getElementById('preview').querySelectorAll('li').length;
+    
+    if (totalImages < 3) {
+        Swal.fire({
+            icon: 'error',
+            title: 'More Images Required',
+            text: 'Please add at least 3 images'
+        });
+        return false;
+    }
+    
+    return true;
+}
+
+// Add this to your form submission
+async function addProduct() {
+    if (!validateImages()) return;
+    
+    const formData = new FormData();
+    
+    // Add valid images to formData (both cropped and original)
+    croppedImages.forEach((image, index) => {
+        if (image) {
+            formData.append('images', image);
+        }
+    });
+
+    // Rest of your form submission code...
+}
+
+// Handle price validation
+document.getElementById('discountPrice').addEventListener('input', function() {
+    const regularPrice = parseFloat(document.getElementById('price').value);
+    const discountPrice = parseFloat(this.value);
+
+    if (discountPrice >= regularPrice) {
+        this.value = '';
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid Discount',
+            text: 'Discount price must be less than regular price'
+        });
+    }
+});
+
+async function addProduct() {
+    try {
+        // Validate required fields
+        const requiredFields = [
+            'name', 'category', 'price', 'stock', 'unit', 'quantity', 'aboutProduct'
+        ];
+
+        for (const field of requiredFields) {
+            const element = document.getElementById(field);
+            if (!element.value.trim()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Required Field',
+                    text: `Please fill in ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`
+                });
+                element.focus();
+                return;
+            }
+        }
+
+        // Validate images
+        if (!croppedImages.some(img => img)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Images Required',
+                text: 'Please add at least one product image'
+            });
+            return;
+        }
+
+        const formData = new FormData();
+
+        // Add basic fields
+        formData.append('name', document.getElementById('name').value);
+        formData.append('brand', document.getElementById('brand').value);
+        formData.append('category', document.getElementById('category').value);
+        formData.append('price', document.getElementById('price').value);
+
+        formData.append('stock', document.getElementById('stock').value);
+        formData.append('unit', document.getElementById('unit').value);
+        formData.append('quantity', document.getElementById('quantity').value);
+        formData.append('listed', document.getElementById('listed').value);
+
+        const discountType = document.getElementById('discountType').value;
+if (discountType === 'price') {
+    formData.append('discountPrice', document.getElementById('discountPrice').value);
+    formData.append('discountType', 'price');
+} else if (discountType === 'percentage') {
+    const price = parseFloat(document.getElementById('price').value);
+    const percentage = parseFloat(document.getElementById('discountPercentage').value);
+    const discountPrice = price - (price * (percentage / 100));
+    formData.append('discountPrice', discountPrice.toFixed(2));
+    formData.append('discountPercentage', percentage);
+    formData.append('discountType', 'percentage');
+} else {
+    formData.append('discountPrice', '');
+    formData.append('discountPercentage', '');
+    formData.append('discountType', '');
+}
+
+        // Add arrays
+        const highlights = document.getElementById('highlights').value
+            .split('\n')
+            .filter(line => line.trim());
+        highlights.forEach((highlight, index) => {
+            formData.append(`highlights[${index}]`, highlight);
+        });
+
+        const aboutProduct = document.getElementById('aboutProduct').value
+            .split('\n')
+            .filter(line => line.trim());
+        aboutProduct.forEach((line, index) => {
+            formData.append(`aboutProduct[${index}]`, line);
+        });
+
+        // Add images
+        croppedImages.forEach((image, index) => {
+            if (image) {
+                formData.append('images', image);
+            }
+        });
+
+        // Show loading
+        Swal.fire({
+            title: 'Adding Product',
+            text: 'Please wait...',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            willOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        const response = await fetch('/admin/products/add', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: data.message,
+                timer: 1500,
+                showConfirmButton: false
+            }).then(() => {
+                window.location.href = data.redirectUrl;
+            });
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message || 'Failed to add product'
+        });
+    }
+}
+    </script>
+</body>
+</html>
