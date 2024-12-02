@@ -1,0 +1,69 @@
+/* Product Image Slider */
+.carousel-item img {
+    width: 100%;
+    height: 400px;
+    object-fit: contain;
+    background: #f8f9fa;
+}
+
+.product-thumbnails {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 10px 0;
+}
+
+.thumbnail-item {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.thumbnail-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.thumbnail-item:hover img {
+    border-color: #007bff;
+}
+
+/* Product Details */
+.product-name {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.price {
+    color: #2c3e50;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.original-price {
+    font-size: 18px;
+}
+
+.discount-badge {
+    font-size: 14px;
+}
+
+.border-bottom {
+    border-color: #eee !important;
+}
+
+/* Status Badges */
+.badge {
+    padding: 8px 12px;
+    font-weight: 500;
+}
+
+/* Highlights */
+.highlights ul li {
+    padding: 5px 0;
+}
+
+.highlights ul li i {
+    font-size: 14px;
+}

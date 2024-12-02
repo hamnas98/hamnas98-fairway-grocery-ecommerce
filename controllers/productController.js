@@ -350,6 +350,112 @@ const updateProduct = async (req, res) => {
     }
 };
 
+const listingProduct = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        
+        if (!product) {
+            return res.json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
 
+        // Toggle the listed status
+        product.listed = !product.listed;
+        await product.save();
 
-module.exports = { getAllProducts, getAddProduct, getParentCategory, addProduct, getEditProduct, updateProduct}
+        res.json({
+            success: true,
+            message: `Product ${product.listed ? 'listed' : 'unlisted'} successfully`
+        });
+    } catch (error) {
+        console.error('Toggle Product status error:', error);
+        res.json({
+            success: false,
+            message: 'Error updating product status'
+        });
+    }
+};
+
+const deleteProduct = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        
+        if (!product) {
+            return res.json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+
+        // Soft delete
+        product.isDeleted = true;
+        await product.save();
+
+        res.json({
+            success: true,
+            message: 'Product removed successfully'
+        });
+    } catch (error) {
+        console.error('Delete Product error:', error);
+        res.json({
+            success: false,
+            message: 'Error removing Product'
+        });
+    }
+};
+
+// View Product Details
+const getProductDetails = async (req, res) => {
+    try {
+        // Find product and populate category with parent
+        const product = await Product.findOne({
+            _id: req.params.id,
+            isDeleted: false
+        }).populate({
+            path: 'category',
+            populate: {
+                path: 'parent'
+            }
+        });
+ 
+        if (!product) {
+            req.flash('error', 'Product not found');
+            return res.redirect('/admin/products');
+        }
+ 
+        // Format dates
+        const createdDate = new Date(product.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+ 
+      
+ 
+        res.render('viewProduct', {
+            product,
+            admin: req.session.admin,
+            createdDate,
+            path: '/admin/products/view',
+            // Add any stats/analytics you want to show
+            stats: {
+                totalOrders: 0, // Replace with actual order count
+                totalSales: 0,  // Replace with actual sales data
+                lastOrdered: null // Replace with last order date
+            }
+        });
+ 
+    } catch (error) {
+        console.error('Get product details error:', error);
+        req.flash('error', 'Error loading product details');
+        res.redirect('/admin/products');
+    }
+ };
+ 
+
+module.exports = { getAllProducts, getAddProduct, getParentCategory, addProduct,
+     getEditProduct, updateProduct, listingProduct, deleteProduct, getProductDetails };

@@ -6,8 +6,8 @@ const { getAllCategories, getAddCategory, addCategory,getEditCategory,
         updateCategory,listingCategory, deleteCategory } = require('../controllers/categoryController');
 const { categoryUpload, productUpload } = require('../config/multer');
 const { isAdmin, isLoggedIn,  } = require('../middleware/authMiddleware');
-const { getAllProducts, getAddProduct, getParentCategory, addProduct, 
-        getEditProduct, updateProduct  } = require('../controllers/productController')
+const { getAllProducts, getAddProduct, getParentCategory, addProduct, getEditProduct, 
+        updateProduct, listingProduct, deleteProduct, getProductDetails  } = require('../controllers/productController')
 
 // admin routes
 router.get('/login', isLoggedIn, getLoginPage);
@@ -31,10 +31,9 @@ router.get('/categories/:parentId/subcategories', isAdmin, getParentCategory);
 router.post('/products/add', isAdmin, productUpload, addProduct);
 router.get('/products/edit/:id', isAdmin, getEditProduct);
 router.post('/products/edit/:id', isAdmin, productUpload, updateProduct);
-// router.delete('/products/delete/:id', isAdmin, deleteProduct);
-// router.put('/products/listing/:id', isAdmin, toggleProductListing);
-// router.put('/products/stock/:id', isAdmin, updateStock);
-// router.get('/products/view/:id', isAdmin, getProductDetails);
+router.put('/products/listing/:id', isAdmin, listingProduct);
+router.delete('/products/delete/:id', isAdmin, deleteProduct);
+router.get('/products/view/:id', isAdmin, getProductDetails);
 
 
 

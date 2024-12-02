@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Add Product - Fairway Supermarket Admin</title>
+    <link href="/admin/css/styles.css" rel="stylesheet">
+    <link href="/admin/css/admin-style.css" rel="stylesheet">
+    <link href="/admin/css/admin-custom.css" rel="stylesheet">
+    <link href="/admin/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/admin/css/productview.css" rel="stylesheet">
+
+
+</head>
+
+<body class="sb-nav-fixed">
+    <%- include('../partials/admin/topnav') %>
+    
+    <div id="layoutSidenav">
+        <%- include('../partials/admin/sidebar') %>
+        
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid">
+                    <h2 class="mt-30 page-title">Products</h2>
+                    <ol class="breadcrumb mb-30">
+                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/products">Products</a></li>
+                        <li class="breadcrumb-item active">Product view </li>
+                        <li class="breadcrumb-item active"><%= product.name %></li>
+                    </ol>
+                    <div class="row">
+                        <!-- Product Images Section -->
+                        <div class="col-lg-6 col-md-6">
+                            <div class="card card-static-2 mb-30">
+                                <div class="card-body-table">
+                                    <!-- Main Image Slider -->
+                                    <div id="productImageSlider" class="carousel slide" data-bs-ride="carousel">
+                                        <div class="carousel-indicators">
+                                            <% product.images.forEach((image, index) => { %>
+                                                <button type="button" data-bs-target="#productImageSlider" 
+                                                    data-bs-slide-to="<%= index %>" 
+                                                    class="<%= index === 0 ? 'active' : '' %>"
+                                                    aria-current="<%= index === 0 ? 'true' : 'false' %>"
+                                                    aria-label="Slide <%= index + 1 %>">
+                                                </button>
+                                            <% }); %>
+                                        </div>
+                                        <div class="carousel-inner">
+                                            <% product.images.forEach((image, index) => { %>
+                                                <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                                                    <img src="<%= image %>" class="d-block w-100" alt="Product image">
+                                                </div>
+                                            <% }); %>
+                                        </div>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#productImageSlider" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#productImageSlider" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                    </div>
+                                    <!-- Thumbnail Navigation -->
+                                    <div class="product-thumbnails mt-3 d-flex justify-content-center">
+                                        <% product.images.forEach((image, index) => { %>
+                                            <div class="thumbnail-item mx-2" onclick="$('#productImageSlider').carousel(<%= index %>)">
+                                                <img src="<%= image %>" alt="Thumbnail" class="img-thumbnail">
+                                            </div>
+                                        <% }); %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <!-- Product Details Section -->
+                        <div class="col-lg-6 col-md-6">
+                            <div class="card card-static-2 mb-30">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Product Details : <%= product.name %></h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="product-info">
+                                        <h3 class="product-name mb-3"><%= product.name %></h3>
+                                        
+                                        <!-- Categories -->
+                                        <div class="category-info mb-3">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <span class="text-muted me-2">Parent Category:</span>
+                                                <span class="badge bg-info"><%= product.category.parent ? product.category.parent.name : 'None' %></span>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <span class="text-muted me-2">Category:</span>
+                                                <span class="badge bg-primary"><%= product.category.name %></span>
+                                            </div>
+                                        </div>
+                    
+                                        <!-- Pricing -->
+                                        <div class="pricing-info mb-3">
+                                            <div class="d-flex align-items-center">
+                                                
+                                                <% if (product.discountPrice) { %>
+                                                    <h4 class="price mb-0">₹<%= product.discountPrice %></h4>
+                                                    <span class="original-price text-muted ms-2 text-decoration-line-through">
+                                                        ₹<%= product.price %>
+                                                    </span>
+                                                    <span class="discount-badge ms-2 bg-success text-white px-2 py-1 rounded">
+                                                        <%= product.discountPercentage %>% OFF
+                                                    </span>
+                                                <% }else {%>
+                                                <h4 class="price mb-0">₹<%= product.price %></h4>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                    
+                                        <!-- Stock and Unit -->
+                                        <div class="stock-info mb-3">
+                                            <div class="d-flex justify-content-between border-bottom pb-2">
+                                                <span>Stock Status:</span>
+                                                <% if (product.outOfStock) { %>
+                                                    <span class="text-danger">Out of Stock</span>
+                                                <% } else { %>
+                                                    <span class="text-success"><%= product.stock %> units available</span>
+                                                <% } %>
+                                            </div>
+                                            <div class="d-flex justify-content-between border-bottom py-2">
+                                                <span>Unit:</span>
+                                                <span><%= product.quantity %> <%= product.unit %></span>
+                                            </div>
+                                        </div>
+                    
+                                        <!-- Brand -->
+                                        <% if (product.brand) { %>
+                                            <div class="brand-info mb-3">
+                                                <div class="d-flex justify-content-between border-bottom py-2">
+                                                    <span>Brand:</span>
+                                                    <span><%= product.brand %></span>
+                                                </div>
+                                            </div>
+                                        <% } %>
+                    
+                                        <!-- Status -->
+                                        <div class="status-info mb-3">
+                                            <div class="d-flex justify-content-between">
+                                                <span>Status:</span>
+                                                <span class="badge <%= product.listed ? 'bg-success' : 'bg-danger' %>">
+                                                    <%= product.listed ? 'Listed' : 'Unlisted' %>
+                                                </span>
+                                            </div>
+                                        </div>
+                    
+                                        <!-- About Product -->
+                                        <div class="about-product mb-3">
+                                            <h5>About Product</h5>
+                                            <% product.aboutProduct.forEach(info => { %>
+                                                <p class="mb-1"><%= info %></p>
+                                            <% }); %>
+                                        </div>
+                    
+                                        <!-- Highlights -->
+                                        <% if (product.highlights && product.highlights.length > 0) { %>
+                                            <div class="highlights">
+                                                <h5>Product Highlights</h5>
+                                                <ul class="list-unstyled">
+                                                    <% product.highlights.forEach(highlight => { %>
+                                                        <li class="mb-1">
+                                                            <i class="fas fa-check-circle text-success me-2"></i>
+                                                            <%= highlight %>
+                                                        </li>
+                                                    <% }); %>
+                                                </ul>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <%- include('../partials/admin/footer') %>
+        </div>
+    </div>
+
+    <script src="/admin/js/jquery.min.js"></script>
+    <script src="/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/admin/js/scripts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+   
+</body>
+</html>

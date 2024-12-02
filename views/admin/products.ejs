@@ -94,10 +94,9 @@
 														<th>Name</th>
 														<th>Category</th>
 														<th>Brand</th>
-														<th>Unit</th>
-														<th>Quantity</th>
+														<th>Quantity & Unit</th>
 														<th>Price</th>
-														<th>Discount</th>
+														<th>Discount %</th>
 														<th>Discount Price</th>
 														<th>Stock</th>
 														<th>Status</th>
@@ -126,37 +125,45 @@
 															<td><%= product.category ? product.category.name : 'N/A' %></td>
 															<td><%= product.brand || 'N/A' %></td>
 															<td><%= product.quantity %> <%= product.unit %></td>
-															<td><%= product.quantity %></td>
-															<td>₹<%= product.price.toFixed(2) %></td>
+															
+															<td>₹<%= product.price %></td>
 															<td>
-																<% if (product.discountPrice) { %>
-																	<%= product.discountPercentage %>%
-																	<br>
-																	<small>₹<%= product.discountPrice.toFixed(2) %></small>
-																<% } else { %>
-																	-
-																<% } %>
+																<% if (product.discountPrice)  %>
+																	<%= product.discountPercentage %>%														
 															</td>
 															<td>
-																<% if (product.outOfStock) { %>
-																	<span class="badge badge-danger">Out of Stock</span>
-																<% } else { %>
-																	<%= product.stock %>
-																<% } %>
+																<% if (product.discountPrice)  %>																	
+																	<span>₹</span><%= product.discountPrice %>
 															</td>
+															
+														
 															<td>
-																<span class="badge-item badge-status" id="status-badge-<%= product._id %>">
+																<span >
 																	<% if (product.soldOut) { %>
 																		Sold Out
 																	<% } else if (product.outOfStock) { %>
 																		Out of Stock
 																	<% } else { %>
-																		<%= product.listed ? 'Listed' : 'Unlisted' %>
+																		<%= product.stock %>
 																	<% } %>
 																</span>
 															</td>
+															<td>
+																<span class="badge-item badge-status" id="status-badge-<%= product._id %>">
+																	<%= product.listed ? 'Listed' : 'Unlisted' %>
+																</span>
+															</td>
+															
 															<td class="action-btns">
-																<a href="/admin/products/view/<%= product._id %>" class="edit-btn" title="View">
+																<button class="edit-btn" onclick="toggleStatus('<%= product._id %>', <%= product.listed %>)">
+																	<% if (product.listed) { %>
+																		<i class="fas fa-ban text-danger"></i> Unlist
+																	<% } else { %>
+																		<i class="fas fa-check text-success"></i> List
+																	<% } %>
+																</button>
+																
+																<a href="/admin/products/view/<%= product._id %>" class="edit-btn ms-3" title="View">
 																	<i class="fas fa-eye"></i>
 																</a>
 																<a href="/admin/products/edit/<%= product._id %>" class="edit-btn" title="Edit">
@@ -205,21 +212,10 @@
 					</div>
 					
 					<script>
-					async function deleteProduct(productId) {
-						try {
-							const result = await Swal.fire({
-								title: 'Delete Product',
-								text: "Are you sure you want to delete this product?",
-								icon: 'warning',
-								showCancelButton: true,
-								confirmButtonColor: '#d33',
-								cancelButtonColor: '#3085d6',
-								confirmButtonText: 'Yes, delete it!'
-							});
-					
-							if (result.isConfirmed) {
-								const response = await fetch(`/admin/products/delete/${productId}`, {
-									method: 'DELETE',
+						async function toggleStatus(productId, currentStatus) {
+							try {
+								const response = await fetch(`/admin/products/listing/${productId}`, {
+									method: 'PUT',
 									headers: {
 										'Content-Type': 'application/json'
 									}
@@ -228,44 +224,108 @@
 								const data = await response.json();
 								
 								if (data.success) {
-									const row = document.querySelector(`button[onclick="deleteProduct('${productId}')"]`).closest('tr');
-									row.style.opacity = '0';
-									row.style.transition = 'opacity 0.5s ease';
+									// Update the status badge
+									const badge = document.getElementById(`status-badge-${productId}`);
+									const newStatus = !currentStatus;
 									
-									setTimeout(() => {
-										row.remove();
-										const tbody = document.querySelector('tbody');
-										if (tbody.children.length === 0) {
-											tbody.innerHTML = `
-												<tr>
-													<td colspan="11" class="text-center">No products found</td>
-												</tr>
-											`;
-										}
-									}, 500);
-					
+									// Update badge text
+									badge.textContent = newStatus ? 'Listed' : 'Unlisted';
+									badge.className = `badge-item badge-status ${newStatus ? 'bg-success' : 'bg-danger'}`;
+									
+									// Update the toggle button
+									const toggleBtn = badge.closest('tr').querySelector('button');
+									toggleBtn.innerHTML = newStatus ? 
+										'<i class="fas fa-ban text-danger"></i> Unlist' : 
+										'<i class="fas fa-check text-success"></i> List';
+									toggleBtn.setAttribute('onclick', `toggleStatus('${productId}', ${newStatus})`);
+						
+									// Show success message
 									Swal.fire({
 										icon: 'success',
-										title: 'Deleted!',
-										text: 'Product has been deleted.',
+										title: 'Success',
+										text: data.message,
 										showConfirmButton: false,
 										timer: 1500
 									});
 								} else {
-									Swal.fire({
-										icon: 'error',
-										title: 'Error',
-										text: data.message || 'Failed to delete product'
-									});
+									throw new Error(data.message);
 								}
+							} catch (error) {
+								console.error('Error:', error);
+								Swal.fire({
+									icon: 'error',
+									title: 'Error',
+									text: error.message || 'Failed to update status'
+								});
 							}
-						} catch (error) {
-							console.error('Error:', error);
-							Swal.fire({
-								icon: 'error',
-								title: 'Error',
-								text: 'Something went wrong while deleting the product'
-							});
 						}
-					}
-					</script>
+						
+						async function deleteProduct(productId) {
+							try {
+								const result = await Swal.fire({
+									title: 'Delete Product',
+									text: "Are you sure you want to delete this product?",
+									icon: 'warning',
+									showCancelButton: true,
+									confirmButtonColor: '#d33',
+									cancelButtonColor: '#3085d6',
+									confirmButtonText: 'Yes, delete it!'
+								});
+						
+								if (result.isConfirmed) {
+									const response = await fetch(`/admin/products/delete/${productId}`, {
+										method: 'DELETE',
+										headers: {
+											'Content-Type': 'application/json'
+										}
+									});
+									
+									const data = await response.json();
+									
+									if (data.success) {
+										const row = document.querySelector(`button[onclick="deleteProduct('${productId}')"]`).closest('tr');
+										
+										// Add fade out animation
+										row.style.opacity = '0';
+										row.style.transition = 'opacity 0.5s ease';
+										
+										// Remove row after animation
+										setTimeout(() => {
+											row.remove();
+											
+											// Check if table is empty
+											const tbody = document.querySelector('tbody');
+											if (tbody.children.length === 0) {
+												tbody.innerHTML = `
+													<tr>
+														<td colspan="11" class="text-center">No products found</td>
+													</tr>
+												`;
+											}
+										}, 500);
+						
+										Swal.fire({
+											icon: 'success',
+											title: 'Deleted!',
+											text: 'Product has been deleted.',
+											showConfirmButton: false,
+											timer: 1500
+										});
+									} else {
+										Swal.fire({
+											icon: 'error',
+											title: 'Error',
+											text: data.message || 'Failed to delete product'
+										});
+									}
+								}
+							} catch (error) {
+								console.error('Error:', error);
+								Swal.fire({
+									icon: 'error',
+									title: 'Error',
+									text: 'Something went wrong while deleting the product'
+								});
+							}
+						}
+						</script>

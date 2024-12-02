@@ -1,4 +1,7 @@
 const Category = require('../models/Category');
+const fs = require('fs').promises;
+const path = require('path');
+const { deleteFile } = require('../utils/fileHelper');
 
 const getAllCategories =  async (req, res) => {
     try {
@@ -8,7 +11,7 @@ const getAllCategories =  async (req, res) => {
         const parentId = req.query.parent || '';
         const listingStatus = req.query.listed || '';
 
-        // Build query
+        // predefined query
         let query = { isDeleted: false };
 
         if (searchQuery) {
@@ -31,7 +34,7 @@ const getAllCategories =  async (req, res) => {
             .skip((page - 1) * limit)
             .limit(limit);
 
-        // Get parent categories for filter
+        // getting parent categories for filter
         const parentCategories = await Category.find({ 
             isDeleted: false, 
             parent: null 
@@ -64,7 +67,7 @@ const getAllCategories =  async (req, res) => {
 
 const getAddCategory = async (req, res) => {
     try {
-        // Get all parent categories for dropdown
+        //  parent categories for dropdown
         const parentCategories = await Category.find({ 
             isDeleted: false, 
             parent: null 
@@ -87,12 +90,12 @@ const addCategory = async (req, res) => {
         const { name, parent, discount, listed } = req.body;
         let image = null;
 
-        // Handle image upload
+        //  image upload
         if (req.file) {
             image = `/uploads/categories/${req.file.filename}`;
         }
 
-        // Check if category name already exists
+        // checking category name already exists
         const existingCategory = await Category.findOne({ 
             name: { $regex: new RegExp(`^${name}$`, 'i') },
             isDeleted: false 
@@ -132,7 +135,7 @@ const addCategory = async (req, res) => {
 
 const getEditCategory = async (req, res) => {
     try {
-        // Get category details
+        // finfing category details
         const category = await Category.findOne({ 
             _id: req.params.id,
             isDeleted: false 
@@ -177,7 +180,7 @@ const updateCategory = async (req, res) => {
             });
         }
 
-        // Check if name exists (excluding current category)
+        // Check if name exists without current category
         const existingCategory = await Category.findOne({
             name: { $regex: new RegExp(`^${name}$`, 'i') },
             _id: { $ne: categoryId },
@@ -191,6 +194,7 @@ const updateCategory = async (req, res) => {
             });
         }
 
+
         // Update data object
         const updateData = {
             name,
@@ -199,8 +203,12 @@ const updateCategory = async (req, res) => {
             listed: listed === 'true'
         };
 
-        // Handle image upload if new image is selected
-        if (req.file) {
+        //  image upload if new image is selected
+       if (req.file) {
+            // Delete old image if exists
+            if (category.image) {
+                await deleteFile(category.image);
+            }
             updateData.image = `/uploads/categories/${req.file.filename}`;
         }
 
@@ -211,6 +219,7 @@ const updateCategory = async (req, res) => {
             { new: true }
         );
 
+        
         res.json({
             success: true,
             message: 'Category updated successfully',
