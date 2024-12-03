@@ -617,12 +617,13 @@ async function updateProduct() {
         formData.append('name', document.getElementById('name').value);
         formData.append('brand', document.getElementById('brand').value);
         formData.append('category', document.getElementById('category').value);
+        formData.append('parentCategory', document.getElementById('parentCategory').value);
         formData.append('price', document.getElementById('price').value);
         formData.append('unit', document.getElementById('unit').value);
         formData.append('quantity', document.getElementById('quantity').value);
         formData.append('stock', document.getElementById('stock').value);
         formData.append('listed', document.getElementById('listed').value);
-
+        parentCategory
         // Add discount fields
         const discountType = document.getElementById('discountType').value;
         if (discountType === 'price') {

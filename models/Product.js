@@ -17,6 +17,7 @@ const productSchema = new mongoose.Schema({
     ],
     images: [{ type: String }], // Array to store multiple images (URLs)
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
+    parentCategory: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
     brand: { type: String, required: false }, // Brand is optional, only applicable if the category has brands
     isDeleted: { type: Boolean, default: false },
     soldOut: { type: Boolean, default: false }, // Sold Out / Unavailable flag
@@ -35,6 +36,12 @@ const productSchema = new mongoose.Schema({
     },
    
 }, { timestamps: true });
+
+
+
+
+
+
 
 
 const Product = mongoose.model('Product', productSchema);

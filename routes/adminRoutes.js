@@ -1,13 +1,13 @@
 
 const express = require('express');
 const router = express.Router();
-const { getLoginPage, login, getDashboard , logout } = require('../controllers/adminController');
+const { getLoginPage, login, getDashboard , logout } = require('../controllers/admin/adminController');
 const { getAllCategories, getAddCategory, addCategory,getEditCategory,
-        updateCategory,listingCategory, deleteCategory } = require('../controllers/categoryController');
+        updateCategory,listingCategory, deleteCategory } = require('../controllers/admin/categoryController');
 const { categoryUpload, productUpload } = require('../config/multer');
 const { isAdmin, isLoggedIn,  } = require('../middleware/authMiddleware');
 const { getAllProducts, getAddProduct, getParentCategory, addProduct, getEditProduct, 
-        updateProduct, listingProduct, deleteProduct, getProductDetails  } = require('../controllers/productController')
+        updateProduct, listingProduct, deleteProduct, getProductDetails  } = require('../controllers/admin/productController')
 
 // admin routes
 router.get('/login', isLoggedIn, getLoginPage);

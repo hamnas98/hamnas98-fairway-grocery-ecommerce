@@ -58,9 +58,10 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Routes
-app.use('/', userRoutes);
 app.use('/admin', adminRoutes);
+
+
+app.use('/', userRoutes)
 
 // Error handler
 app.use((err, req, res, next) => {

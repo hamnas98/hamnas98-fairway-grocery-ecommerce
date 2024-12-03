@@ -530,7 +530,7 @@ async function addProduct() {
     try {
         // Validate required fields
         const requiredFields = [
-            'name', 'category', 'price', 'stock', 'unit', 'quantity', 'aboutProduct'
+            'name', 'category', 'price', 'stock', 'unit', 'quantity', 'aboutProduct', 'parentCategory'
         ];
 
         for (const field of requiredFields) {
@@ -562,6 +562,7 @@ async function addProduct() {
         formData.append('name', document.getElementById('name').value);
         formData.append('brand', document.getElementById('brand').value);
         formData.append('category', document.getElementById('category').value);
+        formData.append('parentCategory', document.getElementById('parentCategory').value);
         formData.append('price', document.getElementById('price').value);
 
         formData.append('stock', document.getElementById('stock').value);

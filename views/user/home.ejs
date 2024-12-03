@@ -1,0 +1,367 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, shrink-to-fit=9">
+		<meta name="description" content="Gambolthemes">
+		<meta name="author" content="Gambolthemes">		
+		<title>Fairway Supermarket</title>
+		
+		<!-- Favicon Icon -->
+		<link rel="icon" type="image/png" href="images/fav.png">
+		
+		<!-- Stylesheets -->
+		<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		<link href='/user/vendor/unicons-2.0.1/css/unicons.css' rel='stylesheet'>
+		<link href="/user/css/style.css" rel="stylesheet">
+		<link href="/user/css/responsive.css" rel="stylesheet">
+		<link href="/user/css/night-mode.css" rel="stylesheet">
+		
+		<!-- Vendor Stylesheets -->
+		<link href="/user/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+		<link href="/user/vendor/OwlCarousel/assets/owl.carousel.css" rel="stylesheet">
+		<link href="/user/vendor/OwlCarousel/assets/owl.theme.default.min.css" rel="stylesheet">
+		<link href="/user/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/user/vendor/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">	
+		
+	</head>
+	<style>
+		
+	</style>
+
+	<body>
+		<!-- Header Start -->
+		<%- include('../partials/user/header', { parentCategories: parentCategories }) %>
+		<!-- Header End -->
+	
+		<!-- Body Start -->
+		<div class="wrapper">
+			<!-- Categories Start -->
+			<div class="section145">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="main-title-tt">
+								<div class="main-title-left">
+									<span>Shop By</span>
+									<h2>Categories</h2>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="owl-carousel cate-slider owl-theme">
+								<% parentCategories.forEach(category => { %>
+									<div class="item">
+										<a href="/category/<%= category._id %>" class="category-item">
+											<div class="cate-img">
+												<img src="<%= category.image %>" alt="<%= category.name %>">
+											</div>
+										</a>
+									</div>
+								<% }); %>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Categories End -->
+			<!-- Categories End -->
+		
+			<!-- Vegetables and Fruits Products Start -->
+			<div class="section145">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="main-title-tt">
+								<div class="main-title-left">
+									<span>For You</span>
+									<h2>Fruits & Vegetables</h2>
+								</div>
+								<a href="/category/fruits-vegetables" class="see-more-btn">See All</a>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="owl-carousel featured-slider owl-theme">
+								<% fruitsVegProducts.forEach(product => { %>
+									<div class="item">
+										<div class="product-item">
+											<a href="/product/<%= product._id %>" class="product-img">
+												<img src="<%= product.images[0] %>" alt="<%= product.name %>">
+												<div class="product-absolute-options">
+													<% if (product.discountPercentage > 0) { %>
+														<span class="offer-badge-1"><%= product.discountPercentage %>% off</span>
+													<% } %>
+													<span class="like-icon" title="wishlist"></span>
+												</div>
+											</a>
+											<div class="product-text-dt">
+												<p>
+													<% if (product.stock > 0) { %>
+														Available<span>(In Stock)</span>
+													<% } else if (product.soldOut) { %>
+														<span>Sold Out</span>
+													<% } else { %>
+														<span>Out of Stock</span>
+													<% } %>
+												</p>
+												<h4><%= product.name %></h4>
+												<h4><%= product.quantity+ product.unit %></h4>
+												<div class="product-price">
+													<% if (product.discountPrice) { %>
+														$<%= product.discountPrice %> <span>$<%= product.price %></span>
+													<% } else { %>
+														$<%= product.price %>
+													<% } %>
+												</div>
+												<% if (product.stock > 0) { %>
+													<div class="qty-cart">
+														<div class="quantity buttons_added">
+															<input type="button" value="-" class="minus minus-btn">
+															<input type="number" step="1" name="quantity" value="1" class="input-text qty text">
+															<input type="button" value="+" class="plus plus-btn">
+														</div>
+														<span class="cart-icon" onclick="addToCart('<%= product._id %>')">
+															<i class="uil uil-shopping-cart-alt"></i>
+														</span>
+													</div>
+												<% } %>
+											</div>
+										</div>
+									</div>
+								<% }); %>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Category Products End -->
+	
+			<!-- Best value Products Start -->
+			
+			<% if(locals.bestvalueProducts && bestvalueProducts.length > 0) { %>
+				<div class="section145">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="main-title-tt">
+									<div class="main-title-left">
+										<span>For You</span>
+										<h2>Best Value Products</h2>
+									</div>
+									<a href="/shop/featured" class="see-more-btn">See All</a>
+								</div>
+							</div>
+							<div class="col-md-12">
+								<div class="owl-carousel featured-slider owl-theme">
+									<% bestvalueProducts.forEach(product => { %>
+										<div class="item">
+											<div class="product-item">
+												<a href="/product/<%= product._id %>" class="product-img">
+													<img src="<%= product.images[0] %>" alt="<%= product.name %>">
+													<div class="product-absolute-options">
+														<% if (product.discountPercentage > 0) { %>
+															<span class="offer-badge-1"><%= product.discountPercentage %>% off</span>
+														<% } %>
+														<span class="like-icon" title="wishlist"></span>
+													</div>
+												</a>
+												<div class="product-text-dt">
+													<p>
+														<% if (product.stock > 0) { %>
+															Available<span></span>
+														<% } else { %>
+															<span>Out of Stock</span>
+														<% } %>
+													</p>
+													<h4><%= product.name %></h4>
+													<h4><%= product.quantity+product.unit %></h4>
+													<div class="product-price">
+														<% if (product.discountPrice) { %>
+															$<%= product.discountPrice %> <span>$<%= product.price %></span>
+														<% } else { %>
+															$<%= product.price %>
+														<% } %>
+													</div>
+													<% if (product.stock > 0) { %>
+														<div class="qty-cart">
+															<div class="quantity buttons_added">
+																<input type="button" value="-" class="minus minus-btn">
+																<input type="number" step="1" name="quantity" value="1" class="input-text qty text">
+																<input type="button" value="+" class="plus plus-btn">
+															</div>
+															<span class="cart-icon" onclick="addToCart('<%= product._id %>')">
+																<i class="uil uil-shopping-cart-alt"></i>
+															</span>
+														</div>
+													<% } %>
+												</div>
+											</div>
+										</div>
+									<% }); %>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			<% } %>
+		
+			<!-- Featured Products End -->
+	
+			<!-- New Products Start -->
+			<% if(locals.newProducts && newProducts.length > 0) { %>
+				<div class="section145">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="main-title-tt">
+									<div class="main-title-left">
+										<span>Fresh Arrivals</span>
+										<h2>New Products</h2>
+									</div>
+									<a href="/shop/new" class="see-more-btn">See All</a>
+								</div>
+							</div>
+							<div class="col-md-12">
+								<div class="owl-carousel new-slider owl-theme">
+									<% newProducts.forEach(product => { %>
+										<div class="item">
+											<div class="product-item">
+												<a href="/product/<%= product._id %>" class="product-img">
+													<img src="<%= product.images[0] %>" alt="<%= product.name %>">
+													<div class="product-absolute-options">
+														<% if (product.discountPercentage > 0) { %>
+															<span class="offer-badge-1"><%= product.discountPercentage %>% off</span>
+														<% } %>
+														<span class="like-icon" title="wishlist"></span>
+													</div>
+												</a>
+												<div class="product-text-dt">
+													<p>
+														<% if (product.stock > 0) { %>
+															Available<span></span>
+														<% } else { %>
+															<span>Out of Stock</span>
+														<% } %>
+													</p>
+													<h4><%= product.name %></h4>
+													<div class="product-price">
+														<% if (product.discountPrice) { %>
+															$<%= product.discountPrice %> <span>$<%= product.price %></span>
+														<% } else { %>
+															$<%= product.price %>
+														<% } %>
+													</div>
+													<% if (product.stock > 0) { %>
+														<div class="qty-cart">
+															<div class="quantity buttons_added">
+																<input type="button" value="-" class="minus minus-btn">
+																<input type="number" step="1" name="quantity" value="1" class="input-text qty text">
+																<input type="button" value="+" class="plus plus-btn">
+															</div>
+															<span class="cart-icon" onclick="addToCart('<%= product._id %>')">
+																<i class="uil uil-shopping-cart-alt"></i>
+															</span>
+														</div>
+													<% } %>
+												</div>
+											</div>
+										</div>
+									<% }); %>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			<% } %>
+			<!-- New Products End -->
+		</div>
+	<!-- Body End -->
+	<!-- Footer Start -->
+	<%- include('../partials/user/footer') %>
+	<!-- Footer End -->
+
+	<!-- Javascripts -->
+	<script src="/user/js/jquery.min.js"></script>
+	<script src="/user/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/user/vendor/bootstrap-select/js/bootstrap-select.min.js"></script>	
+	<script src="/user/vendor/OwlCarousel/owl.carousel.js"></script>
+	<script src="/user/js/jquery.countdown.min.js"></script>
+	<script src="/user/js/custom.js"></script>
+	<script src="/user/js/offset_overlay.js"></script>
+	<script src="/user/js/night-mode.js"></script>
+	<script>
+		$(document).ready(function() {
+    $('.cate-slider').owlCarousel({
+        loop: true,
+        margin: 10,
+        nav: true,
+        dots: false,
+        autoplay: true,
+        autoplayTimeout: 5000,
+        autoplayHoverPause: true,
+        navText: [
+            "<i class='uil uil-angle-left'></i>",
+            "<i class='uil uil-angle-right'></i>"
+        ],
+        responsive: {
+            0: {
+                items: 2,
+                margin: 8
+            },
+            576: {
+                items: 3,
+                margin: 10
+            },
+            768: {
+                items: 4,
+                margin: 12
+            },
+            992: {
+                items: 5,
+                margin: 15
+            },
+            1200: {
+                items: 6,
+                margin: 15
+            }
+        }
+    });
+});
+$(document).ready(function() {
+    $('.featured-slider').owlCarousel({
+        loop: true,
+        margin: 15,
+        nav: true,
+        dots: false,
+        autoplay: true,
+        autoplayTimeout: 4000,
+        autoplayHoverPause: true,
+        navText: [
+            "<i class='uil uil-angle-left'></i>",
+            "<i class='uil uil-angle-right'></i>"
+        ],
+        responsive: {
+            0: {
+                items: 1
+            },
+            576: {
+                items: 2
+            },
+            768: {
+                items: 3
+            },
+            992: {
+                items: 4
+            },
+            1200: {
+                items: 5
+            }
+        }
+    });
+});
+	</script>
+	
+</body>
+</html>
