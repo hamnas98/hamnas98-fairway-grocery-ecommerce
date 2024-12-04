@@ -1,7 +1,7 @@
 const Category = require('../../models/Category');
 const Product = require('../../models/Product');
 
-// Controller (shopController.js)
+
 
 const getCategoryProducts = async (req, res) => {
     try {
@@ -68,8 +68,6 @@ const getCategoryProducts = async (req, res) => {
         res.status(500).render('error', { message: 'Failed to load category page' });
     }
 };
-module.exports = {
-    getCategoryProducts
-};
+module.exports = { getCategoryProducts };
 
 
