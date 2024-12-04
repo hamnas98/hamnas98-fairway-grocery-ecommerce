@@ -80,31 +80,6 @@ const getHome = async (req, res) => {
         });
     }
 };
-// // For "More Categories" link
-// const getAllCategories = async (req, res) => {
-//     try {
-//         const parentCategories = await Category.find({
-//             parent: null,
-//             isDeleted: false,
-//             listed: true
-//         }).populate({
-//             path: 'subcategories',
-//             match: { isDeleted: false, listed: true }
-//         });
-
-//         res.json({
-//             success: true,
-//             categories: parentCategories
-//         });
-//     } catch (error) {
-//         console.error('Get categories error:', error);
-//         res.json({
-//             success: false,
-//             message: 'Error fetching categories'
-//         });
-//     }
-// };
-
 
 const getSignup = (req, res) => {
     try {
@@ -116,4 +91,48 @@ const getSignup = (req, res) => {
    
 };
 
-module.exports = { getHome, getSignup};
+const signup = async (req, res) => {
+    try {
+        const { name, email, mobile, password } = req.body;
+
+        // Check if user exists
+        const existingUser = await User.findOne({
+            $or: [{ email }, { mobile }]
+        });
+
+        if (existingUser) {
+            return res.json({
+                success: false,
+                message: 'Email or mobile already registered'
+            });
+        }
+
+        // Generate OTP and store in session
+        const otp = generateOTP();
+        req.session.signupOTP = {
+            code: otp,
+            mobile,
+            email,
+            name,
+            password,
+            expiresAt: Date.now() + 10 * 60 * 1000 // 10 minutes
+        };
+
+        // Send OTP (implement your SMS/email service)
+        console.log('Signup OTP:', otp);
+
+        res.json({
+            success: true,
+            message: 'OTP sent successfully'
+        });
+    } catch (error) {
+        console.error(error);
+        res.json({
+            success: false,
+            message: 'Error in signup'
+        });
+    }
+};
+
+
+module.exports = { getHome, getSignup ,signup };

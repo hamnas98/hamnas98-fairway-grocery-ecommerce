@@ -13,12 +13,15 @@
 		<link rel="icon" type="image/png" href="images/fav.png">
 		
 		<!-- Stylesheets -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="/user/js/signupmodals.js"></script>
 		<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 		<link href='/user/vendor/unicons-2.0.1/css/unicons.css' rel='stylesheet'>
 		<link href="/user/css/style.css" rel="stylesheet">
 		<link href="/user/css/responsive.css" rel="stylesheet">
 		<link href="/user/css/night-mode.css" rel="stylesheet">
 		<link href="/user/css/customstyle.css" rel="stylesheet">
+		<link  href="/user/css/signupmodals.css"  rel="stylesheet">
 		
 		<!-- Vendor Stylesheets -->
 		<link href="/user/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
@@ -26,6 +29,7 @@
 		<link href="/user/vendor/OwlCarousel/assets/owl.theme.default.min.css" rel="stylesheet">
 		<link href="/user/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 		<link href="/user/vendor/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">	
+		
 		
 	</head>
 	<style>
@@ -35,6 +39,7 @@
 	<body>
 		<!-- Header Start -->
 		<%- include('../partials/user/header', { parentCategories: parentCategories }) %>
+
 		<!-- Header End -->
 	
 		<!-- Body Start -->
@@ -111,7 +116,7 @@
 												<h4><%= product.quantity+ product.unit %></h4>
 												<div class="product-price">
 													<% if (product.discountPrice) { %>
-														$<%= product.discountPrice %> <span>$<%= product.price %></span>
+														₹<%= product.discountPrice %> <span>₹<%= product.price %></span>
 													<% } else { %>
 														$<%= product.price %>
 													<% } %>
@@ -182,22 +187,24 @@
 													<h4><%= product.quantity+product.unit %></h4>
 													<div class="product-price">
 														<% if (product.discountPrice) { %>
-															$<%= product.discountPrice %> <span>$<%= product.price %></span>
+															₹<%= product.discountPrice %> <span>₹<%= product.price %></span>
 														<% } else { %>
-															$<%= product.price %>
+															₹<%= product.price %>
 														<% } %>
 													</div>
 													<% if (product.stock > 0) { %>
-														<div class="qty-cart">
-															<div class="quantity buttons_added">
-																<input type="button" value="-" class="minus minus-btn">
-																<input type="number" step="1" name="quantity" value="1" class="input-text qty text">
-																<input type="button" value="+" class="plus plus-btn">
+														<div class="add-to-cart-wrapper">
+															<button class="add-to-cart-btn" onclick="toggleQuantitySelector(this)">
+																<i class="uil uil-shopping-cart-alt"></i> Add to Cart
+															</button>
+															<div class="quantity-selector" style="display: none;">
+																<button class="qty-btn minus"><i class="uil uil-minus"></i></button>
+																<span class="qty-value">1</span>
+																<button class="qty-btn plus"><i class="uil uil-plus"></i></button>
+																<span  onclick="addToCart('<%= product._id %>')"></span>
 															</div>
-															<span class="cart-icon" onclick="addToCart('<%= product._id %>')">
-																<i class="uil uil-shopping-cart-alt"></i>
-															</span>
 														</div>
+												
 													<% } %>
 												</div>
 											</div>
@@ -251,22 +258,24 @@
 													<h4><%= product.name %></h4>
 													<div class="product-price">
 														<% if (product.discountPrice) { %>
-															$<%= product.discountPrice %> <span>$<%= product.price %></span>
+															₹<%= product.discountPrice %> <span>₹<%= product.price %></span>
 														<% } else { %>
-															$<%= product.price %>
+															₹<%= product.price %>
 														<% } %>
 													</div>
 													<% if (product.stock > 0) { %>
-														<div class="qty-cart">
-															<div class="quantity buttons_added">
-																<input type="button" value="-" class="minus minus-btn">
-																<input type="number" step="1" name="quantity" value="1" class="input-text qty text">
-																<input type="button" value="+" class="plus plus-btn">
+														<div class="add-to-cart-wrapper">
+															<button class="add-to-cart-btn" onclick="toggleQuantitySelector(this)">
+																<i class="uil uil-shopping-cart-alt"></i> Add to Cart
+															</button>
+															<div class="quantity-selector" style="display: none;">
+																<button class="qty-btn minus"><i class="uil uil-minus"></i></button>
+																<span class="qty-value">1</span>
+																<button class="qty-btn plus"><i class="uil uil-plus"></i></button>
+																<span  onclick="addToCart('<%= product._id %>')"></span>
 															</div>
-															<span class="cart-icon" onclick="addToCart('<%= product._id %>')">
-																<i class="uil uil-shopping-cart-alt"></i>
-															</span>
 														</div>
+												
 													<% } %>
 												</div>
 											</div>
@@ -286,6 +295,7 @@
 	<!-- Footer End -->
 
 	<!-- Javascripts -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="/user/js/jquery.min.js"></script>
 	<script src="/user/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 	<script src="/user/vendor/bootstrap-select/js/bootstrap-select.min.js"></script>	
@@ -294,6 +304,7 @@
 	<script src="/user/js/custom.js"></script>
 	<script src="/user/js/offset_overlay.js"></script>
 	<script src="/user/js/night-mode.js"></script>
+
 	<script>
 		$(document).ready(function() {
     $('.cate-slider').owlCarousel({
@@ -357,6 +368,39 @@ $(document).ready(function() {
             },
             992: {
                 items: 4
+            },
+            1200: {
+                items: 5
+            }
+        }
+    });
+});
+
+$(document).ready(function() {
+    $('.new-slider').owlCarousel({
+        loop: true,
+        margin: 15,
+        nav: true,
+        dots: false,
+        autoplay: true,
+        autoplayTimeout: 4000,
+        autoplayHoverPause: true,
+        navText: [
+            "<i class='uil uil-angle-left'></i>",
+            "<i class='uil uil-angle-right'></i>"
+        ],
+        responsive: {
+            0: {
+                items: 2
+            },
+            576: {
+                items: 3
+            },
+            768: {
+                items: 4
+            },
+            992: {
+                items: 5
             },
             1200: {
                 items: 5

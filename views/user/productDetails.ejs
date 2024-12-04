@@ -19,6 +19,7 @@
 		<link href="/user/css/style.css" rel="stylesheet">
 		<link href="/user/css/responsive.css" rel="stylesheet">
 		<link href="/user/css/night-mode.css" rel="stylesheet">
+		<link  href="/user/css/signupmodals.css"  rel="stylesheet">
 		
 		<!-- Vendor Stylesheets -->
 		<link href="/user/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
@@ -29,6 +30,7 @@
 		<link href="/user/css/customstyle.css" rel="stylesheet">
 		
 	</head>
+	<%- include('../partials/user/header', { parentCategories: parentCategories }) %>
 	<div class="wrapper">
 		<div class="gambo-Breadcrumb">
 			<div class="container">
@@ -87,77 +89,85 @@
 												<%= product.category.parent ? product.category.parent.name : product.category.name %>
 												<span><%= product.brand || '' %></span>
 											</p>
-											<p class="stock-qty">
-												<% if (!product.outOfStock && product.stock > 0) { %>
-													Available<span>(In Stock)</span>
-												<% } else { %>
-													<span>Out of Stock</span>
+											<div class="stock-and-unit">
+												<% if (product.quantity && product.unit) { %>
+													<p class="product-unit"><%= product.quantity %><%= product.unit %></p>
 												<% } %>
-											</p>
-										</div>
-	
-										<% if (product.quantity && product.unit) { %>
-											<div class="product-radio">
-												<ul class="product-now">
-													<li>
-														<input type="radio" id="p1" name="product1" checked>
-														<label for="p1"><%= product.quantity %> <%= product.unit %></label>
-													</li>
-												</ul>
+												<p class="stock-qty">
+													<% if (!product.outOfStock && product.stock > 0) { %>
+														Available<span>(In Stock)</span>
+													<% } else { %>
+														<span>Out of Stock</span>
+													<% } %>
+												</p>
+											
 											</div>
-										<% } %>
+										</div>
 										
 										<div class="product-group-dt">
-											<ul>
+											<ul class="price-list">
 												<% if (product.discountPrice) { %>
 													<li>
-														<div class="main-price color-discount">
-															Discount Price<span>₹<%= product.discountPrice %></span>
-														</div>
-													</li>
-													<li>
-														<div class="main-price mrp-price">
-															MRP Price<span>₹<%= product.price %></span>
+														<div class="main-price">
+															<span class="discount-price">₹<%= product.discountPrice %></span>
+															<span class="original-price">₹<%= product.price %></span>
 														</div>
 													</li>
 												<% } else { %>
 													<li>
-														<div class="main-price mrp-price">
-															MRP Price<span>₹<%= product.price %></span>
+														<div class="main-price">
+															<span class="regular-price">₹<%= product.price %></span>
 														</div>
 													</li>
 												<% } %>
 											</ul>
+											
 											<% if (!product.outOfStock && product.stock > 0) { %>
-												<ul class="gty-wish-share">
+												<ul class="ordr-crt-share">
 													<li>
-														<div class="qty-product">
-															<div class="quantity buttons_added">
-																<input type="button" value="-" class="minus minus-btn">
-																<input type="number" step="1" name="quantity" value="1" class="input-text qty text">
-																<input type="button" value="+" class="plus plus-btn">
+														<div class="add-to-cart-wrapper">
+															<button class="add-to-cart-btn" onclick="toggleQuantitySelector(this)">
+																<i class="uil uil-shopping-cart-alt"></i> Add to Cart
+															</button>
+															<div class="quantity-selector" style="display: none;">
+																<button class="qty-btn minus"><i class="uil uil-minus"></i></button>
+																<span class="qty-value">1</span>
+																<button class="qty-btn plus"><i class="uil uil-plus"></i></button>
+																<span onclick="addToCart('<%= product._id %>')"></span>
 															</div>
 														</div>
 													</li>
 													<li><span class="like-icon save-icon" title="wishlist"></span></li>
 												</ul>
-												<ul class="ordr-crt-share">
-													<li>
-														<button class="add-cart-btn hover-btn" onclick="addToCart('<%= product._id %>')">
-															<i class="uil uil-shopping-cart-alt"></i>Add to Cart
-														</button>
-													</li>
-													<li><button class="order-btn hover-btn">Order Now</button></li>
-												</ul>
 											<% } %>
+											<div class="col-lg-6 col-md-12">
+												<div class="pdpt-bg">
+													<div class="pdpt-title">
+														<h4><i class="uil uil-star me-2"></i>Product Highlights</h4>
+													</div>
+													<div class="pdpt-body scrollstyle_4" style="max-height: 200px;">
+														<div class="pdct-dts-1">
+															<div class="pdct-dt-step">
+																<% if (product.highlights && product.highlights.length > 0) { %>
+																	<div class="highlights-grid">
+																		<% product.highlights.forEach(highlight => { %>
+																			<div class="highlight-item">
+																				<i class="fas fa-check-circle text-success me-2"></i>
+																				<%= highlight %>
+																			</div>
+																		<% }); %>
+																	</div>
+																<% } %>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-				</div>
-				
 				<div class="row">
 					<div class="col-lg-6 col-md-12">
 						<div class="pdpt-bg">
@@ -181,26 +191,18 @@
 					<div class="col-lg-6 col-md-12">
 						<div class="pdpt-bg">
 							<div class="pdpt-title">
-								<h4><i class="uil uil-star me-2"></i>Product Highlights</h4>
+								<h4><i class="uil uil-star me-2"></i>Product Reviews</h4>
 							</div>
 							<div class="pdpt-body scrollstyle_4" style="max-height: 200px;">
 								<div class="pdct-dts-1">
 									<div class="pdct-dt-step">
-										<% if (product.highlights && product.highlights.length > 0) { %>
-											<div class="highlights-grid">
-												<% product.highlights.forEach(highlight => { %>
-													<div class="highlight-item">
-														<i class="fas fa-check-circle text-success me-2"></i>
-														<%= highlight %>
-													</div>
-												<% }); %>
-											</div>
-										<% } %>
+									
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
+
 				</div>
 
 			</div>
@@ -250,14 +252,20 @@
 														₹<%= relProduct.price %>
 													<% } %>
 												</div>
-												<% if (!relProduct.outOfStock && relProduct.stock > 0) { %>
-													<div class="qty-cart">
-													
-														<span onclick="addToCart('<%= relProduct._id %>')">
-															<i class="uil uil-shopping-cart-alt"></i>
-														</span>
-													</div>
-												<% } %>
+															<% if (product.stock > 0) { %>
+														<div class="add-to-cart-wrapper">
+															<button class="add-to-cart-btn" onclick="toggleQuantitySelector(this)">
+																<i class="uil uil-shopping-cart-alt"></i> Add to Cart
+															</button>
+															<div class="quantity-selector" style="display: none;">
+																<button class="qty-btn minus"><i class="uil uil-minus"></i></button>
+																<span class="qty-value">1</span>
+																<button class="qty-btn plus"><i class="uil uil-plus"></i></button>
+																<span  onclick="addToCart('<%= product._id %>')"></span>
+															</div>
+														</div>
+												
+													<% } %>
 											</div>
 										</div>
 									</div>
@@ -318,6 +326,7 @@
 	<script src="/user/js/product.thumbnail.slider.js"></script>
 	<script src="/user/js/offset_overlay.js"></script>
 	<script src="/user/js/night-mode.js"></script>
+	<script src="/user/js/signupmodals.js"></script>
 	
 	
 </body>

@@ -293,3 +293,60 @@ $(document).ready(function(){
     e.preventDefault();
   });
 });
+
+
+// cart buttonn with quantity
+
+function toggleQuantitySelector(button) {
+    const wrapper = button.parentElement;
+    const quantitySelector = wrapper.querySelector('.quantity-selector');
+    button.style.display = 'none';
+    quantitySelector.style.display = 'flex';
+
+    // Initialize quantity handlers
+    const minusBtn = quantitySelector.querySelector('.minus');
+    const plusBtn = quantitySelector.querySelector('.plus');
+    const qtyValue = quantitySelector.querySelector('.qty-value');
+    let quantity = 1;
+
+    minusBtn.addEventListener('click', () => {
+        if (quantity > 1) {
+            quantity--;
+            qtyValue.textContent = quantity;
+            updateCart(productId, quantity);
+        }
+    });
+
+    plusBtn.addEventListener('click', () => {
+        if (quantity < 99) {
+            quantity++;
+            qtyValue.textContent = quantity;
+            updateCart(productId, quantity);
+        }
+    });
+}
+
+function updateCart(productId, quantity) {
+    // Add your cart update logic here
+    fetch('/cart/update', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            productId: productId,
+            quantity: quantity
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update any cart indicators if needed
+            console.log('Cart updated successfully');
+        }
+    })
+    .catch(error => {
+        console.error('Error updating cart:', error);
+    });
+}
+
