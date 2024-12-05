@@ -1,5 +1,5 @@
 const User = require('../../models/User');
-const { generateOTP } = require('../../utils/otpUtils');
+const { generateOTP , sendOTP } = require('../../utils/otpUtils');
 const bcrypt = require('bcryptjs');
 const Category = require('../../models/Category');
 const Product = require('../../models/Product');
@@ -81,23 +81,14 @@ const getHome = async (req, res) => {
     }
 };
 
-const getSignup = (req, res) => {
-    try {
-        res.render('signup');
-    } catch (error) {
-        console.error('Login page error:', error);
-        res.status(500).send('Server error');
-    }
-   
-};
-
 const signup = async (req, res) => {
     try {
-        const { name, email, mobile, password } = req.body;
+        const { name, email, phone, password } = req.body;
+        console.log(phone)
 
         // Check if user exists
         const existingUser = await User.findOne({
-            $or: [{ email }, { mobile }]
+            $or: [{ email }, { phone }]
         });
 
         if (existingUser) {
@@ -109,17 +100,17 @@ const signup = async (req, res) => {
 
         // Generate OTP and store in session
         const otp = generateOTP();
-        req.session.signupOTP = {
-            code: otp,
-            mobile,
+        req.session.userData = {
+            otp: otp,
+            phone,
             email,
             name,
             password,
             expiresAt: Date.now() + 10 * 60 * 1000 // 10 minutes
         };
-
-        // Send OTP (implement your SMS/email service)
+        const emailSent = await sendOTP(email,otp);
         console.log('Signup OTP:', otp);
+        console.log(req.session.userData)
 
         res.json({
             success: true,
@@ -134,5 +125,92 @@ const signup = async (req, res) => {
     }
 };
 
+const resendOTP = async (req, res) => {
+    try {
+        const otp = generateOTP();
+        const {type,email} = req.body;
+        console.log(type,email) // 'signup' or 'login'
 
-module.exports = { getHome, getSignup ,signup };
+        if (type === 'signup' && req.session.userData) {
+            req.session.userData.otp = otp;
+            req.session.userData.expiresAt = Date.now() + 10 * 60 * 1000;
+        } else if (type === 'login' && req.session.userData) {
+            req.session.userData.otp = otp;
+            req.session.userData.expiresAt = Date.now() + 10 * 60 * 1000;
+        } else {
+            return res.json({
+                success: false,
+                message: 'Invalid request'
+            });
+        }
+
+        const emailSent = await sendOTP(email,otp);
+ 
+        console.log(req.session.userData)
+        console.log('Resent OTP:', otp);
+
+        res.json({
+            success: true,
+            message: 'OTP resent successfully'
+        });
+    } catch (error) {
+        console.error(error);
+        res.json({
+            success: false,
+            message: 'Error resending OTP'
+        });
+    }
+};
+
+const verifySignupOTP = async (req, res) => {
+    try {
+        const { otp } = req.body;
+        const userData = req.session.userData;
+        console.log(otp,userData.otp)
+
+        if (!userData || userData.expiresAt < Date.now()) {
+            return res.json({
+                success: false,
+                message: 'OTP expired. Please try again.'
+            });
+        }
+
+        if (otp !== userData.otp) {
+            return res.json({
+                success: false,
+                message: 'Invalid OTP'
+            });
+        }
+
+        // Create new user
+        const user = new User({
+            name: userData.name,
+            email: userData.email,
+            phone: userData.phone,
+            password: userData.password,
+            isVerified: true
+        });
+
+        await user.save();
+
+        
+        delete req.session.userData;
+
+
+        res.json({
+            success: true,
+            message: 'Account created successfully, Please Login',
+            redirectUrl: '/'
+        });
+    } catch (error) {
+        console.error(error);
+        res.json({
+            success: false,
+            message: 'Error in verification'
+        });
+    }
+};
+
+
+
+module.exports = { getHome ,signup, resendOTP , verifySignupOTP };

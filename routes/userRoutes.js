@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getHome, getSignup } = require('../controllers/user/userController');
+const { getHome ,signup, resendOTP, verifySignupOTP } = require('../controllers/user/userController');
 const { getCategoryProducts } = require('../controllers/user/categoryController');
 const { getProductDetails } = require('../controllers/user/productController');
 
@@ -8,7 +8,10 @@ const { getProductDetails } = require('../controllers/user/productController');
 //user routes
 router.get('/', getHome);
 
-router.get('/signup', getSignup);
+// router.get('/signup', getSignup);
+router.post('/signup', signup);
+router.post('/resend-otp', resendOTP);
+router.post('/verify-signup-otp',verifySignupOTP);
 
 
 //user product category routes
