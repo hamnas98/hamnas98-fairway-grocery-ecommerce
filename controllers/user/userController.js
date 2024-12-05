@@ -211,6 +211,112 @@ const verifySignupOTP = async (req, res) => {
     }
 };
 
+const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        console.log(email,password)
+
+        const user = await User.findOne({ email });
+        console.log(user)
+        if (!user) {
+            return res.json({
+                success: false,
+                message: 'Invalid credentials'
+            });
+        }
+        console.log(user)
+
+        if (user.isBlocked) {
+            return res.json({
+                success: false,
+                message: 'Account is blocked'
+            });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        console.log(isMatch)
+        if (!isMatch) {
+            return res.json({
+                success: false,
+                message: 'Invalid credentials'
+            });
+        }
+
+        // Generate login OTP and store in session
+        const otp = generateOTP();
+        req.session.userData = {
+            otp: otp,
+            userId: user._id,
+            expiresAt: Date.now() + 10 * 60 * 1000 // 10 minutes
+        };
+
+        const emailSent = await sendOTP(email,otp);
+        console.log(req.session.userData)
+        console.log('Login OTP:', otp);
+
+        res.json({
+            success: true,
+            message: 'OTP sent successfully'
+        });
+    } catch (error) {
+        console.error(error);
+        res.json({
+            success: false,
+            message: 'Error in login'
+        });
+    }
+};
+
+const verifyLoginOTP = async (req, res) => {
+    try {
+        const { otp } = req.body;
+        const userData = req.session.userData;
+        console.log(otp,userData.otp)
+
+        if (!userData || userData.expiresAt < Date.now()) {
+            return res.json({
+                success: false,
+                message: 'OTP expired. Please try again.'
+            });
+        }
+
+        if (otp !== userData.otp) {
+            return res.json({
+                success: false,
+                message: 'Invalid OTP'
+            });
+        }
+
+        // Get user and set session
+        const user = await User.findById(userData.userId);
+        req.session.user = {
+            id: user._id,
+            name: user.name
+        };
+
+        // Clear login OTP from session
+        delete req.session.userData.otp;
+
+        res.json({
+            success: true,
+            message: 'Login successful',
+            redirectUrl: '/'
+        });
+    } catch (error) {
+        console.error(error);
+        res.json({
+            success: false,
+            message: 'Error in verification'
+        });
+    }
+};
+
+const logout = (req, res) => {
+    req.session.destroy(err => {
+        if (err) console.error('Logout error:', err);
+        res.redirect('/login');
+    });
+};
 
 
-module.exports = { getHome ,signup, resendOTP , verifySignupOTP };
+module.exports = { getHome ,signup, resendOTP , verifySignupOTP, login , verifyLoginOTP, logout };
