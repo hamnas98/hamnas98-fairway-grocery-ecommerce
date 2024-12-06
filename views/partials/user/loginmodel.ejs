@@ -1,0 +1,74 @@
+<style>
+
+</style>
+
+<div class="auth-modal modal" id="loginModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered auth-dialog">
+        <div class="modal-content auth-content">
+            <div class="modal-body p-0">
+                <div class="auth-message"></div>
+                <button type="button" class="auth-close" data-bs-dismiss="modal">
+                    <i class="uil uil-multiply"></i>
+                </button>
+                <div class="row m-0">
+                    <!-- Login Fields -->
+                    <div id="loginFields" class=" auth-form-side col-md-6">
+                        <form id="loginForm" class="auth-form p-4">
+                            
+                            <h4 class="auth-title">Login</h4>
+                            <div class="auth-group">
+                                <input type="email" class="auth-control" name="email" placeholder="Email">
+                            </div>
+                            <div class="auth-group">
+                                <input type="password" class="auth-control" name="password" placeholder="Password">
+                                <i class="uil uil-eye password-toggle" onclick="togglePassword(this)"></i>
+                            </div>
+                            <div class="forgot-link mb-3">
+                                <a href="#" id="forgotPassword">Forgot Password?</a>
+                            </div>
+                            <button class="auth-btn hover-btn" type="submit">Login</button>
+                            <div class="auth-switch mt-3">
+                                <p>Don't have an account? <a href="#" data-bs-toggle="modal" data-bs-target="#signupModal">Sign Up</a></p>
+                            </div>
+                        </form>
+                    </div>
+ 
+                    <!-- OTP Fields -->
+                    <div id="loginOtpFields" class=" auth-form-side col-md-6" style="display: none;">
+                        <div class="auth-form p-4 text-center">
+                            <h4 class="auth-title">Verify OTP</h4>
+                            <p class="text-muted mb-4">Enter the OTP sent to your email</p>
+                            <div class="otp-inputs">
+                                <input type="text" maxlength="1" class="otp-input">
+                                <input type="text" maxlength="1" class="otp-input">
+                                <input type="text" maxlength="1" class="otp-input">
+                                <input type="text" maxlength="1" class="otp-input">
+                                <input type="text" maxlength="1" class="otp-input">
+                                <input type="text" maxlength="1" class="otp-input">
+                            </div>
+                            <button onclick="verifyLoginOTP()" class="auth-btn hover-btn mt-4">Verify OTP</button>
+                            <div class="mt-3">
+                                <span id="loginTimer">Resend OTP in <span id="loginCountdown">30</span>s</span>
+                                <a href="#" id="loginResendBtn" style="display: none;">Resend OTP</a>
+                            </div>
+                        </div>
+                    </div>
+ 
+                    <!-- Branding Side -->
+                    <div class="col-md-6 auth-brand-side">
+                        <div class="auth-brand-content">
+                            <img src="/images/logo.svg" alt="Fairway" class="mb-4">
+                            <h2>Welcome Back!</h2>
+                            <p>Login to access your account</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ </div>
+ 
+
+ <script src="/user/js/common.js"></script>
+ <script src="/user/js/login.js"></script>
+
