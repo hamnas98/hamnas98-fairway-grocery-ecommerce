@@ -7,6 +7,8 @@ const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const multerErrorHandler = require('./middleware/multerErrorHandler');
+const passport = require('passport');
+require('./config/passport');
 
 // Load environment variables
 dotenv.config();
@@ -57,6 +59,9 @@ app.use((err, req, res, next) => {
         admin: req.session.admin 
     });
 });
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/admin', adminRoutes);
 

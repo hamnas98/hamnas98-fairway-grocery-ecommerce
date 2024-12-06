@@ -31,6 +31,12 @@ const userSchema = new mongoose.Schema({
     isBlocked: {
         type: Boolean,
         default: false
+    },
+    googleId: { 
+        type: String, 
+        unique: true ,
+        dafault: null,
+        required: false
     }
 }, { timestamps: true });
 
