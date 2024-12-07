@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
     googleId: { 
         type: String, 
         unique: true ,

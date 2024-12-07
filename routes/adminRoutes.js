@@ -5,36 +5,41 @@ const { getLoginPage, login, getDashboard , logout } = require('../controllers/a
 const { getAllCategories, getAddCategory, addCategory,getEditCategory,
         updateCategory,listingCategory, deleteCategory } = require('../controllers/admin/categoryController');
 const { categoryUpload, productUpload } = require('../config/multer');
-const { isAdmin, isLoggedIn,  } = require('../middleware/authMiddleware');
+const adminAuth = require('../middleware/amninAuth');
 const { getAllProducts, getAddProduct, getParentCategory, addProduct, getEditProduct, 
-        updateProduct, listingProduct, deleteProduct, getProductDetails  } = require('../controllers/admin/productController')
+        updateProduct, listingProduct, deleteProduct, getProductDetails  } = require('../controllers/admin/productController');
+const { getUsers,toggleUserBlock,deleteUser } = require('../controllers/admin/userController')
 
 // admin routes
-router.get('/login', isLoggedIn, getLoginPage);
-router.post('/login', isLoggedIn, login);
-router.get('/logout', isAdmin, logout);
-router.get('/dashboard', isAdmin, getDashboard);
+router.get('/login', getLoginPage);
+router.post('/login', login);
+router.get('/logout', adminAuth, logout);
+router.get('/dashboard', getDashboard);
 
 // Category routes
-router.get('/categories', isAdmin, getAllCategories);
-router.get('/categories/add', isAdmin, getAddCategory);
-router.post('/categories/add', isAdmin, categoryUpload, addCategory);
-router.get('/categories/edit/:id', isAdmin, getEditCategory);
-router.post('/categories/edit/:id', isAdmin, categoryUpload, updateCategory);
-router.put('/categories/listing/:id', isAdmin, listingCategory);
-router.delete('/categories/delete/:id', isAdmin, deleteCategory);
+router.get('/categories', adminAuth, getAllCategories);
+router.get('/categories/add', adminAuth, getAddCategory);
+router.post('/categories/add', adminAuth, categoryUpload, addCategory);
+router.get('/categories/edit/:id', adminAuth, getEditCategory);
+router.post('/categories/edit/:id', adminAuth, categoryUpload, updateCategory);
+router.put('/categories/listing/:id', adminAuth, listingCategory);
+router.delete('/categories/delete/:id', adminAuth, deleteCategory);
 
 // product routes
-router.get('/products', isAdmin, getAllProducts);
-router.get('/products/add', isAdmin, getAddProduct);
-router.get('/categories/:parentId/subcategories', isAdmin, getParentCategory);
-router.post('/products/add', isAdmin, productUpload, addProduct);
-router.get('/products/edit/:id', isAdmin, getEditProduct);
-router.post('/products/edit/:id', isAdmin, productUpload, updateProduct);
-router.put('/products/listing/:id', isAdmin, listingProduct);
-router.delete('/products/delete/:id', isAdmin, deleteProduct);
-router.get('/products/view/:id', isAdmin, getProductDetails);
+router.get('/products', adminAuth, getAllProducts);
+router.get('/products/add', adminAuth, getAddProduct);
+router.get('/categories/:parentId/subcategories', adminAuth, getParentCategory);
+router.post('/products/add', adminAuth, productUpload, addProduct);
+router.get('/products/edit/:id', adminAuth, getEditProduct);
+router.post('/products/edit/:id', adminAuth, productUpload, updateProduct);
+router.put('/products/listing/:id', adminAuth, listingProduct);
+router.delete('/products/delete/:id', adminAuth, deleteProduct);
+router.get('/products/view/:id', adminAuth, getProductDetails);
 
+// user routes
+router.get('/users', adminAuth, getUsers);
+router.put('/users/isBlocked/:id', adminAuth, toggleUserBlock);
+router.delete('/users/delete/:id', adminAuth, deleteUser);
 
 
 module.exports = router;
