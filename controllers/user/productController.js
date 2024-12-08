@@ -49,5 +49,64 @@ const getProductDetails = async (req, res) => {
         });
     }
 };
+const getNewProducts = async (req, res) => {
+    try {
+        
+        // Get new products
+        const newProducts = await Product.find({
+            isDeleted: false,
+            listed: true
+        })
+        .sort({ createdAt: -1 })
+        .limit(10);     
+        // Get all parent categories for the header
+        const parentCategories = await Category.find({ 
+          parent: null,
+          isDeleted: false,
+          listed: true 
+      });
 
-module.exports = { getProductDetails };
+                     
+
+        res.render('newProducts', {
+            newProducts,
+            parentCategories,
+            pageTitle: 'Fairway Supermarket'
+        });
+
+
+
+    } catch (error) {
+        console.error('New Products error:', error);
+        res.status(500).render('error', { message: 'Failed to load New Products page' });
+    }
+};
+
+const getBestvalueProducts = async (req, res) => {
+    try {
+            const bestValueProducts = await Product.find({
+            isDeleted: false,
+            listed: true,
+            discountPercentage: { $gt: 0 }  // Only get products with discount
+        })
+        .sort({ discountPercentage: -1 })  // Sort by highest discount first
+        .limit(10);
+        
+        // Get all parent categories for the header
+        const parentCategories = await Category.find({ 
+          parent: null,
+          isDeleted: false,
+          listed: true 
+      });
+        res.render('bestValueProducts', {
+            bestValueProducts,
+            parentCategories,
+            pageTitle: 'Fairway Supermarket'
+        });
+
+    } catch (error) {
+        console.error('Best Value Products error:', error);
+        res.status(500).render('error', { message: 'Failed to load Best Value Products' });
+    }
+};
+module.exports = { getProductDetails, getNewProducts, getBestvalueProducts };

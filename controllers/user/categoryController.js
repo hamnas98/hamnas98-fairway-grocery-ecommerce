@@ -68,6 +68,7 @@ const getCategoryProducts = async (req, res) => {
         res.status(500).render('error', { message: 'Failed to load category page' });
     }
 };
+
 module.exports = { getCategoryProducts };
 
 

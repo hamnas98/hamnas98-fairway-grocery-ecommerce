@@ -5,7 +5,7 @@ const passport = require('passport');
 const { getHome ,signup, resendOTP, verifySignupOTP, login , verifyLoginOTP,
         logout, forgotPasswordSubmit, verifyForgotPasswordOTP, resetPassword } = require('../controllers/user/userController');
 const { getCategoryProducts } = require('../controllers/user/categoryController');
-const { getProductDetails } = require('../controllers/user/productController');
+const { getProductDetails, getNewProducts, getBestvalueProducts } = require('../controllers/user/productController');
 
 
 //user routes
@@ -21,12 +21,6 @@ router.get('/logout', logout);
 router.post('/forgot-password', forgotPasswordSubmit);
 router.post('/verify-forgot-password-otp', verifyForgotPasswordOTP);
 router.post('/reset-password', resetPassword);
-
-
-//user product category routes
-router.get('/category/:id', getCategoryProducts);
-router.get('/product/:id', getProductDetails);
-
 
 //google authentication
 
@@ -49,6 +43,15 @@ router.get('/auth/google/callback',
         res.redirect('/');
     }
 );
+
+//user product & category routes
+router.get('/category/:id', getCategoryProducts);
+router.get('/product/:id', getProductDetails);
+router.get('/products/new', getNewProducts)
+router.get('/products/best-value-products', getBestvalueProducts)
+
+
+
 
 
 
