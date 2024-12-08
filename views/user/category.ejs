@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, shrink-to-fit=9">
+		<meta name="description" content="Gambolthemes">
+		<meta name="author" content="Gambolthemes">		
+		<title><%= parentCategory.name %></title>
+		
+		<!-- Favicon Icon -->
+		<link rel="icon" type="image/png" href="images/fav.png">
+		
+		<!-- Stylesheets -->
+		<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		<link href='/user/vendor/unicons-2.0.1/css/unicons.css' rel='stylesheet'>
+		<link href="/user/css/style.css" rel="stylesheet">
+		<link href="/user/css/responsive.css" rel="stylesheet">
+		<link href="/user/css/night-mode.css" rel="stylesheet">
+		<link href="/user/css/customstyle.css" rel="stylesheet">
+		
+		<!-- Vendor Stylesheets -->
+		<link href="/user/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+		<link href="/user/vendor/OwlCarousel/assets/owl.carousel.css" rel="stylesheet">
+		<link href="/user/vendor/OwlCarousel/assets/owl.theme.default.min.css" rel="stylesheet">
+		<link href="/user/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/user/vendor/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">
+
+		
+	</head>
+
+<body>	
+
+
+	<%- include('../partials/user/header', { parentCategories: parentCategories }) %>
+
+
+	<div class="wrapper">
+		<div class="gambo-Breadcrumb">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="/">Home</a></li>
+								<li class="breadcrumb-item active" aria-current="page"><%= parentCategory.name %></li>
+								<li class="breadcrumb-item active" aria-current="page"><%= parentCategory.name==category.name ?'All':category.name %></li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="all-product-grid">
+			<div class="container">
+				<div class="row">
+					<!-- Sidebar -->
+					<div class="col-lg-3">
+						<div class="category-sidebar">
+							<div class="category-list">
+								<!-- Parent Category -->
+								<a href="/category/<%= parentCategory._id %>" 
+								   class="category-item <%= category._id.toString() === parentCategory._id.toString() ? 'active' : '' %>">
+									<div class="cat-icon">
+										<img src="<%= parentCategory.image %>" alt="<%= parentCategory.name %>">
+									</div>
+									<span><%= parentCategory.name %></span>
+								</a>
+					
+								<!-- Subcategories -->
+								<% subcategories.forEach(subCat => { %>
+									<a href="/category/<%= subCat._id %>" 
+									   class="category-item <%= category._id.toString() === subCat._id.toString() ? 'active' : '' %>">
+										<div class="cat-icon">
+											<img src="<%= subCat.image %>" alt="<%= subCat.name %>">
+										</div>
+										<span><%= subCat.name %></span>
+									</a>
+								<% }); %>
+							</div>
+						</div>
+					</div>
+					
+	
+					<!-- Products Section Start -->
+					<div class="col-lg-9">
+						<div class="product-top-dt">
+							<div class="product-left-title small">
+								<h2><%= category.name %></h2>
+							</div>
+							<div class="product-sort main-form">
+								<select class="selectpicker" data-width="25%">
+									<option value="0">Popularity</option>
+									<option value="1">Price - Low to High</option>
+									<option value="2">Price - High to Low</option>
+									<option value="3">Alphabetical</option>
+									<option value="4">Saving - High to Low</option>
+									<option value="5">Saving - Low to High</option>
+									<option value="6">% Off - High to Low</option>
+								</select>
+							</div>
+						</div>
+	
+						<div class="product-list-view">
+							<div class="row">
+								<% if(products.length > 0) { %>
+									<% products.forEach(product => { %>
+										<div class="col-lg-3 col-md-6">
+											<div class="product-item mb-30">
+												<a href="/product/<%= product._id %>" class="product-img">
+													<img src="<%= product.images[0] %>" alt="<%= product.name %>">
+													<div class="product-absolute-options">
+														<% if (product.discountPercentage > 0) { %>
+															<span class="offer-badge-1"><%= product.discountPercentage %>% off</span>
+														<% } %>
+														<span class="like-icon" title="wishlist"></span>
+													</div>
+												</a>
+												<div class="product-text-dt">
+													<p>
+														<% if (product.stock > 0) { %>
+														
+														<% } else { %>
+															<span>Out of Stock</span>
+														<% } %>
+													</p>
+													<h4><%= product.name %></h4>
+													<h4><%= product.quantity+product.unit %></h4>
+													<div class="product-price">
+														<% if (product.discountPrice) { %>
+															<%= product.discountPrice %> <span><%= product.price %></span>
+														<% } else { %>
+															$<%= product.price %>
+														<% } %>
+													</div>
+													<% if (product.stock > 0) { %>
+														<div class="add-to-cart-wrapper">
+															<button class="add-to-cart-btn" onclick="toggleQuantitySelector(this)">
+																<i class="uil uil-shopping-cart-alt"></i> Add to Cart
+															</button>
+															<div class="quantity-selector" style="display: none;">
+																<button class="qty-btn minus"><i class="uil uil-minus"></i></button>
+																<span class="qty-value">1</span>
+																<button class="qty-btn plus"><i class="uil uil-plus"></i></button>
+																<span  onclick="addToCart('<%= product._id %>')"></span>
+															</div>
+														</div>
+												
+													<% } %>
+												</div>
+											</div>
+										</div>
+									<% }); %>
+								<% } else { %>
+									<div class="col-md-12">
+										<div class="no-results">
+											<h3>No products found in this category.</h3>
+										</div>
+									</div>
+								<% } %>
+							</div>
+						</div>
+					</div>
+					<!-- Products Section End -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+	
+
+	<!-- Body End -->
+	<!-- Footer Start -->
+	
+	<!-- Footer End -->
+
+	<!-- Javascripts -->
+	<script src="/user/js/jquery.min.js"></script>
+	<script src="/user/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/user/vendor/bootstrap-select/js/bootstrap-select.min.js"></script>
+	<script src="/user/vendor/OwlCarousel/owl.carousel.js"></script>
+	<script src="/user/js/jquery.countdown.min.js"></script>
+	<script src="/user/js/custom.js"></script>
+	<script src="/user/js/offset_overlay.js"></script>
+	<script src="/user/js/night-mode.js"></script>
+	
+	
+</body>
+</html>

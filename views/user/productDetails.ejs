@@ -1,0 +1,333 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, shrink-to-fit=9">
+		<meta name="description" content="Gambolthemes">
+		<meta name="author" content="Gambolthemes">		
+		<title></title>
+		
+		
+		<!-- Favicon Icon -->
+		<link rel="icon" type="image/png" href="images/fav.png">
+		
+		<!-- Stylesheets -->
+		<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		<link href='/user/vendor/unicons-2.0.1/css/unicons.css' rel='stylesheet'>
+		<link href="/user/css/style.css" rel="stylesheet">
+		<link href="/user/css/responsive.css" rel="stylesheet">
+		<link href="/user/css/night-mode.css" rel="stylesheet">
+		<link  href="/user/css/signupmodals.css"  rel="stylesheet">
+		
+		<!-- Vendor Stylesheets -->
+		<link href="/user/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+		<link href="/user/vendor/OwlCarousel/assets/owl.carousel.css" rel="stylesheet">
+		<link href="/user/vendor/OwlCarousel/assets/owl.theme.default.min.css" rel="stylesheet">
+		<link href="/user/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/user/vendor/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">
+		<link href="/user/css/customstyle.css" rel="stylesheet">
+		
+	</head>
+	<%- include('../partials/user/header', { parentCategories: parentCategories }) %>
+	<div class="wrapper">
+		<div class="gambo-Breadcrumb">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="/">Home</a></li>
+								<% if(product.category.parent) { %>
+									<li class="breadcrumb-item">
+										<a href="/category/<%= product.category.parent._id %>">
+											<%= product.category.parent.name %>
+										</a>
+									</li>
+								<% } %>
+								<li class="breadcrumb-item">
+									<a href="/category/<%= product.category._id %>">
+										<%= product.category.name %>
+									</a>
+								</li>
+								<li class="breadcrumb-item active" aria-current="page"><%= product.name %></li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="all-product-grid">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="product-dt-view">
+							<div class="row">
+								<div class="col-lg-6 col-md-4">
+									<div id="sync1" class="owl-carousel owl-theme">
+										<% product.images.forEach(image => { %>
+											<div class="item">
+												<img src="<%= image %>" alt="<%= product.name %>">
+											</div>
+										<% }); %>
+									</div>
+									<div id="sync2" class="owl-carousel owl-theme">
+										<% product.images.forEach(image => { %>
+											<div class="item">
+												<img src="<%= image %>" alt="<%= product.name %>">
+											</div>
+										<% }); %>
+									</div>
+								</div>
+								<div class="col-lg-6 col-md-8">
+									<div class="product-dt-right">
+										<h2><%= product.name %></h2>
+										<div class="no-stock">
+											<p class="pd-no">
+												<%= product.category.parent ? product.category.parent.name : product.category.name %>
+												<span><%= product.brand || '' %></span>
+											</p>
+											<div class="stock-and-unit">
+												<% if (product.quantity && product.unit) { %>
+													<p class="product-unit"><%= product.quantity %><%= product.unit %></p>
+												<% } %>
+												<p class="stock-qty">
+													<% if (!product.outOfStock && product.stock > 0) { %>
+														Available<span>(In Stock)</span>
+													<% } else { %>
+														<span>Out of Stock</span>
+													<% } %>
+												</p>
+											
+											</div>
+										</div>
+										
+										<div class="product-group-dt">
+											<ul class="price-list">
+												<% if (product.discountPrice) { %>
+													<li>
+														<div class="main-price">
+															<span class="discount-price">₹<%= product.discountPrice %></span>
+															<span class="original-price">₹<%= product.price %></span>
+														</div>
+													</li>
+												<% } else { %>
+													<li>
+														<div class="main-price">
+															<span class="regular-price">₹<%= product.price %></span>
+														</div>
+													</li>
+												<% } %>
+											</ul>
+											
+											<% if (!product.outOfStock && product.stock > 0) { %>
+												<ul class="ordr-crt-share">
+													<li>
+														<div class="add-to-cart-wrapper">
+															<button class="add-to-cart-btn" onclick="toggleQuantitySelector(this)">
+																<i class="uil uil-shopping-cart-alt"></i> Add to Cart
+															</button>
+															<div class="quantity-selector" style="display: none;">
+																<button class="qty-btn minus"><i class="uil uil-minus"></i></button>
+																<span class="qty-value">1</span>
+																<button class="qty-btn plus"><i class="uil uil-plus"></i></button>
+																<span onclick="addToCart('<%= product._id %>')"></span>
+															</div>
+														</div>
+													</li>
+													<li><span class="like-icon save-icon" title="wishlist"></span></li>
+												</ul>
+											<% } %>
+											<div class="col-lg-6 col-md-12">
+												<div class="pdpt-bg">
+													<div class="pdpt-title">
+														<h4><i class="uil uil-star me-2"></i>Product Highlights</h4>
+													</div>
+													<div class="pdpt-body scrollstyle_4" style="max-height: 200px;">
+														<div class="pdct-dts-1">
+															<div class="pdct-dt-step">
+																<% if (product.highlights && product.highlights.length > 0) { %>
+																	<div class="highlights-grid">
+																		<% product.highlights.forEach(highlight => { %>
+																			<div class="highlight-item">
+																				<i class="fas fa-check-circle text-success me-2"></i>
+																				<%= highlight %>
+																			</div>
+																		<% }); %>
+																	</div>
+																<% } %>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+				<div class="row">
+					<div class="col-lg-6 col-md-12">
+						<div class="pdpt-bg">
+							<div class="pdpt-title">
+								<h4><i class="uil uil-file-info-alt me-2"></i>About Product</h4>
+							</div>
+							<div class="pdpt-body scrollstyle_4" style="max-height: 200px;">
+								<div class="pdct-dts-1">
+									<div class="pdct-dt-step">
+										<% if (product.aboutProduct && product.aboutProduct.length > 0) { %>
+											<% product.aboutProduct.forEach(info => { %>
+												<p class="mb-2"><%= info %></p>
+											<% }); %>
+										<% } %>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-lg-6 col-md-12">
+						<div class="pdpt-bg">
+							<div class="pdpt-title">
+								<h4><i class="uil uil-star me-2"></i>Product Reviews</h4>
+							</div>
+							<div class="pdpt-body scrollstyle_4" style="max-height: 200px;">
+								<div class="pdct-dts-1">
+									<div class="pdct-dt-step">
+									
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	
+		<!-- Related Products -->
+		<% if (relatedProducts && relatedProducts.length > 0) { %>
+			<div class="section145">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="main-title-tt">
+								<div class="main-title-left">
+									<span>For You</span>
+									<h2>Similar Products</h2>
+								</div>
+								<a href="/shop" class="see-more-btn">See All</a>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="owl-carousel featured-slider owl-theme">
+								<% relatedProducts.forEach(relProduct => { %>
+									<div class="item">
+										<div class="product-item">
+											<a href="/product/<%= relProduct._id %>" class="product-img">
+												<img src="<%= relProduct.images[0] %>" alt="<%= relProduct.name %>">
+												<div class="product-absolute-options">
+													<% if (relProduct.discountPercentage > 0) { %>
+														<span class="offer-badge-1"><%= relProduct.discountPercentage %>% off</span>
+													<% } %>
+													<span class="like-icon" title="wishlist"></span>
+												</div>
+											</a>
+											<div class="product-text-dt">
+												<p>
+													<% if (!relProduct.outOfStock && relProduct.stock > 0) { %>
+														Available
+													<% } else { %>
+														<span>Out of Stock</span>
+													<% } %>
+												</p>
+												<h4><%= relProduct.name %></h4>
+												<div class="product-price">
+													<% if (relProduct.discountPrice) { %>
+														₹<%= relProduct.discountPrice %> <span>₹<%= relProduct.price %></span>
+													<% } else { %>
+														₹<%= relProduct.price %>
+													<% } %>
+												</div>
+															<% if (product.stock > 0) { %>
+														<div class="add-to-cart-wrapper">
+															<button class="add-to-cart-btn" onclick="toggleQuantitySelector(this)">
+																<i class="uil uil-shopping-cart-alt"></i> Add to Cart
+															</button>
+															<div class="quantity-selector" style="display: none;">
+																<button class="qty-btn minus"><i class="uil uil-minus"></i></button>
+																<span class="qty-value">1</span>
+																<button class="qty-btn plus"><i class="uil uil-plus"></i></button>
+																<span  onclick="addToCart('<%= product._id %>')"></span>
+															</div>
+														</div>
+												
+													<% } %>
+											</div>
+										</div>
+									</div>
+								<% }); %>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		<% } %>
+		
+		<!-- Initialize the carousel for related products -->
+		<script>
+		$(document).ready(function() {
+			$('.featured-slider').owlCarousel({
+				loop: true,
+				margin: 15,
+				nav: true,
+				dots: false,
+				autoplay: true,
+				autoplayTimeout: 4000,
+				autoplayHoverPause: true,
+				navText: [
+					"<i class='uil uil-angle-left'></i>",
+					"<i class='uil uil-angle-right'></i>"
+				],
+				responsive: {
+					0: {
+						items: 2
+					},
+					576: {
+						items: 3
+					},
+					768: {
+						items: 4
+					},
+					992: {
+						items: 5
+					},
+					1200: {
+						items: 5
+					}
+				}
+			});
+		});
+		</script>
+	</div>
+
+	
+
+	<!-- Javascripts -->
+	<script src="/user/js/jquery.min.js"></script>
+	<script src="/user/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/user/vendor/bootstrap-select/js/bootstrap-select.min.js"></script>
+	<script src="/user/vendor/OwlCarousel/owl.carousel.js"></script>
+	<script src="/user/js/jquery.countdown.min.js"></script>
+	<script src="/user/js/custom.js"></script>
+	<script src="/user/js/product.thumbnail.slider.js"></script>
+	<script src="/user/js/offset_overlay.js"></script>
+	<script src="/user/js/night-mode.js"></script>
+	<script src="/user/js/signupmodals.js"></script>
+	
+	
+</body>
+</html>

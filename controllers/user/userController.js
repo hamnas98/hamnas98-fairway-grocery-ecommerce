@@ -129,7 +129,7 @@ const resendOTP = async (req, res) => {
     try {
         const otp = generateOTP();
         const {type,email} = req.body;
-        console.log(type,email) // 'signup' or 'login'
+        console.log(type,email) //
 
         if (type === 'signup' && req.session.userData) {
             req.session.userData.otp = otp;
@@ -137,7 +137,10 @@ const resendOTP = async (req, res) => {
         } else if (type === 'login' && req.session.userData) {
             req.session.userData.otp = otp;
             req.session.userData.expiresAt = Date.now() + 10 * 60 * 1000;
-        } else {
+        } else if (type === 'forgot' && req.session.userData) {
+            req.session.userData.otp = otp;
+            req.session.userData.expiresAt = Date.now() + 10 * 60 * 1000;
+        }else {
             return res.json({
                 success: false,
                 message: 'Invalid request'
@@ -318,5 +321,102 @@ const logout = (req, res) => {
     });
 };
 
+const forgotPasswordSubmit = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+        console.log(user ,'fu')
 
-module.exports = { getHome ,signup, resendOTP , verifySignupOTP, login , verifyLoginOTP, logout };
+        if (!user ) {
+            return res.json({ 
+                success: false, 
+                message: 'No account found with this email' 
+            });
+        }
+        if (!user.password ) {
+            return res.json({ 
+                success: false, 
+                message: 'please Login with Google' 
+            });
+        }
+
+        // Generate OTP
+        const otp = generateOTP();
+        
+        // Save OTP in session
+        req.session.userData = {
+            email,
+            otp,
+            expiresAt: Date.now() + 10 * 60 * 1000 // 10 minutes
+        };
+
+        // Send OTP to email
+        await sendOTP(email, otp);
+
+        res.json({ 
+            success: true, 
+            message: 'OTP sent to your email' 
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.json({ success: false, message: 'Failed to process request' });
+    }
+};
+const verifyForgotPasswordOTP = async (req, res) => {
+    try {
+        const { otp } = req.body;
+        const storedData = req.session.userData;
+        console.log(otp,storedData)
+
+        if (!storedData.otp || storedData.otp.expiresAt < Date.now()) {
+            return res.json({ 
+                success: false, 
+                message: 'OTP expired. Please request again.' 
+            });
+        }
+
+        if (otp !== storedData.otp) {
+            return res.json({ 
+                success: false, 
+                message: 'Invalid OTP' 
+            });
+        }
+
+        res.json({ success: true });
+
+    } catch (error) {
+        console.error(error);
+        res.json({ success: false, message: 'Error verifying OTP' });
+    }
+};
+
+const resetPassword = async (req, res) => {
+    try {
+        const { password } = req.body;
+        const { email } = req.session.userData;
+        console.log(password,email,req.session.userData)
+
+        const user = await User.findOne({ email });
+        user.password = password;
+        await user.save();
+
+        // Clear session
+        delete req.session.userData;
+
+        res.json({ 
+            success: true, 
+            message: 'Password reset successfully',
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.json({ success: false, message: 'Failed to reset password' });
+    }
+};
+
+
+
+
+module.exports = { getHome ,signup, resendOTP , verifySignupOTP, login ,
+                   verifyLoginOTP, logout, forgotPasswordSubmit, verifyForgotPasswordOTP, resetPassword };
