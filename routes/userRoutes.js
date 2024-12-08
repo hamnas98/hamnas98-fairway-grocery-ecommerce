@@ -6,6 +6,8 @@ const { getHome ,signup, resendOTP, verifySignupOTP, login , verifyLoginOTP,
         logout, forgotPasswordSubmit, verifyForgotPasswordOTP, resetPassword } = require('../controllers/user/userController');
 const { getCategoryProducts } = require('../controllers/user/categoryController');
 const { getProductDetails, getNewProducts, getBestvalueProducts } = require('../controllers/user/productController');
+const { getDashboard } = require('../controllers/user/dashboardConroller');
+const userAuth = require('../middleware/userAuth');
 
 
 //user routes
@@ -49,6 +51,10 @@ router.get('/category/:id', getCategoryProducts);
 router.get('/product/:id', getProductDetails);
 router.get('/products/new', getNewProducts)
 router.get('/products/best-value-products', getBestvalueProducts)
+
+//user dashbord 
+
+router.get('/dashboard',userAuth, getDashboard)
 
 
 

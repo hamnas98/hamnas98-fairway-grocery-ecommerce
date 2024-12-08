@@ -6,6 +6,26 @@
 
 <%- include('../partials/user/forgotPassword') %>
 <!-- Category Model End -->
+<head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+</head>
+
+<script>
+    // Prevent back button after logout
+    window.onpageshow = function(event) {
+        if (event.persisted) {
+            window.location.reload();
+        }
+    };
+
+    // Prevent back navigation
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        history.go(1);
+    };
+</script>
  <!-- signup form -->
  
  <!-- Header -->

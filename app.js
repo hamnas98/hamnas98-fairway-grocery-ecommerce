@@ -9,6 +9,8 @@ const adminRoutes = require('./routes/adminRoutes');
 const multerErrorHandler = require('./middleware/multerErrorHandler');
 const passport = require('passport');
 require('./config/passport');
+const nocache = require('nocache');
+;
 
 // Load environment variables
 dotenv.config();
@@ -24,6 +26,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(multerErrorHandler);
 
+app.use(nocache());
 // Session configuration
 app.use(session({
     secret: process.env.SESSION_SECRET || 'your-secret-key',

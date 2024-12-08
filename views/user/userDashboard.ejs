@@ -1,0 +1,205 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, shrink-to-fit=9">
+		<meta name="description" content="Gambolthemes">
+		<meta name="author" content="Gambolthemes">		
+		<title>Fairway Supermarket</title>
+		
+		<!-- Favicon Icon -->
+		<link rel="icon" type="image/png" href="images/fav.png">
+		
+		<!-- Stylesheets -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		
+		<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		<link href='/user/vendor/unicons-2.0.1/css/unicons.css' rel='stylesheet'>
+		<link href="/user/css/style.css" rel="stylesheet">
+		<link href="/user/css/responsive.css" rel="stylesheet">
+		<link href="/user/css/night-mode.css" rel="stylesheet">
+		<link href="/user/css/customstyle.css" rel="stylesheet">
+		<link  href="/user/css/signupmodals.css"  rel="stylesheet">
+		
+		<!-- Vendor Stylesheets -->
+		<link href="/user/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+		<link href="/user/vendor/OwlCarousel/assets/owl.carousel.css" rel="stylesheet">
+		<link href="/user/vendor/OwlCarousel/assets/owl.theme.default.min.css" rel="stylesheet">
+		<link href="/user/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/user/vendor/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">	
+		
+		
+	</head>
+	<style>
+		
+	</style>
+
+	<body>
+		<!-- Header Start -->
+		<%- include('../partials/user/header', { parentCategories: parentCategories }) %>
+		
+
+		
+		<!-- Header End -->
+	
+		<!-- Body Start -->
+		<div class="wrapper">
+			<div class="gambo-Breadcrumb">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<nav aria-label="breadcrumb">
+								<ol class="breadcrumb">
+									<li class="breadcrumb-item"><a href="index.html">Home</a></li>
+									<li class="breadcrumb-item active" aria-current="page"><%= user.name %> Dashboard</li>
+								</ol>
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="dashboard-group">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="user-dt">
+								<div class="user-img">
+									<img src="/images/avatar/img-5.jpg" alt="">
+									<div class="img-add">													
+										<input type="file" id="file">
+										<label for="file"><i class="uil uil-camera-plus"></i></label>
+									</div>
+								</div>
+								<h4><%= user.name %></h4>
+								<p><%= user.phone ? 'user.phone ' : 'user.email'%><a href="#"><i class="uil uil-edit"></i></a></p>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>	
+			<div class="">
+				<div class="container">
+					<div class="row">
+						<div class="col-xl-3 col-lg-4 col-md-12">
+							<div class="left-side-tabs">
+								<div class="dashboard-left-links">
+									<a href="dashboard_overview.html" class="user-item active"><i class="uil uil-apps"></i>Overview</a>
+									<a href="dashboard_my_orders.html" class="user-item"><i class="uil uil-box"></i>My Orders</a>
+									<a href="dashboard_my_rewards.html" class="user-item"><i class="uil uil-gift"></i>My Rewards</a>
+									<a href="dashboard_my_wallet.html" class="user-item"><i class="uil uil-wallet"></i>My Wallet</a>
+									<a href="dashboard_my_wishlist.html" class="user-item"><i class="uil uil-heart"></i>Shopping Wishlist</a>
+									<a href="dashboard_my_addresses.html" class="user-item"><i class="uil uil-location-point"></i>My Address</a>
+									<a href="sign_in.html" class="user-item"><i class="uil uil-exit"></i>Logout</a>
+								</div>
+							</div>
+						</div>
+						<div class="col-xl-9 col-lg-8 col-md-12">
+							<div class="dashboard-right">
+								<div class="row">
+									<div class="col-md-12">
+										<div class="main-title-tab">
+											<h4><i class="uil uil-apps"></i>Overview</h4>
+										</div>
+										<div class="welcome-text">
+											<h2>Hi <%= user.name %></h2>
+										</div>
+									</div>
+									<div class="col-xl-6 col-lg-12 col-md-12">
+										<div class="pdpt-bg">
+											<div class="pdpt-title">
+												<h4>My Rewards</h4>
+											</div>
+											<div class="ddsh-body">
+												<h2>6 Rewards</h2>
+												<ul>
+													<li>
+														<a href="#" class="small-reward-dt hover-btn">Won $2</a>
+													</li>
+													<li>
+														<a href="#" class="small-reward-dt hover-btn">Won 40% Off</a>
+													</li>
+													<li>
+														<a href="#" class="small-reward-dt hover-btn">Caskback $1</a>
+													</li>
+													<li>
+														<a href="#" class="rewards-link5">+More</a>
+													</li>
+												</ul>
+											</div>
+											<a href="#" class="more-link14">Rewards and Details <i class="uil uil-angle-double-right"></i></a>
+										</div>
+									</div>
+									<div class="col-xl-6 col-lg-12 col-md-12">
+										<div class="pdpt-bg">
+											<div class="pdpt-title">
+												<h4>My Orders</h4>
+											</div>
+											<div class="ddsh-body">
+												<h2>2 Recently Purchases</h2>
+												<ul class="order-list-145">
+													<li>
+														<div class="smll-history">
+															<div class="order-title">2 Items <span data-inverted="" data-tooltip="2kg broccoli, 1kg Apple" data-position="top center">?</span></div>
+															<div class="order-status">On the way</div>
+															<p>$22</p>
+														</div>
+													</li>
+												</ul>
+											</div>
+											<a href="#" class="more-link14">All Orders <i class="uil uil-angle-double-right"></i></a>
+										</div>
+									</div>
+									<div class="col-lg-12 col-md-12">
+										<div class="pdpt-bg">
+											<div class="pdpt-title">
+												<h4>My Wallet</h4>
+											</div>
+											<div class="wllt-body">
+												<h2>Credits $100</h2>
+												<ul class="wallet-list">
+													<li>
+														<a href="#" class="wallet-links14"><i class="uil uil-card-atm"></i>Payment Methods</a>
+													</li>
+													<li>
+														<a href="#" class="wallet-links14"><i class="uil uil-gift"></i>3 offers Active</a>
+													</li>	
+													<li>
+														<a href="#" class="wallet-links14"><i class="uil uil-coins"></i>Points Earning</a>
+													</li>	
+												</ul>
+											</div>
+											<a href="#" class="more-link14">Rewards and Details <i class="uil uil-angle-double-right"></i></a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>	
+				</div>	
+			</div>	
+		</div>
+	<!-- Body End -->
+	<!-- Footer Start -->
+	
+	<!-- Footer End -->
+
+	<!-- Javascripts -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="/user/js/jquery.min.js"></script>
+	<script src="/user/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/user/vendor/bootstrap-select/js/bootstrap-select.min.js"></script>	
+	<script src="/user/vendor/OwlCarousel/owl.carousel.js"></script>
+	<script src="/user/js/jquery.countdown.min.js"></script>
+	<script src="/user/js/custom.js"></script>
+	<script src="/user/js/offset_overlay.js"></script>
+	<script src="/user/js/night-mode.js"></script>
+
+	
+	
+</body>
+</html>
