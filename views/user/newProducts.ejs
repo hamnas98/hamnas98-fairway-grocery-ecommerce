@@ -136,8 +136,54 @@
 
 					<!-- Products Section End -->
 				</div>
+				 <!-- Pagination -->
+				 <% if (pagination.totalPages > 1) { %>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="pagination-wrapper">
+								<nav aria-label="Page navigation">
+									<ul class="pagination justify-content-center">
+										<!-- Previous Button -->
+										<% if (pagination.hasPreviousPage) { %>
+											<li class="page-item">
+												<a class="page-link" href="?page=<%= pagination.previousPage %>" aria-label="Previous">
+													<span aria-hidden="true">&laquo;</span>
+												</a>
+											</li>
+										<% } %>
+	
+										<!-- Page Numbers -->
+										<% for(let i = 1; i <= pagination.totalPages; i++) { %>
+											<li class="page-item <%= pagination.currentPage === i ? 'active' : '' %>">
+												<a class="page-link" href="?page=<%= i %>"><%= i %></a>
+											</li>
+										<% } %>
+	
+										<!-- Next Button -->
+										<% if (pagination.hasNextPage) { %>
+											<li class="page-item">
+												<a class="page-link" href="?page=<%= pagination.nextPage %>" aria-label="Next">
+													<span aria-hidden="true">&raquo;</span>
+												</a>
+											</li>
+										<% } %>
+									</ul>
+								</nav>
+								<div class="products-count text-center mt-2">
+									Showing <%= (pagination.currentPage - 1) * pagination.limit + 1 %> to 
+									<%= Math.min(pagination.currentPage * pagination.limit, pagination.totalProducts) %> 
+									of <%= pagination.totalProducts %> products
+								</div>
+							</div>
+						</div>
+					</div>
+				<% } %>
 			</div>
 		</div>
+	</div>
+			</div>
+		</div>
+		
 	</div>
 
 	

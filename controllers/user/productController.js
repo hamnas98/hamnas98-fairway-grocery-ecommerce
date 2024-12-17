@@ -51,30 +51,52 @@ const getProductDetails = async (req, res) => {
 };
 const getNewProducts = async (req, res) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 1; // Products per page
+        const skip = (page - 1) * limit;
         
-        // Get new products
+        // Get total count for pagination
+        const totalProducts = await Product.countDocuments({
+            isDeleted: false,
+            listed: true
+        });
+        
+        // Get paginated new products
         const newProducts = await Product.find({
             isDeleted: false,
             listed: true
         })
         .sort({ createdAt: -1 })
-        .limit(10);     
+        .skip(skip)
+        .limit(limit);
+
         // Get all parent categories for the header
         const parentCategories = await Category.find({ 
-          parent: null,
-          isDeleted: false,
-          listed: true 
-      });
+            parent: null,
+            isDeleted: false,
+            listed: true 
+        });
 
-                     
+        // Calculate pagination values
+        const totalPages = Math.ceil(totalProducts / limit);
+        const hasNextPage = page < totalPages;
+        const hasPreviousPage = page > 1;
 
         res.render('newProducts', {
             newProducts,
             parentCategories,
-            pageTitle: 'Fairway Supermarket'
+            pageTitle: 'New Products - Fairway Supermarket',
+            pagination: {
+                currentPage: page,
+                totalPages: totalPages,
+                hasNextPage: hasNextPage,
+                hasPreviousPage: hasPreviousPage,
+                nextPage: hasNextPage ? page + 1 : null,
+                previousPage: hasPreviousPage ? page - 1 : null,
+                limit: limit,
+                totalProducts: totalProducts
+            }
         });
-
-
 
     } catch (error) {
         console.error('New Products error:', error);
@@ -84,24 +106,53 @@ const getNewProducts = async (req, res) => {
 
 const getBestvalueProducts = async (req, res) => {
     try {
-            const bestValueProducts = await Product.find({
+        const page = parseInt(req.query.page) || 1;
+        const limit = 1; // Products per page
+        const skip = (page - 1) * limit;
+
+        // Get total count for pagination
+        const totalProducts = await Product.countDocuments({
             isDeleted: false,
             listed: true,
-            discountPercentage: { $gt: 0 }  // Only get products with discount
+            discountPercentage: { $gt: 0 }
+        });
+
+        // Get paginated best value products
+        const bestValueProducts = await Product.find({
+            isDeleted: false,
+            listed: true,
+            discountPercentage: { $gt: 0 }
         })
-        .sort({ discountPercentage: -1 })  // Sort by highest discount first
-        .limit(10);
-        
+        .sort({ discountPercentage: -1 })
+        .skip(skip)
+        .limit(limit);
+
         // Get all parent categories for the header
         const parentCategories = await Category.find({ 
-          parent: null,
-          isDeleted: false,
-          listed: true 
-      });
+            parent: null,
+            isDeleted: false,
+            listed: true 
+        });
+
+        // Calculate pagination values
+        const totalPages = Math.ceil(totalProducts / limit);
+        const hasNextPage = page < totalPages;
+        const hasPreviousPage = page > 1;
+
         res.render('bestValueProducts', {
             bestValueProducts,
             parentCategories,
-            pageTitle: 'Fairway Supermarket'
+            pageTitle: 'Best Value Products - Fairway Supermarket',
+            pagination: {
+                currentPage: page,
+                totalPages: totalPages,
+                hasNextPage: hasNextPage,
+                hasPreviousPage: hasPreviousPage,
+                nextPage: hasNextPage ? page + 1 : null,
+                previousPage: hasPreviousPage ? page - 1 : null,
+                limit: limit,
+                totalProducts: totalProducts
+            }
         });
 
     } catch (error) {

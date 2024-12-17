@@ -6,11 +6,16 @@ const Product = require('../../models/Product');
 const getCategoryProducts = async (req, res) => {
     try {
         const categoryId = req.params.id;
+        const page = parseInt(req.query.page) || 1; // Get page from query params
+        const limit = 1; // Products per page
+        const skip = (page - 1) * limit;
+        
         const category = await Category.findById(categoryId);
         
         let parentCategory;
         let subcategories = [];
         let products = [];
+        let totalProducts = 0;
 
         // If clicked category is a parent category
         if (!category.parent) {
@@ -22,13 +27,24 @@ const getCategoryProducts = async (req, res) => {
                 listed: true
             });
             
-            // Get all products from parent and all its subcategories
+            // Get all products from parent and all its subcategories with pagination
             const categoryIds = [category._id, ...subcategories.map(sub => sub._id)];
-            products = await Product.find({
+            
+            // Get total count for pagination
+            totalProducts = await Product.countDocuments({
                 category: { $in: categoryIds },
                 isDeleted: false,
                 listed: true
             });
+            
+            // Get paginated products
+            products = await Product.find({
+                category: { $in: categoryIds },
+                isDeleted: false,
+                listed: true
+            })
+            .skip(skip)
+            .limit(limit);
         } 
         // If clicked category is a subcategory
         else {
@@ -40,27 +56,53 @@ const getCategoryProducts = async (req, res) => {
                 isDeleted: false,
                 listed: true
             });
-            // Get products only from this subcategory
-            products = await Product.find({
+            
+            // Get total count for pagination
+            totalProducts = await Product.countDocuments({
                 category: category._id,
                 isDeleted: false,
                 listed: true
             });
+            
+            // Get paginated products
+            products = await Product.find({
+                category: category._id,
+                isDeleted: false,
+                listed: true
+            })
+            .skip(skip)
+            .limit(limit);
         }
-          // Get all parent categories for the header
-          const parentCategories = await Category.find({ 
+
+        // Get all parent categories for the header
+        const parentCategories = await Category.find({ 
             parent: null,
             isDeleted: false,
             listed: true 
         });
 
+        // Calculate pagination values
+        const totalPages = Math.ceil(totalProducts / limit);
+        const hasNextPage = page < totalPages;
+        const hasPreviousPage = page > 1;
+
         res.render('category', {
-            category,          // Current category (parent or sub)
+            category,          // Current category (parent / sub)
             parentCategory,    // Parent category
             subcategories,     // List of subcategories
             products,
             parentCategories,
-            pageTitle: category.name
+            pageTitle: category.name,
+            pagination: {
+                currentPage: page,
+                totalPages: totalPages,
+                hasNextPage: hasNextPage,
+                hasPreviousPage: hasPreviousPage,
+                nextPage: hasNextPage ? page + 1 : null,
+                previousPage: hasPreviousPage ? page - 1 : null,
+                limit: limit,
+                totalProducts: totalProducts
+            }
         });
 
     } catch (error) {
