@@ -58,7 +58,7 @@ const getHome = async (req, res) => {
         })
         .sort({ createdAt: -1 })
         .limit(10);
-
+        console.log(req.session.user)
         res.render('home', {
             parentCategories,
             fruitsVegProducts,

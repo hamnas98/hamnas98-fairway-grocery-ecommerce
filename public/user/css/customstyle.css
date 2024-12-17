@@ -470,3 +470,119 @@
     color: #2b2f4c;
 }
 
+
+.product-price-discount {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.original-price {
+    font-size: 16px;
+    color: #999;
+    text-decoration: line-through;
+}
+
+.discounted-price {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2b2f4c;
+    margin: 5px 0;
+}
+
+.current-price {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2b2f4c;
+}
+
+.discount-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #ff4e00;
+    color: white;
+    border-radius: 4px;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.savings {
+    color: #00b517;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* image zoom */
+
+.product-zoom-container {
+    position: relative;
+    width: 100%;
+}
+
+.img-zoom-container {
+    position: relative;
+    width: 100%;
+    cursor: crosshair;
+}
+
+.zoom-img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.img-zoom-lens {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    display: none;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3),
+                inset 0 0 2px rgba(255,255,255,0.6);
+    overflow: hidden;
+}
+
+.img-zoom-lens::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid rgba(0,0,0,0.3);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* Optional: Add crosshair lines in the lens */
+.img-zoom-lens::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 1px;
+    background: rgba(255,255,255,0.5);
+    transform: translate(-50%, -50%);
+}
+
+.img-zoom-lens::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1px;
+    height: 100%;
+    background: rgba(255,255,255,0.5);
+    transform: translate(-50%, -50%);
+}
+
+@media (max-width: 768px) {
+    .img-zoom-lens {
+        display: none !important;
+    }
+}

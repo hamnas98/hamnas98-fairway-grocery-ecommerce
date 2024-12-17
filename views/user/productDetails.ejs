@@ -20,7 +20,6 @@
 		<link href="/user/css/responsive.css" rel="stylesheet">
 		<link href="/user/css/night-mode.css" rel="stylesheet">
 		<link  href="/user/css/signupmodals.css"  rel="stylesheet">
-		
 		<!-- Vendor Stylesheets -->
 		<link href="/user/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
 		<link href="/user/vendor/OwlCarousel/assets/owl.carousel.css" rel="stylesheet">
@@ -28,7 +27,7 @@
 		<link href="/user/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 		<link href="/user/vendor/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">
 		<link href="/user/css/customstyle.css" rel="stylesheet">
-		
+
 	</head>
 	<%- include('../partials/user/header', { parentCategories: parentCategories }) %>
 	<div class="wrapper">
@@ -66,21 +65,29 @@
 						<div class="product-dt-view">
 							<div class="row">
 								<div class="col-lg-6 col-md-4">
-									<div id="sync1" class="owl-carousel owl-theme">
-										<% product.images.forEach(image => { %>
-											<div class="item">
-												<img src="<%= image %>" alt="<%= product.name %>">
-											</div>
-										<% }); %>
-									</div>
-									<div id="sync2" class="owl-carousel owl-theme">
-										<% product.images.forEach(image => { %>
-											<div class="item">
-												<img src="<%= image %>" alt="<%= product.name %>">
-											</div>
-										<% }); %>
+									<div class="product-zoom-container">
+										<div id="sync1" class="owl-carousel owl-theme">
+											<% product.images.forEach(image => { %>
+												<div class="item">
+													<div class="img-zoom-container">
+														<img src="<%= image %>" alt="<%= product.name %>" class="zoom-img">
+														<div class="img-zoom-lens"></div>
+													</div>
+												</div>
+											<% }); %>
+										</div>
+										
+										<div id="sync2" class="owl-carousel owl-theme">
+											<% product.images.forEach(image => { %>
+												<div class="item">
+													<img src="<%= image %>" alt="<%= product.name %>">
+												</div>
+											<% }); %>
+										</div>
 									</div>
 								</div>
+								
+
 								<div class="col-lg-6 col-md-8">
 									<div class="product-dt-right">
 										<h2><%= product.name %></h2>
@@ -104,23 +111,21 @@
 											</div>
 										</div>
 										
-										<div class="product-group-dt">
-											<ul class="price-list">
-												<% if (product.discountPrice) { %>
-													<li>
-														<div class="main-price">
-															<span class="discount-price">₹<%= product.discountPrice %></span>
-															<span class="original-price">₹<%= product.price %></span>
-														</div>
-													</li>
-												<% } else { %>
-													<li>
-														<div class="main-price">
-															<span class="regular-price">₹<%= product.price %></span>
-														</div>
-													</li>
-												<% } %>
-											</ul>
+										 <!-- Price and Discount Section -->
+										 <div class="product-price-discount">
+											<% if (product.discountPercentage > 0) { %>
+												<div class="original-price">₹<%= product.price %></div>
+												<div class="discounted-price">₹<%= product.discountPrice %></div>
+												<div class="discount-badge">
+													<%= product.discountPercentage %>% OFF
+												</div>
+												<div class="savings">
+													You Save: ₹<%= (product.price - product.discountPrice).toFixed(2) %>
+												</div>
+											<% } else { %>
+												<div class="current-price">₹<%= product.price %></div>
+											<% } %>
+										</div>
 											
 											<% if (!product.outOfStock && product.stock > 0) { %>
 												<ul class="ordr-crt-share">
@@ -277,45 +282,7 @@
 			</div>
 		<% } %>
 		
-		<!-- Initialize the carousel for related products -->
-		<script>
-		$(document).ready(function() {
-			$('.featured-slider').owlCarousel({
-				loop: true,
-				margin: 15,
-				nav: true,
-				dots: false,
-				autoplay: true,
-				autoplayTimeout: 4000,
-				autoplayHoverPause: true,
-				navText: [
-					"<i class='uil uil-angle-left'></i>",
-					"<i class='uil uil-angle-right'></i>"
-				],
-				responsive: {
-					0: {
-						items: 2
-					},
-					576: {
-						items: 3
-					},
-					768: {
-						items: 4
-					},
-					992: {
-						items: 5
-					},
-					1200: {
-						items: 5
-					}
-				}
-			});
-		});
-		</script>
 	</div>
-
-	
-
 	<!-- Javascripts -->
 	<script src="/user/js/jquery.min.js"></script>
 	<script src="/user/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -327,6 +294,106 @@
 	<script src="/user/js/offset_overlay.js"></script>
 	<script src="/user/js/night-mode.js"></script>
 	<script src="/user/js/signupmodals.js"></script>
+	
+		<!-- Initialize the carousel for related products -->
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				const zoomContainers = document.querySelectorAll('.img-zoom-container');
+				
+				zoomContainers.forEach(container => {
+					const img = container.querySelector('.zoom-img');
+					const lens = container.querySelector('.img-zoom-lens');
+					let isImageLoaded = false;
+					
+					// Handle image load
+					function handleImageLoad() {
+						isImageLoaded = true;
+						console.log('Image loaded successfully');
+					}
+			
+					if (img.complete) {
+						handleImageLoad();
+					} else {
+						img.addEventListener('load', handleImageLoad);
+					}
+			
+					// Mouse events
+					container.addEventListener('mouseenter', function(e) {
+						if (!isImageLoaded) return;
+						lens.style.display = 'block';
+						updateZoom(e);
+					});
+			
+					container.addEventListener('mouseleave', function() {
+						lens.style.display = 'none';
+					});
+			
+					container.addEventListener('mousemove', updateZoom);
+			
+					function updateZoom(e) {
+						if (!isImageLoaded) return;
+			
+						const rect = container.getBoundingClientRect();
+						const x = e.clientX - rect.left;
+						const y = e.clientY - rect.top;
+			
+						// Calculate lens position
+						const lensWidth = lens.offsetWidth;
+						const lensHeight = lens.offsetHeight;
+						let lensLeft = x - lensWidth / 2;
+						let lensTop = y - lensHeight / 2;
+			
+						// Boundary checking
+						const maxX = container.offsetWidth - lensWidth;
+						const maxY = container.offsetHeight - lensHeight;
+						lensLeft = Math.min(Math.max(0, lensLeft), maxX);
+						lensTop = Math.min(Math.max(0, lensTop), maxY);
+			
+						// Position the lens
+						lens.style.left = `${lensLeft}px`;
+						lens.style.top = `${lensTop}px`;
+			
+						// Calculate zoom
+						const zoomFactor = 2; // Adjust this value to change zoom level
+						const bgX = (lensLeft * zoomFactor * -1);
+						const bgY = (lensTop * zoomFactor * -1);
+			
+						// Update lens background
+						lens.style.backgroundImage = `url(${img.src})`;
+						lens.style.backgroundSize = `${container.offsetWidth * zoomFactor}px ${container.offsetHeight * zoomFactor}px`;
+						lens.style.backgroundPosition = `${bgX}px ${bgY}px`;
+					}
+				});
+			
+				// Initialize Owl Carousel
+				$('#sync1').owlCarousel({
+					items: 1,
+					slideSpeed: 2000,
+					nav: true,
+					autoplay: false,
+					dots: false,
+					loop: true,
+					responsiveRefreshRate: 200
+				});
+			
+				$('#sync2').owlCarousel({
+					items: 4,
+					dots: false,
+					nav: true,
+					navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
+					margin: 5,
+					responsiveRefreshRate: 100,
+					responsive: {
+						0: {
+							items: 3
+						},
+						768: {
+							items: 4
+						}
+					}
+				});
+			});
+			</script>
 	
 	
 </body>
