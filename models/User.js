@@ -36,6 +36,12 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    blockedAt: {
+         type: Date 
+    },
+    deletedAt: { 
+        type: Date 
+    },
     googleId: { 
         type: String, 
         unique: true ,

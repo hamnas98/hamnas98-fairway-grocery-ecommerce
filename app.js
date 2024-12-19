@@ -62,13 +62,6 @@ app.use((err, req, res, next) => {
     });
 });
 
-// app.use((req, res, next) => {
-//     if (req.session) {
-//         res.locals.user = req.session.user || null;
-//         res.locals.admin = req.session.admin || null;
-//     }
-//     next();
-// });
 app.use(passport.initialize());
 app.use(passport.session());
 

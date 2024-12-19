@@ -1,5 +1,32 @@
 const User = require('../models/User')
 
+const checkUserStatus = async (req, res, next) => {
+    try {
+        if (!req.session.userId) {
+            return next();
+        }
+
+        const user = await User.findById(req.session.userId);
+        
+        if (!user || user.isDeleted || user.isBlocked) {
+            // Clear user session
+            req.session.destroy((err) => {
+                if (err) console.error('Session destruction error:', err);
+            });
+            res.clearCookie('connect.sid');
+            
+            // Redirect with appropriate message
+            const message = user?.isBlocked ? 'Your account has been blocked' : 'Your account no longer exists';
+            return res.redirect(`/login?error=${encodeURIComponent(message)}`);
+        }
+
+        next();
+    } catch (error) {
+        console.error('User status check error:', error);
+        next(error);
+    }
+};
+
 const userAuth = async (req, res, next) => {
     try {
         // Add no-cache headers
@@ -59,4 +86,4 @@ const userAuth = async (req, res, next) => {
     }
 };
 
- module.exports = userAuth
+ module.exports ={ userAuth, checkUserStatus };

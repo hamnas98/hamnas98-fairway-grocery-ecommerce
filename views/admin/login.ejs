@@ -63,53 +63,58 @@
         <script src="/admin/js/scripts.js"></script>	
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
-                                            // Handle form submission using JavaScript (AJAX)
-                                            document.getElementById('loginForm').addEventListener('submit', async function(event) {
-                                                event.preventDefault(); // Prevent default form submission
-                                        
-                                                const email = document.getElementById('inputEmailAddress').value;
-                                                const password = document.getElementById('inputPassword').value;
-                                                const rememberPassword = document.getElementById('rememberPasswordCheck').checked;
-                                        
-                                                try {
-                                                    const response = await fetch('/admin/login', {
-                                                        method: 'POST',
-                                                        headers: {
-                                                            'Content-Type': 'application/json',
-                                                        },
-                                                        body: JSON.stringify({ email, password, rememberPassword }),
-                                                    });
-                                        
-                                                    const data = await response.json();
-                                        
-                                                    if (data.success) {
-                                                        // Display success message and redirect
-                                                        Swal.fire({
-                                                            icon: 'success',
-                                                            title: 'Login Successful',
-                                                            showConfirmButton: false,
-                                                            timer: 1500,
-                                                        }).then(() => {
-                                                            window.location.href = data.redirectUrl || '/admin/dashboard'; 
-                                                        });
-                                                    } else {
-                                                        // Display error message
-                                                        Swal.fire({
-                                                            icon: 'error',
-                                                            title: 'Login Failed',
-                                                            text: data.message,
-                                                        });
-                                                    }
-                                                } catch (error) {
-                                                    console.error('Error:', error);
-                                                    Swal.fire({
-                                                        icon: 'error',
-                                                        title: 'Error',
-                                                        text: 'Something went wrong. Please try again later.',
-                                                    });
-                                                }
-                                            });
-                                        </script>	
+document.getElementById('loginForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const email = document.getElementById('inputEmailAddress').value;
+    const password = document.getElementById('inputPassword').value;
+    const rememberPassword = document.getElementById('rememberPasswordCheck').checked;
+
+    try {
+        const response = await fetch('/admin/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password, rememberPassword }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Login Successful',
+                showConfirmButton: false,
+                timer: 1500,
+            }).then(() => {
+                // Use replace instead of href
+                window.location.replace(data.redirectUrl || '/admin/dashboard');
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Failed',
+                text: data.message,
+            });
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Something went wrong. Please try again later.',
+        });
+    }
+});
+
+// Add this to handle browser back button
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        window.location.reload(true);
+    }
+});
+</script>
 		
     </body>
 </html>

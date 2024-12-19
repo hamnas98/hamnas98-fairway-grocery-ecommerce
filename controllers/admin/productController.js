@@ -7,7 +7,7 @@ const { deleteFile } = require('../../utils/fileHelper');
 const getAllProducts = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
+        const limit = parseInt(req.query.limit) || 2;
         const searchQuery = req.query.search || '';
         const categoryId = req.query.category || '';
         const listed = req.query.listed || '';
@@ -133,6 +133,13 @@ const addProduct = async (req, res) => {
             return res.json({
                 success: false,
                 message: 'Please fill all required fields'
+            });
+        }
+         // Validate price
+         if (price<=0) {
+            return res.json({
+                success: false,
+                message: 'Please enter valid price'
             });
         }
 

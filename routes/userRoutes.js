@@ -7,8 +7,9 @@ const { getHome ,signup, resendOTP, verifySignupOTP, login , verifyLoginOTP,
 const { getCategoryProducts } = require('../controllers/user/categoryController');
 const { getProductDetails, getNewProducts, getBestvalueProducts } = require('../controllers/user/productController');
 
-const userAuth = require('../middleware/userAuth');
+const { userAuth,checkUserStatus }= require('../middleware/userAuth');
 
+router.use(checkUserStatus);
 
 //user routes
 router.get('/', getHome);

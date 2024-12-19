@@ -7,14 +7,28 @@
 <script src="/admin/js/scripts.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
 <script>
-// Logout functionality
-document.getElementById('logoutBtn').addEventListener('click', async function(e) {
+// Disable browser back button functionality
+window.history.pushState(null, null, window.location.href);
+window.addEventListener('popstate', function() {
+    window.history.pushState(null, null, window.location.href);
+});
+
+// Single event listener for logout
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', handleAdminLogout);
+    }
+});
+
+async function handleAdminLogout(e) {
     e.preventDefault();
     
     try {
         const response = await fetch('/admin/logout', {
-            method: 'GET',
+            method: 'POST', // Changed to POST for better security
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -29,7 +43,11 @@ document.getElementById('logoutBtn').addEventListener('click', async function(e)
                 showConfirmButton: false,
                 timer: 1500
             }).then(() => {
-                window.location.href = data.redirectUrl;
+                // Clear any cached pages
+                window.location.replace(data.redirectUrl);
+                
+                // Prevent going back to protected pages
+                window.history.pushState(null, null, data.redirectUrl);
             });
         } else {
             Swal.fire({
@@ -46,4 +64,17 @@ document.getElementById('logoutBtn').addEventListener('click', async function(e)
             text: 'Something went wrong. Please try again.'
         });
     }
+}
+
+// Prevent back button after logout and handle page reloads
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        window.location.reload(true); // Force reload from server
+    }
 });
+
+// Additional security for protected pages
+if (window.performance && window.performance.navigation.type === 2) {
+    window.location.reload(true);
+}
+</script>

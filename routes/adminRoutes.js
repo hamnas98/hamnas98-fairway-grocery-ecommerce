@@ -10,10 +10,12 @@ const { getAllProducts, getAddProduct, getParentCategory, addProduct, getEditPro
         updateProduct, listingProduct, deleteProduct, getProductDetails  } = require('../controllers/admin/productController');
 const { getUsers,toggleUserBlock,deleteUser } = require('../controllers/admin/userController')
 
+
+// router.use(adminAuth);
 // admin routes
 router.get('/login', getLoginPage);
 router.post('/login', login);
-router.get('/logout', adminAuth, logout);
+router.post('/logout', adminAuth, logout);
 router.get('/dashboard', getDashboard);
 
 // Category routes

@@ -241,6 +241,16 @@ document.getElementById('discountPrice').addEventListener('input', function() {
         });
         return;
     }
+    
+    if (price<=0){
+        this.value='';
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please enter valid MRP'
+        });
+        return
+    }
 
     if (discountPrice >= price) {
         this.value = '';
@@ -270,6 +280,15 @@ document.getElementById('discountPercentage').addEventListener('input', function
             icon: 'error',
             title: 'Error',
             text: 'Please enter MRP price first'
+        });
+        return;
+    }
+    if (price <=0) {
+        this.value = '';
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please enter Valid MRP price first'
         });
         return;
     }

@@ -227,6 +227,12 @@ const login = async (req, res) => {
                 message: 'Invalid credentials'
             });
         }
+        if(!user.password){
+            return res.json({
+                success: false,
+                message: 'Please Login with Google'
+            });
+        }
         console.log(user)
 
         if (user.isBlocked) {
