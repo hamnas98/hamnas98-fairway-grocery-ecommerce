@@ -231,16 +231,29 @@ const getEditProduct = async (req, res) => {
         }
 
         // Get categories for dropdown
-        const categories = await Category.find({ isDeleted: false })
-                                      .populate('parent')
-                                      .sort('name');
+        const categories = await Category.find({ 
+            isDeleted: false,
+            listed: true
+        }).populate('parent').sort('name');
 
-        // Create category hierarchy
+        // Create category hierarchy with sorted subcategories
         const categoryStructure = categories.reduce((acc, cat) => {
             if (!cat.parent) {
-                acc[cat._id] = { parent: cat, categories: [] };
-            } else if (acc[cat.parent._id]) {
-                acc[cat.parent._id].categories.push(cat);
+                // Initialize parent category if not exists
+                if (!acc[cat._id]) {
+                    acc[cat._id] = { parent: cat, categories: [] };
+                } else {
+                    acc[cat._id].parent = cat;
+                }
+            } else {
+                // Add to parent's categories array
+                if (!acc[cat.parent._id]) {
+                    acc[cat.parent._id] = { parent: cat.parent, categories: [cat] };
+                } else {
+                    acc[cat.parent._id].categories.push(cat);
+                }
+                // Sort subcategories by name
+                acc[cat.parent._id].categories.sort((a, b) => a.name.localeCompare(b.name));
             }
             return acc;
         }, {});
@@ -248,7 +261,7 @@ const getEditProduct = async (req, res) => {
         res.render('editProduct', {
             product,
             categoryStructure,
-            admin: req.session.admin,  // Add this line
+            admin: req.session.admin,
             path: '/admin/products/edit'
         });
     } catch (error) {

@@ -59,8 +59,8 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="form-label">Parent Category*</label>
-                                                    <select id="parentCategory" class="form-control" required>
-                                                        <option value="" disabled>-- Select Parent Category --</option>
+                                                    <select id="parentCategory" name="parentCategory" class="form-control" required>
+                                                        <option value="">-- Select Parent Category --</option>
                                                         <% Object.values(categoryStructure).forEach(({ parent }) => { %>
                                                             <option value="<%= parent._id %>" 
                                                                 <%= product.category.parent && 
@@ -74,16 +74,19 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="form-label">Category*</label>
-                                                    <select id="category" class="form-control" required>
-                                                        <option value="" disabled>-- Select Category --</option>
-                                                        <% if (product.category.parent) { %>
-                                                            <% categoryStructure[product.category.parent._id].categories.forEach(cat => { %>
-                                                                <option value="<%= cat._id %>" 
-                                                                    <%= cat._id.toString() === product.category._id.toString() ? 'selected' : '' %>>
-                                                                    <%= cat.name %>
-                                                                </option>
-                                                            <% }) %>
-                                                        <% } %>
+                                                    <select id="category" name="category" class="form-control" required>
+                                                        <option value="">-- Select Category --</option>
+                                                        <% if (product.category.parent) { 
+                                                            const parentId = product.category.parent._id;
+                                                            if (categoryStructure[parentId]) {
+                                                                categoryStructure[parentId].categories.forEach(cat => { %>
+                                                                    <option value="<%= cat._id %>" 
+                                                                        <%= cat._id.toString() === product.category._id.toString() ? 'selected' : '' %>>
+                                                                        <%= cat.name %>
+                                                                    </option>
+                                                                <% });
+                                                            }
+                                                        } %>
                                                     </select>
                                                 </div>
                                             </div>
@@ -427,34 +430,58 @@ if (discountType === 'price') {
 
 
 
-// Handle category dropdown
-document.getElementById('parentCategory').addEventListener('change', async function() {
+document.addEventListener('DOMContentLoaded', function() {
+    const parentCategorySelect = document.getElementById('parentCategory');
     const categorySelect = document.getElementById('category');
-    const parentId = this.value;
     
-    categorySelect.innerHTML = '<option value="" disabled selected>-- Select Category --</option>';
-    categorySelect.disabled = true;
-    
-    if (!parentId) return;
+    async function loadCategories(parentId) {
+        try {
+            categorySelect.innerHTML = '<option value="">-- Select Category --</option>';
+            categorySelect.disabled = true;
+            
+            if (!parentId) return;
 
-    try {
-        const response = await fetch(`/admin/categories/${parentId}/subcategories`);
-        const data = await response.json();
+            const response = await fetch(`/admin/categories/${parentId}/subcategories`);
+            const data = await response.json();
 
-        if (data.success) {
-            data.categories.forEach(category => {
-                categorySelect.innerHTML += `
-                    <option value="${category._id}">${category.name}</option>
-                `;
+            if (data.success && data.categories.length > 0) {
+                data.categories.forEach(category => {
+                    const option = new Option(category.name, category._id);
+                    categorySelect.add(option);
+                });
+                categorySelect.disabled = false;
+            } else {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'No Categories',
+                    text: 'No subcategories found for this parent category'
+                });
+            }
+        } catch (error) {
+            console.error('Error loading categories:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load categories'
             });
-            categorySelect.disabled = false;
         }
-    } catch (error) {
-        console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to load categories'
+    }
+
+    parentCategorySelect.addEventListener('change', function() {
+        loadCategories(this.value);
+    });
+
+    // If parent category is already selected, load its subcategories
+    if (parentCategorySelect.value) {
+        // Get the currently selected category value
+        const currentCategoryValue = categorySelect.value;
+        
+        // Load subcategories
+        loadCategories(parentCategorySelect.value).then(() => {
+            // Restore the selected category if it exists
+            if (currentCategoryValue) {
+                categorySelect.value = currentCategoryValue;
+            }
         });
     }
 });
