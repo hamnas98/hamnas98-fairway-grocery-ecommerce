@@ -7,14 +7,14 @@ const Product = require('../../models/Product');
 
 const getHome = async (req, res) => {
     try {
-        // Get parent categories
+
         const parentCategories = await Category.find({ 
             parent: null,
             isDeleted: false,
             listed: true 
         }).select('name image');
 
-        // Find the Fruits & Vegetables parent category
+        
         const fruitsVegCategory = await Category.findOne({ 
             name: "Fruits & Vegetables",
             parent: null,
