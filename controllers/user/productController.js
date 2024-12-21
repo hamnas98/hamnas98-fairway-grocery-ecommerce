@@ -39,7 +39,8 @@ const getProductDetails = async (req, res) => {
             product,
             relatedProducts,
             parentCategories,
-            pageTitle: product.name
+            pageTitle: product.name,
+            user: req.session.user || null
         });
 
     } catch (error) {
@@ -95,7 +96,8 @@ const getNewProducts = async (req, res) => {
                 previousPage: hasPreviousPage ? page - 1 : null,
                 limit: limit,
                 totalProducts: totalProducts
-            }
+            },
+            user: req.session.user || null
         });
 
     } catch (error) {
@@ -152,7 +154,8 @@ const getBestvalueProducts = async (req, res) => {
                 previousPage: hasPreviousPage ? page - 1 : null,
                 limit: limit,
                 totalProducts: totalProducts
-            }
+            },
+            user: req.session.user || null
         });
 
     } catch (error) {

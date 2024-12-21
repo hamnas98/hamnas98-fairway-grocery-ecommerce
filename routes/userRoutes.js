@@ -3,13 +3,14 @@ const router = express.Router();
 
 const passport = require('passport');
 const { getHome ,signup, resendOTP, verifySignupOTP, login , verifyLoginOTP,
-        logout, forgotPasswordSubmit, verifyForgotPasswordOTP, resetPassword } = require('../controllers/user/userController');
+        logout, forgotPasswordSubmit, verifyForgotPasswordOTP, resetPassword, googleCallback } = require('../controllers/user/userController');
 const { getCategoryProducts } = require('../controllers/user/categoryController');
 const { getProductDetails, getNewProducts, getBestvalueProducts } = require('../controllers/user/productController');
+const { getDashboard } = require('../controllers/user/dashboardConroller');
 
-const { userAuth,checkUserStatus }= require('../middleware/userAuth');
+const { userAuth }= require('../middleware/userAuth');
 
-router.use(checkUserStatus);
+
 
 //user routes
 router.get('/', getHome);
@@ -36,16 +37,9 @@ router.get('/auth/google/callback',
         failureRedirect: '/login',
         failureFlash: true
     }),
-    (req, res) => {
-
-        req.session.user = {
-            id: req.user._id,
-            name: req.user.name
-        }
-        // Successful authentication
-        res.redirect('/');
-    }
+    googleCallback
 );
+
 
 //user product & category routes
 router.get('/category/:id', getCategoryProducts);
@@ -55,7 +49,7 @@ router.get('/products/best-value-products', getBestvalueProducts)
 
 //user dashbord 
 
-
+router.get('/dashboard',userAuth, getDashboard)
 
 
 

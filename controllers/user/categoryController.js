@@ -102,7 +102,8 @@ const getCategoryProducts = async (req, res) => {
                 previousPage: hasPreviousPage ? page - 1 : null,
                 limit: limit,
                 totalProducts: totalProducts
-            }
+            },
+            user: req.session.user || null
         });
 
     } catch (error) {

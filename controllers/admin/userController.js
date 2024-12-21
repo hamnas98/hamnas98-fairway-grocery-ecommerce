@@ -83,7 +83,8 @@ const toggleUserBlock = async (req, res) => {
 
                 if (sessions) {
                     Object.keys(sessions).forEach((sid) => {
-                        if (sessions[sid].userId === userId) {
+                        const session = sessions[sid];
+                        if (session.user && session.user.id === userId) {
                             req.sessionStore.destroy(sid, (err) => {
                                 if (err) console.error('Session destruction error:', err);
                             });
@@ -107,6 +108,7 @@ const toggleUserBlock = async (req, res) => {
         });
     }
 };
+
 
 const deleteUser = async (req, res) => {
     try {

@@ -421,8 +421,44 @@ const resetPassword = async (req, res) => {
     }
 };
 
+const googleCallback = async (req, res) => {
+    try {
+        // Check if user is blocked or deleted
+        const user = await User.findById(req.user._id);
+        
+        if (!user) {
+            req.flash('error', 'User not found');
+            return res.redirect('/');
+        }
+
+        if (user.isBlocked) {
+            req.flash('error', 'Your account has been blocked. Please contact support');
+            return res.redirect('/');
+        }
+
+        if (user.isDeleted) {
+            req.flash('error', 'Account not found. Please create a new account');
+            return res.redirect('/');
+        }
+
+        // If user is not blocked, set session
+        req.session.user = {
+            id: user._id,
+            name: user.name
+        };
+
+        // Successful authentication
+        res.redirect('/');
+        
+    } catch (error) {
+        console.error('Google auth callback error:', error);
+        req.flash('error', 'Authentication failed');
+        res.redirect('/');
+    }
+};
+
 
 
 
 module.exports = { getHome ,signup, resendOTP , verifySignupOTP, login ,
-                   verifyLoginOTP, logout, forgotPasswordSubmit, verifyForgotPasswordOTP, resetPassword };
+                   verifyLoginOTP, logout, forgotPasswordSubmit, verifyForgotPasswordOTP, resetPassword, googleCallback };
