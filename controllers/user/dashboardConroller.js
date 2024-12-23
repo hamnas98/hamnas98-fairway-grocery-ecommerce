@@ -1,6 +1,8 @@
+const passport = require('passport');
 const Category = require('../../models/Category');
 const Product = require('../../models/Product');
 const User = require('../../models/User');
+const bcrypt = require('bcrypt');
 
 const getDashboard = async (req, res) => {
     try {
@@ -18,7 +20,8 @@ const getDashboard = async (req, res) => {
             id: user._id,
             name: user.name,
             email: user.email,
-            phone:user.phone
+            phone:user.phone,
+            password:user.password
         };
         res.render('userDashboard', {
             parentCategories,
@@ -66,7 +69,7 @@ const updateProfile = async (req, res) => {
 
             // Check if email already exists
             if (phone !== user.phone) {
-                const emailExists = await User.findOne({ 
+                const phoneExists = await User.findOne({ 
                     phone, 
                     _id: { $ne: userId } 
                 });
@@ -91,7 +94,7 @@ const updateProfile = async (req, res) => {
             id: user._id,
             name: user.name,
             email: user.email,
-            phone:user.phone
+            phone:user.phone,
         };
 
         res.json({
@@ -108,6 +111,53 @@ const updateProfile = async (req, res) => {
     }
 };
 
+const resetDashPassword = async (req, res) => {
+    try {
+        const {newPassword, confirmPassword } = req.body;
 
+        // Validate passwords match
+        if (newPassword !== confirmPassword) {
+            return res.json({
+                success: false,
+                message: 'Passwords do not match'
+            });
+        }
 
-module.exports = { getDashboard, updateProfile }
+        // Find user
+        const user = await User.findById(req.session.user.id);
+        if (!user) {
+            return res.json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+        const currentPassword = req.session.user.password
+        // Verify current password
+        const isMatch = await bcrypt.compare(newPassword, user.password);
+        if (isMatch) {
+            return res.json({
+                success: false,
+                message: 'Current password is not be same with previous One'
+            });
+        }
+        console.log(newPassword,user.password ,'np,up')
+
+        // Update password
+        user.password = newPassword;
+        await user.save();
+
+        res.json({
+            success: true,
+            message: 'Password reset successfully'
+        });
+
+    } catch (error) {
+        console.error('Reset password error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to reset password'
+        });
+    }
+};
+
+module.exports = { getDashboard, updateProfile, resetDashPassword }
