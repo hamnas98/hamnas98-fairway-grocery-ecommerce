@@ -1,0 +1,48 @@
+.btn-edit-profile {
+    background: #2b2f4c;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-top: 10px;
+    transition: all 0.3s;
+}
+
+.btn-edit-profile:hover {
+    background: #1a1c2e;
+}
+
+.btn-edit-profile i {
+    margin-right: 5px;
+}
+
+.modal-content {
+    border: none;
+    border-radius: 10px;
+}
+
+.modal-header {
+    background: #f8f9fa;
+    border-radius: 10px 10px 0 0;
+}
+
+.modal-title {
+    color: #2b2f4c;
+    font-weight: 600;
+}
+
+.form-control {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.form-control:focus {
+    border-color: #2b2f4c;
+    box-shadow: none;
+}
+
+.form-control:disabled {
+    background: #f8f9fa;
+}

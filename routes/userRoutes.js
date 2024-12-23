@@ -6,7 +6,7 @@ const { getHome ,signup, resendOTP, verifySignupOTP, login , verifyLoginOTP,
         logout, forgotPasswordSubmit, verifyForgotPasswordOTP, resetPassword, googleCallback } = require('../controllers/user/userController');
 const { getCategoryProducts } = require('../controllers/user/categoryController');
 const { getProductDetails, getNewProducts, getBestvalueProducts } = require('../controllers/user/productController');
-const { getDashboard } = require('../controllers/user/dashboardConroller');
+const { getDashboard, updateProfile } = require('../controllers/user/dashboardConroller');
 
 const { userAuth }= require('../middleware/userAuth');
 
@@ -34,7 +34,7 @@ router.get('/auth/google',
 
 router.get('/auth/google/callback',
     passport.authenticate('google', { 
-        failureRedirect: '/login',
+        failureRedirect: '/',
         failureFlash: true
     }),
     googleCallback
@@ -48,8 +48,8 @@ router.get('/products/new', getNewProducts)
 router.get('/products/best-value-products', getBestvalueProducts)
 
 //user dashbord 
-
-router.get('/dashboard',userAuth, getDashboard)
+router.get('/dashboard',userAuth, getDashboard);
+router.post('/update-profile',userAuth , updateProfile);
 
 
 

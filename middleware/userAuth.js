@@ -4,19 +4,31 @@ const User = require('../models/User')
 
 const userAuth = async (req, res, next) => {
     try {
-        // Add no-cache headers
+          // Add no-cache headers
         res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
         res.set('Pragma', 'no-cache');
         res.set('Expires', '0');
 
-        if (!req.session.user) {
+        if (!req.session.user || !req.session.user.id) {
+            if (req.xhr) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Please login to continue'
+                });
+            }
             req.flash('error', 'Please login to continue');
             return res.redirect('/login');
         }
-
+        console.log('auth',req.session.user ,req.session.user.id)
         const user = await User.findById(req.session.user.id);
 
         if (!user) {
+            if (req.xhr) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'User not found'
+                });
+            }
             req.flash('error', 'User not found. Please login again');
             req.session.destroy((err) => {
                 if (err) console.error('Session destroy error:', err);
@@ -48,16 +60,11 @@ const userAuth = async (req, res, next) => {
             return res.redirect('/verify-email');
         }
 
-        // Prevent accessing auth pages after login
-        if (req.path.match(/\/(login|signup|forgot-password)/)) {
-            return res.redirect('/');
-        }
-
         next();
     } catch (error) {
         console.error('Auth Middleware Error:', error);
         req.flash('error', 'Something went wrong. Please try again');
-        res.redirect('/login');
+        res.redirect('/');
     }
 };
 

@@ -46,9 +46,9 @@ const getHome = async (req, res) => {
           const bestvalueProducts = await Product.find({
             isDeleted: false,
             listed: true,
-            discountPercentage: { $gt: 0 }  // Only get products with discount
+            discountPercentage: { $gt: 0 }  
         })
-        .sort({ discountPercentage: -1 })  // Sort by highest discount first
+        .sort({ discountPercentage: -1 })  
         .limit(10);
 
         // Get new products
@@ -84,7 +84,7 @@ const getHome = async (req, res) => {
 const signup = async (req, res) => {
     try {
         const { name, email, phone, password } = req.body;
-        console.log(phone)
+        // console.log(phone)
 
         // Check if user exists
         const existingUser = await User.findOne({
@@ -109,8 +109,8 @@ const signup = async (req, res) => {
             expiresAt: Date.now() + 10 * 60 * 1000 // 10 minutes
         };
         const emailSent = await sendOTP(email,otp);
-        console.log('Signup OTP:', otp);
-        console.log(req.session.userData)
+        // console.log('Signup OTP:', otp);
+        // console.log(req.session.userData)
 
         res.json({
             success: true,
@@ -168,8 +168,8 @@ const resendOTP = async (req, res) => {
 const verifySignupOTP = async (req, res) => {
     try {
         const { otp } = req.body;
-        const userData = req.session.userData;
-        console.log(otp,userData.otp)
+        // const userData = req.session.userData;
+        // console.log(otp,userData.otp)
 
         if (!userData || userData.expiresAt < Date.now()) {
             return res.json({
@@ -217,10 +217,10 @@ const verifySignupOTP = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log(email,password)
+        // console.log(email,password)
 
         const user = await User.findOne({ email });
-        console.log(user)
+        console.log(user,'LS')
         if (!user) {
             return res.json({
                 success: false,
@@ -260,7 +260,7 @@ const login = async (req, res) => {
         };
 
         const emailSent = await sendOTP(email,otp);
-        console.log(req.session.userData)
+        // console.log(req.session.userData)
         console.log('Login OTP:', otp);
 
         res.json({
@@ -331,7 +331,7 @@ const forgotPasswordSubmit = async (req, res) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email });
-        console.log(user ,'fu')
+        // console.log(user ,'fp')
 
         if (!user ) {
             return res.json({ 
@@ -373,7 +373,7 @@ const verifyForgotPasswordOTP = async (req, res) => {
     try {
         const { otp } = req.body;
         const storedData = req.session.userData;
-        console.log(otp,storedData)
+        // console.log(otp,storedData)
 
         if (!storedData.otp || storedData.otp.expiresAt < Date.now()) {
             return res.json({ 
@@ -425,6 +425,7 @@ const googleCallback = async (req, res) => {
     try {
         // Check if user is blocked or deleted
         const user = await User.findById(req.user._id);
+        // console.log(user)
         
         if (!user) {
             req.flash('error', 'User not found');
@@ -446,6 +447,8 @@ const googleCallback = async (req, res) => {
             id: user._id,
             name: user.name
         };
+
+        console.log(req.session.user,'gs')
 
         // Successful authentication
         res.redirect('/');
