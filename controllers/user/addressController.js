@@ -216,4 +216,41 @@ const deleteAddress = async (req, res) => {
     }
 };
 
-module.exports = {getAllAddresses, addAddress, getAddress, updateAddress, deleteAddress };
+const setDefaultAddress = async (req, res) => {
+    try {
+        await Address.updateMany(
+            { user: req.session.user.id },
+            { $set: { isDefault: false } }
+        );
+
+        const address = await Address.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                user: req.session.user.id,
+                isDeleted: false
+            },
+            { isDefault: true },
+            { new: true }
+        );
+
+        if (!address) {
+            return res.status(404).json({
+                success: false,
+                message: 'Address not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Default address updated successfully'
+        });
+    } catch (error) {
+        console.error('Set default address error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to set default address'
+        });
+    }
+};
+
+module.exports = {getAllAddresses, addAddress, getAddress, updateAddress, deleteAddress, setDefaultAddress };

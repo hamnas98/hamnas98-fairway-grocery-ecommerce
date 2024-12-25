@@ -756,6 +756,36 @@ async function deleteAddress(addressId) {
         });
     }
 }
+async function setDefaultAddress(addressId) {
+    try {
+        const response = await fetch(`/dashboard/address/${addressId}/default`, {
+            method: 'PUT'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Default address updated successfully',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.reload();
+            });
+        } else {
+            throw new Error(data.message || 'Failed to set default address');
+        }
+    } catch (error) {
+        console.error('Set default address error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message || 'Failed to set default address'
+        });
+    }
+}
 		
 	</script>
 </body>
