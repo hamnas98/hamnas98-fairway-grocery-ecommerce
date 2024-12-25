@@ -171,5 +171,49 @@ const updateAddress = async (req, res) => {
     }
 };
 
+const deleteAddress = async (req, res) => {
+    try {
+        const address = await Address.findOne({
+            _id: req.params.id,
+            user: req.session.user.id,
+            isDeleted: false
+        });
 
-module.exports = {getAllAddresses, addAddress, getAddress, updateAddress };
+        if (!address) {
+            return res.status(404).json({
+                success: false,
+                message: 'Address not found'
+            });
+        }
+
+        address.isDeleted = true;
+        await address.save();
+
+        // If deleted address was default, set another address as default
+        if (address.isDefault) {
+            const newDefaultAddress = await Address.findOne({
+                user: req.session.user.id,
+                isDeleted: false,
+                _id: { $ne: address._id }
+            }).sort({ createdAt: 1 });
+
+            if (newDefaultAddress) {
+                newDefaultAddress.isDefault = true;
+                await newDefaultAddress.save();
+            }
+        }
+
+        res.json({
+            success: true,
+            message: 'Address deleted successfully'
+        });
+    } catch (error) {
+        console.error('Delete address error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to delete address'
+        });
+    }
+};
+
+module.exports = {getAllAddresses, addAddress, getAddress, updateAddress, deleteAddress };
