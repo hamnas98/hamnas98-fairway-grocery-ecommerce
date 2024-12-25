@@ -7,6 +7,7 @@ const { getHome ,signup, resendOTP, verifySignupOTP, login , verifyLoginOTP,
 const { getCategoryProducts } = require('../controllers/user/categoryController');
 const { getProductDetails, getNewProducts, getBestvalueProducts } = require('../controllers/user/productController');
 const { getDashboard, updateProfile, resetDashPassword } = require('../controllers/user/dashboardConroller');
+const { getAllAddresses, addAddress, getAddress, updateAddress } = require('../controllers/user/addressController') 
 
 const { userAuth }= require('../middleware/userAuth');
 
@@ -51,6 +52,12 @@ router.get('/products/best-value-products', getBestvalueProducts)
 router.get('/dashboard',userAuth, getDashboard);
 router.post('/dashboard/update-profile',userAuth , updateProfile);
 router.post('/dashboard/reset-password', userAuth, resetDashPassword);
+//address routes
+router.get('/dashboard/addresses', userAuth, getAllAddresses);
+router.post('/dashboard/address', userAuth, addAddress);
+router.get('/dashboard/address/:id', userAuth, getAddress);
+router.put('/dashboard/address/:id', userAuth, updateAddress);
+
 
 
 

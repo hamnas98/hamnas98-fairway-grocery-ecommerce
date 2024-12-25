@@ -1,0 +1,61 @@
+<div class="wrapper">
+    <div class="gambo-Breadcrumb">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><%= user.name %> Dashboard</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="dashboard-group">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="user-dt">
+                        <div class="user-img">
+                            <img src="/images/avatar/img-5.jpg" alt="">
+                            <div class="img-add">													
+                                <input type="file" id="file">
+                                <label for="file"><i class="uil uil-camera-plus"></i></label>
+                            </div>
+                        </div>
+                        <h4><%= user.name %></h4>
+                        <p><%= user.email%>
+                        <p><%= user.phone ? user.phone : '' %></p> 
+                        <button class="btn btn-edit-profile" onclick="openEditModal()">
+                            <i class="uil uil-edit"></i> Edit Profile
+                        </button>
+                        <% if (user.password ) { %>
+                        <button class="btn btn-secondary" onclick="openResetPasswordModal()">
+                            <i class="uil uil-key-skeleton"></i> Reset Password
+                        </button>
+                        <% } %>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>	
+    <div class="">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-3 col-lg-4 col-md-12">
+                    <div class="left-side-tabs">
+                        <div class="dashboard-left-links">
+                            <a href="/dashboard" class="user-item active"><i class="uil uil-apps"></i>Overview</a>
+                            <a href="dashboard_my_orders.html" class="user-item"><i class="uil uil-box"></i>My Orders</a>
+                            <a href="dashboard_my_cart.html" class="user-item"><i class="uil uil-cart"></i>My Cart</a>
+                            <a href="dashboard_my_wallet.html" class="user-item"><i class="uil uil-wallet"></i>My Wallet</a>
+                            <a href="dashboard_my_wishlist.html" class="user-item"><i class="uil uil-heart"></i>Shopping Wishlist</a>
+                            <a href="/dashboard/addresses"  class="user-item"><i class="uil uil-location-point"></i>My Address</a>
+                            <a href="/logout" class="user-item"><i class="uil uil-exit"></i>Logout</a>
+                        </div>
+                    </div>
+                </div>
