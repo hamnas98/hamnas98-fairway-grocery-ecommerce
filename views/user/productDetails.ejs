@@ -126,25 +126,31 @@
 												<div class="current-price">₹<%= product.price %></div>
 											<% } %>
 										</div>
-											
-											<% if (!product.outOfStock && product.stock > 0) { %>
-												<ul class="ordr-crt-share">
-													<li>
-														<div class="add-to-cart-wrapper">
-															<button class="add-to-cart-btn" onclick="toggleQuantitySelector(this)">
-																<i class="uil uil-shopping-cart-alt"></i> Add to Cart
-															</button>
-															<div class="quantity-selector" style="display: none;">
-																<button class="qty-btn minus"><i class="uil uil-minus"></i></button>
-																<span class="qty-value">1</span>
-																<button class="qty-btn plus"><i class="uil uil-plus"></i></button>
-																<span onclick="addToCart('<%= product._id %>')"></span>
-															</div>
-														</div>
-													</li>
-													<li><span class="like-icon save-icon" title="wishlist"></span></li>
-												</ul>
+										<div class="add-to-cart-wrapper">
+											<% if (product.stock > 0) { %>
+												<div class="cart-controls" data-product-id="<%= product._id %>">
+													<button class="add-to-cart-btn" onclick="toggleQuantitySelector(this, '<%= product._id %>')">
+														<i class="uil uil-shopping-cart-alt"></i> Add to Cart
+													</button>
+													<div class="quantity-selector" style="display: none;">
+														<button class="qty-btn minus" onclick="handleQuantity(this, false, '<%= product._id %>')">
+															<i class="uil uil-minus"></i>
+														</button>
+														<span class="qty-value">1</span>
+														<button class="qty-btn plus" onclick="handleQuantity(this, true, '<%= product._id %>')">
+															<i class="uil uil-plus"></i>
+														</button>
+													</div>
+												</div>
+											<% } else { %>
+												<button class="out-of-stock-btn" disabled>
+													Out of Stock
+												</button>
 											<% } %>
+										</div>
+										<li><span class="like-icon save-icon" title="wishlist"></span></li>	
+					
+
 											<div class="col-lg-6 col-md-12">
 												<div class="pdpt-bg">
 													<div class="pdpt-title">
@@ -257,20 +263,28 @@
 														₹<%= relProduct.price %>
 													<% } %>
 												</div>
-															<% if (product.stock > 0) { %>
-														<div class="add-to-cart-wrapper">
-															<button class="add-to-cart-btn" onclick="toggleQuantitySelector(this)">
+												<div class="add-to-cart-wrapper">
+													<% if (relProduct.stock > 0) { %>
+														<div class="cart-controls" data-product-id="<%= product._id %>">
+															<button class="add-to-cart-btn" onclick="toggleQuantitySelector(this, '<%= relProduct._id %>')">
 																<i class="uil uil-shopping-cart-alt"></i> Add to Cart
 															</button>
 															<div class="quantity-selector" style="display: none;">
-																<button class="qty-btn minus"><i class="uil uil-minus"></i></button>
+																<button class="qty-btn minus" onclick="handleQuantity(this, false, '<%= relProduct._id %>')">
+																	<i class="uil uil-minus"></i>
+																</button>
 																<span class="qty-value">1</span>
-																<button class="qty-btn plus"><i class="uil uil-plus"></i></button>
-																<span  onclick="addToCart('<%= product._id %>')"></span>
+																<button class="qty-btn plus" onclick="handleQuantity(this, true, '<%= relProduct._id %>')">
+																	<i class="uil uil-plus"></i>
+																</button>
 															</div>
 														</div>
-												
+													<% } else { %>
+														<button class="out-of-stock-btn" disabled>
+															Out of Stock
+														</button>
 													<% } %>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -294,6 +308,8 @@
 	<script src="/user/js/offset_overlay.js"></script>
 	<script src="/user/js/night-mode.js"></script>
 	<script src="/user/js/signupmodals.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="/user/js/cart.js"></script>
 	
 		<!-- Initialize the carousel for related products -->
 		<script>

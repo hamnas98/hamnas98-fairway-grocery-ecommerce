@@ -7,7 +7,8 @@ const { getHome ,signup, resendOTP, verifySignupOTP, login , verifyLoginOTP,
 const { getCategoryProducts } = require('../controllers/user/categoryController');
 const { getProductDetails, getNewProducts, getBestvalueProducts } = require('../controllers/user/productController');
 const { getDashboard, updateProfile, resetDashPassword } = require('../controllers/user/dashboardConroller');
-const { getAllAddresses, addAddress, getAddress, updateAddress, deleteAddress, setDefaultAddress } = require('../controllers/user/addressController') 
+const { getAllAddresses, addAddress, getAddress, updateAddress, deleteAddress, setDefaultAddress } = require('../controllers/user/addressController'); 
+const { getCart, addToCart, updateCartQuantity, cartCount, removeFromCart, clearCart  } = require('../controllers/user/cartController');
 
 const { userAuth }= require('../middleware/userAuth');
 
@@ -59,9 +60,13 @@ router.get('/dashboard/address/:id', userAuth, getAddress);
 router.put('/dashboard/address/:id', userAuth, updateAddress);
 router.delete('/dashboard/address/:id', userAuth, deleteAddress);
 router.put('/dashboard/address/:id/default', userAuth, setDefaultAddress);
-
-
-
+// cart routes
+router.get('/dashboard/cart', userAuth, getCart);
+router.post('/cart/add', userAuth, addToCart);
+router.put('/cart/update', userAuth, updateCartQuantity);
+router.delete('/cart/remove/:productId', userAuth, removeFromCart);
+router.delete('/cart/clear', userAuth, clearCart);
+router.get('/cart/count', userAuth, cartCount);
 
 
 

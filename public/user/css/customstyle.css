@@ -687,3 +687,77 @@
     .modal-body ul li {
     margin-bottom: 2px;
     }
+
+    
+    
+    .quantity-selector {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        background: #fff;
+        border: 1px solid #2b2f4c;
+        border-radius: 5px;
+        padding: 5px;
+    }
+    
+    .qty-btn {
+        width: 30px;
+        height: 30px;
+        border: none;
+        background: #f5f5f5;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+    
+    .qty-btn:hover {
+        background: #e0e0e0;
+    }
+    
+    .qty-value {
+        min-width: 30px;
+        text-align: center;
+        font-weight: 500;
+    }
+    
+    .add-confirm-btn {
+        padding: 6px 12px;
+        background: #2b2f4c;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .add-confirm-btn:hover {
+        background: #1a1c2e;
+    }
+    
+    .add-confirm-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+    
+    .out-of-stock-btn {
+        width: 100%;
+        padding: 10px;
+        background: #f5f5f5;
+        color: #999;
+        border: none;
+        border-radius: 5px;
+        cursor: not-allowed;
+    }
+    
+    /* Animation for spinner */
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .uil-spinner-alt {
+        animation: spin 1s linear infinite;
+    }

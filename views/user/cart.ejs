@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, shrink-to-fit=9">
+		<meta name="description" content="Gambolthemes">
+		<meta name="author" content="Gambolthemes">		
+		<title>Fairway Supermarket</title>
+		
+		<!-- Favicon Icon -->
+		<link rel="icon" type="image/png" href="images/fav.png">
+		
+		<!-- Stylesheets -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<link  href="/user/css/cart.css"  rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		<link href='/user/vendor/unicons-2.0.1/css/unicons.css' rel='stylesheet'>
+		<link href="/user/css/style.css" rel="stylesheet">
+		<link href="/user/css/responsive.css" rel="stylesheet">
+		<link href="/user/css/night-mode.css" rel="stylesheet">
+		<link href="/user/css/customstyle.css" rel="stylesheet">
+		<link  href="/user/css/signupmodals.css"  rel="stylesheet">
+        <link  href="/user/css/editProfileModal.css"  rel="stylesheet">
+		
+		<!-- Vendor Stylesheets -->
+		<link href="/user/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+		<link href="/user/vendor/OwlCarousel/assets/owl.carousel.css" rel="stylesheet">
+		<link href="/user/vendor/OwlCarousel/assets/owl.theme.default.min.css" rel="stylesheet">
+		<link href="/user/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/user/vendor/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">	
+        
+		
+		
+	</head>
+
+
+	<body>
+		
+	<!-- Add Address Model End-->
+		<%- include('../partials/user/header', { parentCategories: parentCategories }) %>
+		
+
+		
+		<!-- Header End -->
+	
+		<!-- Body Start -->
+        <%- include('../partials/user/dashboardOverview') %>
+        <div class="col-xl-9 col-lg-8 col-md-12">
+            <div class="dashboard-right">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="main-title-tab">
+                            <h4><i class="uil uil-shopping-cart-alt"></i>Shopping Cart</h4>
+                        </div>
+                        <div class="cart-header">
+                  
+                            <% if(cart && cart.items.length > 0) { %>
+                                <span class="item-count"><%= cart.items.length %> items</span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <% if(cart && cart.items.length > 0) { %>
+                        <div class="row">
+                            <!-- Cart Items Section -->
+                            <div class="col-lg-8">
+                                <div class="cart-items-container">
+                                    <% cart.items.forEach(item => { %>
+                                        <div class="cart-item" data-product-id="<%= item.product._id %>">
+                                            <div class="item-image">
+                                                <img src="<%= item.product.images[0] %>" alt="<%= item.product.name %>">
+                                            </div>
+                                            <div class="item-details">
+                                                <div class="item-info">
+                                                    <h3><%= item.product.name %></h3>
+                                                    <p class="item-unit"><%= item.product.quantity + item.product.unit %></p>
+                                                    <% if(item.product.stock < 10) { %>
+                                                        <span class="stock-warning">Only <%= item.product.stock %> left!</span>
+                                                    <% } %>
+                                                </div>
+                                                <div class="item-price">
+                                                    <% if(item.product.discountPrice) { %>
+                                                        <span class="current-price">₹<%= item.product.discountPrice %></span>
+                                                        <span class="original-price">₹<%= item.product.price %></span>
+                                                        <span class="discount">(<%= item.product.discountPercentage %>% off)</span>
+                                                    <% } else { %>
+                                                        <span class="current-price">₹<%= item.product.price %></span>
+                                                    <% } %>
+                                                </div>
+                                                <div class="item-actions">
+                                                    <div class="quantity-controls">
+                                                        <button class="qty-btn minus" onclick="updateQuantity('<%= item.product._id %>', <%= item.quantity - 1 %>)">
+                                                            <i class="uil uil-minus"></i>
+                                                        </button>
+                                                        <span class="qty-value"><%= item.quantity %></span>
+                                                        <button class="qty-btn plus" onclick="updateQuantity('<%= item.product._id %>', <%= item.quantity + 1 %>)">
+                                                            <i class="uil uil-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                    <button class="remove-btn" onclick="removeFromCart('<%= item.product._id %>')">
+                                                        <i class="uil uil-trash-alt"></i> Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }); %>
+                                </div>
+            
+                                <div class="cart-actions">
+                                    <button class="continue-shopping" onclick="window.location.href='/'">
+                                        <i class="uil uil-arrow-left"></i> Continue Shopping
+                                    </button>
+                                    <button class="clear-cart" onclick="clearCart()">
+                                        <i class="uil uil-trash-alt"></i> Clear Cart
+                                    </button>
+                                </div>
+                            </div>
+            
+                            <!-- Cart Summary Section -->
+                            <div class="col-lg-4">
+                                <div class="cart-summary">
+                                    <h2>Order Summary</h2>
+                                    <div class="summary-items">
+                                        <div class="summary-item">
+                                            <span>Subtotal</span>
+                                            <span>₹<%= cart.total.toFixed(2) %></span>
+                                        </div>
+                                        <% if(cart.total - cart.discountTotal > 0) { %>
+                                            <div class="summary-item discount">
+                                                <span>Discount</span>
+                                                <span>-₹<%= (cart.total - cart.discountTotal).toFixed(2) %></span>
+                                            </div>
+                                        <% } %>
+                                        <div class="summary-item">
+                                            <span>Delivery Charges</span>
+                                            <span class="free">FREE</span>
+                                        </div>
+                                        <div class="summary-total">
+                                            <span>Total</span>
+                                            <span>₹<%= cart.discountTotal.toFixed(2) %></span>
+                                        </div>
+                                    </div>
+                                    <button class="checkout-btn" onclick="proceedToCheckout()">
+                                        Proceed to Checkout <i class="uil uil-arrow-right"></i>
+                                    </button>
+                                    <div class="safe-checkout">
+                                        <i class="uil uil-shield-check"></i>
+                                        <span>Safe and Secure Payments</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <!-- Empty Cart -->
+                        <div class="empty-cart">
+                            <div class="empty-cart-content">
+                                <i class="uil uil-shopping-cart"></i>
+                                <h2>Your cart is empty</h2>
+                                <p>Looks like you haven't added anything to your cart yet.</p>
+                                <button class="start-shopping" onclick="window.location.href='/'">
+                                    Start Shopping <i class="uil uil-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>	
+    </div>	
+</div>	
+
+
+
+
+        
+
+
+     
+        
+        <%- include('../partials/user/resetResetModal') %>
+
+        
+
+
+	<!-- Javascripts -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="/user/js/jquery.min.js"></script>
+	<script src="/user/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/user/vendor/bootstrap-select/js/bootstrap-select.min.js"></script>	
+	<script src="/user/vendor/OwlCarousel/owl.carousel.js"></script>
+	<script src="/user/js/jquery.countdown.min.js"></script>
+	<script src="/user/js/custom.js"></script>
+	<script src="/user/js/offset_overlay.js"></script>
+	<script src="/user/js/night-mode.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="/user/js/editReset.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+	
+
+
+</body>
+</html>
