@@ -62,8 +62,8 @@ router.delete('/dashboard/address/:id', userAuth, deleteAddress);
 router.put('/dashboard/address/:id/default', userAuth, setDefaultAddress);
 // cart routes
 router.get('/dashboard/cart', userAuth, getCart);
-router.post('/cart/add', userAuth, addToCart);
-router.put('/cart/update', userAuth, updateCartQuantity);
+router.post('/cart/add', addToCart);
+router.put('/cart/update', updateCartQuantity);
 router.delete('/cart/remove/:productId', userAuth, removeFromCart);
 router.delete('/cart/clear', userAuth, clearCart);
 router.get('/cart/count', userAuth, cartCount);

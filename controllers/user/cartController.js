@@ -4,8 +4,7 @@ const Category = require('../../models/Category');
 
 const getCart = async (req, res) => {
     try {
-
-         // Get all parent categories for the header
+      // Get all parent categories for the header
          const parentCategories = await Category.find({ 
             parent: null,
             isDeleted: false,
@@ -29,7 +28,7 @@ const getCart = async (req, res) => {
 const addToCart = async (req, res) => {
     try {
         const { productId, quantity } = req.body;
-        console.log(req.body)
+        console.log(req.body,req.session.user,'add')
 
         if(!req.session.user){
                 return res.status(404).json({
@@ -108,17 +107,17 @@ const addToCart = async (req, res) => {
 
 const updateCartQuantity = async (req, res) => {
     try {
-        const { productId, quantity } = req.body;
 
-        // Validate quantity
-        if (quantity < 1) {
-            return res.status(400).json({
+        if(!req.session.user){
+            return res.status(404).json({
                 success: false,
-                message: 'Invalid quantity'
+                message: 'Plaese Login to Add products to Cart'
             });
-        }
-
-        // Find cart
+    }
+        const { productId, quantity } = req.body;
+        console.log('up')
+        
+         // Find cart
         const cart = await Cart.findOne({ user: req.session.user.id });
         if (!cart) {
             return res.status(404).json({

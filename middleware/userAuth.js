@@ -17,7 +17,7 @@ const userAuth = async (req, res, next) => {
                 });
             }
             req.flash('error', 'Please login to continue');
-            return res.redirect('/login');
+            return res.redirect('/');
         }
         console.log('auth',req.session.user ,req.session.user.id)
         const user = await User.findById(req.session.user.id);
@@ -32,7 +32,7 @@ const userAuth = async (req, res, next) => {
             req.flash('error', 'User not found. Please login again');
             req.session.destroy((err) => {
                 if (err) console.error('Session destroy error:', err);
-                res.redirect('/login');
+                res.redirect('/');
             });
             return;
         }
@@ -41,7 +41,7 @@ const userAuth = async (req, res, next) => {
             req.flash('error', 'Your account has been blocked. Please contact support');
             req.session.destroy((err) => {
                 if (err) console.error('Session destroy error:', err);
-                res.redirect('/login');
+                res.redirect('/');
             });
             return;
         }
@@ -50,7 +50,7 @@ const userAuth = async (req, res, next) => {
             req.flash('error', 'Account not found. Please create a new account');
             req.session.destroy((err) => {
                 if (err) console.error('Session destroy error:', err);
-                res.redirect('/signup');
+                res.redirect('/');
             });
             return;
         }

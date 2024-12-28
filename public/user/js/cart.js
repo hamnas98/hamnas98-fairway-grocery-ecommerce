@@ -121,6 +121,9 @@ async function handleQuantity(button, isIncrement, productId) {
 async function updateCartQuantity(productId, newQuantity) {
     if (isProcessing) return;
 
+    // Check maximum quantity limit first
+    
+
     isProcessing = true;
     const currentQty = parseInt(document.querySelector(`.cart-item[data-product-id="${productId}"] .qty-value`).textContent);
 
@@ -148,15 +151,11 @@ async function updateCartQuantity(productId, newQuantity) {
             if (qtyElement) {
                 qtyElement.textContent = newQuantity;
             }
-           
 
             updateCartCount(data.cartCount);
             updateCartSummary(data.cart);
             showCartNotification(newQuantity > currentQty ? 'Quantity increased' : 'Quantity decreased');
-            if (newQuantity > 10) {
-                showCartNotification('Maximum quantity limit reached');
-                return;
-            }
+          
         } else {
             throw new Error(data.message);
         }
