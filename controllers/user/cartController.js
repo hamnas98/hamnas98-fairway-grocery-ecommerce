@@ -238,4 +238,47 @@ const clearCart = async (req, res) => {
         });
     }
 };
-module.exports = { getCart, addToCart, updateCartQuantity, cartCount, removeFromCart, clearCart };
+
+const verifyCart = async (req, res) => {
+    try {
+        const cart = await Cart.findOne({ user: req.session.user.id })
+            .populate('items.product');
+
+        if (!cart || cart.items.length === 0) {
+            return res.json({
+                success: false,
+                message: 'Your cart is empty'
+            });
+        }
+
+        // Check stock availability
+        let unavailableItems = [];
+        for (const item of cart.items) {
+            if (item.quantity > item.product.stock) {
+                unavailableItems.push(item.product.name);
+            }
+        }
+
+        if (unavailableItems.length > 0) {
+            return res.json({
+                success: false,
+                message: unavailableItems.length > 1 
+                    ? `Some items are out of stock: ${unavailableItems.join(', ')}`
+                    : `${unavailableItems[0]} is out of stock`
+            });
+        }
+
+        res.json({
+            success: true
+        });
+
+    } catch (error) {
+        console.error('Verify cart error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to verify cart'
+        });
+    }
+};
+
+module.exports = { getCart, addToCart, updateCartQuantity, cartCount, removeFromCart, clearCart, verifyCart };

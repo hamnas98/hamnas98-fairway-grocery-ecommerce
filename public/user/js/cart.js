@@ -126,6 +126,9 @@ async function updateCartQuantity(productId, newQuantity) {
 
     isProcessing = true;
     const currentQty = parseInt(document.querySelector(`.cart-item[data-product-id="${productId}"] .qty-value`).textContent);
+    if(currentQty>10 ||currentQty>10){
+        showCartNotification('maximum');
+    }
 
     try {
         const response = await fetch('/cart/update', {

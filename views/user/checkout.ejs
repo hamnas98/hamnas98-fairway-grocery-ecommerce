@@ -1,0 +1,226 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, shrink-to-fit=9">
+		<meta name="description" content="Gambolthemes">
+		<meta name="author" content="Gambolthemes">		
+		<title>Fairway Supermarket</title>
+		
+		<!-- Favicon Icon -->
+		<link rel="icon" type="image/png" href="images/fav.png">
+		
+		<!-- Stylesheets -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		<link href='/user/vendor/unicons-2.0.1/css/unicons.css' rel='stylesheet'>
+		<link href="/user/css/style.css" rel="stylesheet">
+		<link href="/user/css/responsive.css" rel="stylesheet">
+		<link href="/user/css/night-mode.css" rel="stylesheet">
+		<link href="/user/css/customstyle.css" rel="stylesheet">
+		<link  href="/user/css/signupmodals.css"  rel="stylesheet">
+		<link href="/user/css/Checkout.css" rel="stylesheet">
+		
+		<!-- Vendor Stylesheets -->
+		<link href="/user/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+		<link href="/user/vendor/OwlCarousel/assets/owl.carousel.css" rel="stylesheet">
+		<link href="/user/vendor/OwlCarousel/assets/owl.theme.default.min.css" rel="stylesheet">
+		<link href="/user/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/user/vendor/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">	
+		
+		
+	</head>
+	
+
+	<body>
+		<!-- Header Start -->
+		<%- include('../partials/user/header', { parentCategories: parentCategories }) %>
+		
+
+		
+		<!-- Header End -->
+	
+		<!-- Body Start -->
+		<div class="wrapper">
+			<div class="gambo-Breadcrumb">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<nav aria-label="breadcrumb">
+								<ol class="breadcrumb">
+									<li class="breadcrumb-item"><a href="/">Home</a></li>
+									<li class="breadcrumb-item"><a href="/cart">Cart</a></li>
+									<li class="breadcrumb-item active" aria-current="page">Checkout</li>
+								</ol>
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+			<div class="all-product-grid">
+				<div class="container">
+					<div class="row">
+						<!-- Left Section - Delivery and Payment -->
+						<div class="col-lg-8 col-md-7">
+							<!-- Delivery Address Section -->
+							<div class="checkout-step mb-4">
+								<div class="step-header">
+									<h4><i class="uil uil-location-point"></i>Delivery Address</h4>
+								</div>
+								<div class="step-body">
+									<!-- Address List -->
+									<% if(addresses && addresses.length > 0) { %>
+										<div class="address-list">
+											<% addresses.forEach(address => { %>
+												<div class="address-item mb-3">
+													<div class="address-card">
+														<input type="radio" 
+															   name="deliveryAddress" 
+															   id="address<%= address._id %>" 
+															   value="<%= address._id %>"
+															   <%= address.isDefault ? 'checked' : '' %>>
+														<label for="address<%= address._id %>">
+															<div class="address-detail">
+																<div class="address-type">
+																	<%= address.addressType %>
+																	<% if(address.isDefault) { %>
+																		<span class="badge bg-success">Default</span>
+																	<% } %>
+																</div>
+																<h5><%= address.name %></h5>
+																<p class="mb-2"><%= address.mobile %></p>
+																<p class="address-text">
+																	<%= address.flat %>, 
+																	<%= address.addressLine %>, 
+																	<%= address.city %>, 
+																	<%= address.state %> - <%= address.pincode %>
+																</p>
+															</div>
+														</label>
+													</div>
+												</div>
+											<% }); %>
+										</div>
+									<% } %>
+									<button class="add-address-btn" onclick="openAddressModal()">
+										<i class="uil uil-plus"></i> Add New Address
+									</button>
+								</div>
+							</div>
+		
+							<!-- Payment Method Section -->
+							<div class="checkout-step">
+								<div class="step-header">
+									<h4><i class="uil uil-money-bill"></i>Payment Method</h4>
+								</div>
+								<div class="step-body">
+									<div class="payment-methods">
+										<div class="payment-method">
+											<input type="radio" name="paymentMethod" id="cod" value="cod" checked>
+											<label for="cod">
+												<i class="uil uil-money-bill"></i>
+												Cash on Delivery
+												<span class="badge bg-success">Available</span>
+											</label>
+										</div>
+										<!-- Add more payment methods here -->
+									</div>
+								</div>
+							</div>
+						</div>
+		
+						<!-- Right Section - Order Summary -->
+						<div class="col-lg-4 col-md-5">
+							<div class="order-summary">
+								<div class="summary-header">
+									<h4>Order Summary</h4>
+									<span><%= cart.items.length %> Items</span>
+								</div>
+								<div class="summary-body">
+									<!-- Items List -->
+									<div class="items-list">
+										<% cart.items.forEach(item => { %>
+											<div class="summary-item">
+												<div class="item-img">
+													<img src="<%= item.product.images[0] %>" alt="<%= item.product.name %>">
+													<span class="item-quantity"><%= item.quantity %></span>
+												</div>
+												<div class="item-details">
+													<h5><%= item.product.name %></h5>
+													<p><%= item.product.quantity + item.product.unit %></p>
+													<div class="item-price">
+														<% if(item.product.discountPrice) { %>
+															<span>₹<%= item.product.discountPrice %></span>
+															<small class="original-price">₹<%= item.product.price %></small>
+														<% } else { %>
+															<span>₹<%= item.product.price %></span>
+														<% } %>
+													</div>
+												</div>
+											</div>
+										<% }); %>
+									</div>
+		
+									<!-- Price Details -->
+									<div class="price-details">
+										<div class="price-item">
+											<span>Subtotal</span>
+											<span>₹<%= cart.total.toFixed(2) %></span>
+										</div>
+										<% if(cart.total - cart.discountTotal > 0) { %>
+											<div class="price-item discount">
+												<span>Discount</span>
+												<span>-₹<%= (cart.total - cart.discountTotal).toFixed(2) %></span>
+											</div>
+										<% } %>
+										<div class="price-item">
+											<span>Delivery Charges</span>
+											<span class="free">FREE</span>
+										</div>
+										<div class="total">
+											<span>Total</span>
+											<span>₹<%= cart.discountTotal.toFixed(2) %></span>
+										</div>
+									</div>
+								</div>
+								<div class="summary-footer">
+									<button class="place-order-btn" onclick="placeOrder()">
+										Place Order <i class="uil uil-arrow-right"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	<!-- Body End -->
+	<!-- Footer Start -->
+	
+	<!-- Footer End -->
+
+	<!-- Javascripts -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="/user/js/jquery.min.js"></script>
+	<script src="/user/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/user/vendor/bootstrap-select/js/bootstrap-select.min.js"></script>	
+	<script src="/user/vendor/OwlCarousel/owl.carousel.js"></script>
+	<script src="/user/js/jquery.countdown.min.js"></script>
+	<script src="/user/js/custom.js"></script>
+	<script src="/user/js/offset_overlay.js"></script>
+	<script src="/user/js/night-mode.js"></script>
+	<script src="/user/js/cart.js"></script>
+	
+
+	<script>
+		
+	</script>
+	
+</body>
+</html>
