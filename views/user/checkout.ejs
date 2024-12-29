@@ -247,9 +247,124 @@
 	<script src="/user/js/night-mode.js"></script>
 	<script src="/user/js/cart.js"></script>
 	<script src="/user/js/address.js"></script>
-
 	<script>
-		
+
+
+// Handle address selection
+document.querySelectorAll('input[name="deliveryAddress"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        // Remove selected class from all cards
+        document.querySelectorAll('.address-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        
+        // Add selected class to chosen card
+        this.closest('.address-card').classList.add('selected');
+    });
+});
+
+// Place Order
+async function placeOrder() {
+    if (isProcessing) return;
+
+    // Get selected address
+    const selectedAddress = document.querySelector('input[name="deliveryAddress"]:checked');
+    if (!selectedAddress) {
+        showErrorNotification('Please select a delivery address');
+        return;
+    }
+
+    // Get payment method
+    const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+    if (!selectedPayment) {
+        showErrorNotification('Please select a payment method');
+        return;
+    }
+
+    try {
+        isProcessing = true;
+        
+        // Show loading state
+        const orderBtn = document.querySelector('.place-order-btn');
+        const originalText = orderBtn.innerHTML;
+        orderBtn.innerHTML = '<i class="uil uil-spinner-alt"></i> Processing...';
+        orderBtn.disabled = true;
+
+        const response = await fetch('/place-order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                addressId: selectedAddress.value,
+                paymentMethod: selectedPayment.value
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Show success message
+            Swal.fire({
+                icon: 'success',
+                title: 'Order Placed Successfully!',
+                text: 'Thank you for shopping with us',
+                confirmButtonText: 'View Order',
+                allowOutsideClick: false
+            }).then((result) => {
+                window.location.href = `/orders/${data.orderId}`;
+            });
+        } else {
+            throw new Error(data.message || 'Failed to place order');
+        }
+    } catch (error) {
+        showErrorNotification(error.message);
+        // Reset button
+        orderBtn.innerHTML = originalText;
+        orderBtn.disabled = false;
+    } finally {
+        isProcessing = false;
+    }
+}
+
+
+// Notifications
+function showSuccessNotification(message) {
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+    });
+
+    Toast.fire({
+        icon: 'success',
+        title: message
+    });
+}
+
+function showErrorNotification(message) {
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+    });
+
+    Toast.fire({
+        icon: 'error',
+        title: message
+    });
+}
+
+// Handle page reload/navigation
+window.onbeforeunload = function() {
+    if (isProcessing) {
+        return "Order is being processed. Are you sure you want to leave?";
+    }
+};
 	</script>
 	
 </body>

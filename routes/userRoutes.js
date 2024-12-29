@@ -9,7 +9,7 @@ const { getProductDetails, getNewProducts, getBestvalueProducts } = require('../
 const { getDashboard, updateProfile, resetDashPassword } = require('../controllers/user/dashboardConroller');
 const { getAllAddresses, addAddress, getAddress, updateAddress, deleteAddress, setDefaultAddress } = require('../controllers/user/addressController'); 
 const { getCart, addToCart, updateCartQuantity, cartCount, removeFromCart, clearCart, verifyCart  } = require('../controllers/user/cartController');
-const { getCheckoutPage} = require('../controllers/user/checkoutController');
+const { getCheckoutPage, placeOrder} = require('../controllers/user/checkoutController');
 
 
 const { userAuth }= require('../middleware/userAuth');
@@ -71,9 +71,9 @@ router.delete('/cart/clear', userAuth, clearCart);
 router.get('/cart/count', userAuth, cartCount);
 router.get('/cart/verify', userAuth, verifyCart);
 
-
+//checkout routeas
 router.get('/checkout', userAuth, getCheckoutPage);
-
+router.post('/place-order', userAuth, placeOrder);
 
 
 
