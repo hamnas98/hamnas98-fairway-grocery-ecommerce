@@ -74,7 +74,7 @@
 										<i class="uil uil-location-point"></i>
 										<h4>Delivery Address</h4>
 									</div>
-									<button class="new-address-btn" onclick="openAddressModal()">
+									<button class="new-address-btn" data-bs-toggle="modal" data-bs-target="#address_model">
 										<i class="uil uil-plus"></i> Add New Addess
 									</button>
 								</div>
@@ -140,16 +140,25 @@
 								</div>
 								<div class="step-body">
 									<div class="payment-methods">
-										<div class="payment-method">
+										<div class="payment-option">
 											<input type="radio" name="paymentMethod" id="cod" value="cod" checked>
-											<label for="cod">
-												<div class="payment-info">
-													<i class="uil uil-money-bill"></i>
-													<span>Cash on Delivery</span>
+											<label for="cod" class="payment-card">
+												<div class="payment-left">
+													<div class="radio-mark"></div>
+													<div class="payment-icon">
+														<i class="uil uil-money-bill"></i>
+													</div>
+													<div class="payment-details">
+														<span class="payment-name">Cash on Delivery</span>
+														
+													</div>
 												</div>
-												<span class="status-badge">Available</span>
+												<div class="payment-right">
+													<span class="status-tag">Available</span>
+												</div>
 											</label>
 										</div>
+										<!-- Add more payment options here -->
 									</div>
 								</div>
 							</div>
@@ -237,7 +246,7 @@
 	<script src="/user/js/offset_overlay.js"></script>
 	<script src="/user/js/night-mode.js"></script>
 	<script src="/user/js/cart.js"></script>
-	
+	<script src="/user/js/address.js"></script>
 
 	<script>
 		
