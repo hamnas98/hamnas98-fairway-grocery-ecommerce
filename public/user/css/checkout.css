@@ -1,56 +1,86 @@
-/* checkout.css */
 .checkout-container {
     background: #f9f9f9;
     padding: 40px 0;
 }
 
-/* Step Header Styles */
+/* Checkout Step Common Styles */
+.checkout-step {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 24px;
+    border: 1px solid #eef0f5;
+}
+
+/* Header Styles */
 .step-header {
+    padding: 20px;
+    background: #fff;
+    border-bottom: 1px solid #eef0f5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.step-title {
     display: flex;
     align-items: center;
-    gap: 10px;
-    background: #2b2f4c;
-    color: white;
-    padding: 15px 20px;
-    border-radius: 10px 10px 0 0;
+    gap: 12px;
 }
 
-.step-header i {
-    font-size: 24px;
+.step-title i {
+    font-size: 22px;
+    color: #2b2f4c;
 }
 
-.step-header h4 {
+.step-title h4 {
     margin: 0;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
+    color: #2b2f4c;
 }
 
-/* Step Body Styles */
+.new-address-btn {
+    padding: 6px 12px;
+    background: #f0f2f5;
+    color: #2b2f4c;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.new-address-btn:hover {
+    background: #e4e6eb;
+}
+
+/* Address Card Styles */
 .step-body {
-    background: white;
     padding: 20px;
-    border-radius: 0 0 10px 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-/* Address Styles */
 .address-list {
     display: grid;
-    gap: 15px;
-    margin-bottom: 20px;
+    gap: 12px;
 }
 
 .address-card {
     position: relative;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    transition: all 0.3s ease;
-    cursor: pointer;
+    border: 1px solid #eef0f5;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
 }
 
 .address-card:hover {
     border-color: #2b2f4c;
-    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .address-card input[type="radio"] {
@@ -58,87 +88,114 @@
     opacity: 0;
 }
 
+.address-card label {
+    flex: 1;
+    margin: 0;
+    padding: 15px;
+    cursor: pointer;
+}
+
 .address-card input[type="radio"]:checked + label {
-    background: #f0f7ff;
+    background: #f8fafd;
 }
 
 .address-card input[type="radio"]:checked + label::before {
     content: '';
     position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    border: 2px solid #2b2f4c;
-    border-radius: 10px;
-    pointer-events: none;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: #2b2f4c;
+    border-radius: 3px 0 0 3px;
 }
 
-.address-card label {
-    display: block;
-    padding: 20px;
-    cursor: pointer;
-    margin: 0;
-}
-
-.address-type {
+/* Address Content Styles */
+.address-header {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 10px;
+}
+
+.address-type-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.address-type-badge.home {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.address-type-badge.office {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.address-type-badge.other {
+    background: #f5f5f5;
+    color: #616161;
+}
+
+.default-badge {
+    padding: 3px 8px;
+    background: #fff3e0;
+    color: #e65100;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.address-details h5 {
+    margin: 0 0 4px;
+    font-size: 14px;
     color: #2b2f4c;
     font-weight: 600;
 }
 
-.address-type .badge {
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 4px;
+.address-details .phone {
+    color: #666;
+    margin: 0 0 6px;
+    font-size: 13px;
 }
 
-.address-detail h5 {
-    margin-bottom: 5px;
-    color: #2b2f4c;
-}
-
-.address-text {
+.address-details .location {
     color: #666;
     margin: 0;
+    font-size: 13px;
     line-height: 1.5;
 }
 
-/* Add Address Button */
-.add-address-btn {
-    width: 100%;
-    padding: 15px;
-    background: #e8f0fe;
-    border: 2px dashed #2b2f4c;
-    border-radius: 10px;
-    color: #2b2f4c;
-    font-weight: 600;
+.address-actions {
+    padding: 12px;
+    border-left: 1px solid #eef0f5;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    transition: all 0.3s ease;
-    cursor: pointer;
 }
 
-.add-address-btn:hover {
-    background: #d1e3fe;
+.edit-btn {
+    background: none;
+    border: none;
+    color: #2b2f4c;
+    padding: 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-size: 16px;
 }
 
-/* Payment Methods */
-.payment-methods {
-    display: grid;
-    gap: 15px;
+.edit-btn:hover {
+    background: #f0f2f5;
 }
 
+/* Payment Method Styles */
 .payment-method {
-    position: relative;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    transition: all 0.3s ease;
+    border: 1px solid #eef0f5;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
 }
 
 .payment-method:hover {
@@ -146,26 +203,40 @@
 }
 
 .payment-method input[type="radio"] {
-    position: absolute;
-    opacity: 0;
+    display: none;
+}
+
+.payment-method input[type="radio"]:checked + label {
+    background: #f8fafd;
 }
 
 .payment-method label {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 15px;
-    padding: 20px;
-    cursor: pointer;
+    padding: 15px;
     margin: 0;
+    cursor: pointer;
 }
 
-.payment-method i {
-    font-size: 24px;
+.payment-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.payment-info i {
+    font-size: 20px;
     color: #2b2f4c;
 }
 
-.payment-method .badge {
-    margin-left: auto;
+.status-badge {
+    padding: 3px 8px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
 }
 
 /* Order Summary */

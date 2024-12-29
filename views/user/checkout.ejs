@@ -40,7 +40,7 @@
 	<body>
 		<!-- Header Start -->
 		<%- include('../partials/user/header', { parentCategories: parentCategories }) %>
-		
+		<%- include('../partials/user/addAddressModel') %>
 
 		
 		<!-- Header End -->
@@ -54,7 +54,7 @@
 							<nav aria-label="breadcrumb">
 								<ol class="breadcrumb">
 									<li class="breadcrumb-item"><a href="/">Home</a></li>
-									<li class="breadcrumb-item"><a href="/cart">Cart</a></li>
+									<li class="breadcrumb-item"><a href="/dashboard/cart">Cart</a></li>
 									<li class="breadcrumb-item active" aria-current="page">Checkout</li>
 								</ol>
 							</nav>
@@ -66,19 +66,23 @@
 			<div class="all-product-grid">
 				<div class="container">
 					<div class="row">
-						<!-- Left Section - Delivery and Payment -->
 						<div class="col-lg-8 col-md-7">
 							<!-- Delivery Address Section -->
 							<div class="checkout-step mb-4">
 								<div class="step-header">
-									<h4><i class="uil uil-location-point"></i>Delivery Address</h4>
+									<div class="step-title">
+										<i class="uil uil-location-point"></i>
+										<h4>Delivery Address</h4>
+									</div>
+									<button class="new-address-btn" onclick="openAddressModal()">
+										<i class="uil uil-plus"></i> Add New Addess
+									</button>
 								</div>
 								<div class="step-body">
-									<!-- Address List -->
 									<% if(addresses && addresses.length > 0) { %>
 										<div class="address-list">
 											<% addresses.forEach(address => { %>
-												<div class="address-item mb-3">
+												<div class="address-item">
 													<div class="address-card">
 														<input type="radio" 
 															   name="deliveryAddress" 
@@ -86,54 +90,71 @@
 															   value="<%= address._id %>"
 															   <%= address.isDefault ? 'checked' : '' %>>
 														<label for="address<%= address._id %>">
-															<div class="address-detail">
-																<div class="address-type">
-																	<%= address.addressType %>
+															<div class="address-content">
+																<div class="address-header">
+																	<div class="address-type-badge <%= address.addressType.toLowerCase() %>">
+																		<%= address.addressType %>
+																	</div>
 																	<% if(address.isDefault) { %>
-																		<span class="badge bg-success">Default</span>
+																		<span class="default-badge">Default</span>
 																	<% } %>
 																</div>
-																<h5><%= address.name %></h5>
-																<p class="mb-2"><%= address.mobile %></p>
-																<p class="address-text">
-																	<%= address.flat %>, 
-																	<%= address.addressLine %>, 
-																	<%= address.city %>, 
-																	<%= address.state %> - <%= address.pincode %>
-																</p>
+																<div class="address-details">
+																	<h5><%= address.name %></h5>
+																	<p class="phone"><%= address.mobile %></p>
+																	<p class="location">
+																		<%= address.flat %>, 
+																		<%= address.addressLine %>, 
+																		<%= address.city %>, 
+																		<%= address.state %> - <%= address.pincode %>
+																	</p>
+																</div>
 															</div>
 														</label>
+														<div class="address-actions">
+															<button class="edit-btn" onclick="editAddress('<%= address._id %>')">
+																<i class="uil uil-edit"></i>
+															</button>
+														</div>
 													</div>
 												</div>
 											<% }); %>
 										</div>
+									<% } else { %>
+										<div class="no-address">
+											<i class="uil uil-map-marker"></i>
+											<p>No addresses found</p>
+											<button class="add-btn" onclick="openAddressModal()">Add New Address</button>
+										</div>
 									<% } %>
-									<button class="add-address-btn" onclick="openAddressModal()">
-										<i class="uil uil-plus"></i> Add New Address
-									</button>
 								</div>
 							</div>
-		
+			
 							<!-- Payment Method Section -->
 							<div class="checkout-step">
 								<div class="step-header">
-									<h4><i class="uil uil-money-bill"></i>Payment Method</h4>
+									<div class="step-title">
+										<i class="uil uil-wallet"></i>
+										<h4>Payment Method</h4>
+									</div>
 								</div>
 								<div class="step-body">
 									<div class="payment-methods">
 										<div class="payment-method">
 											<input type="radio" name="paymentMethod" id="cod" value="cod" checked>
 											<label for="cod">
-												<i class="uil uil-money-bill"></i>
-												Cash on Delivery
-												<span class="badge bg-success">Available</span>
+												<div class="payment-info">
+													<i class="uil uil-money-bill"></i>
+													<span>Cash on Delivery</span>
+												</div>
+												<span class="status-badge">Available</span>
 											</label>
 										</div>
-										<!-- Add more payment methods here -->
 									</div>
 								</div>
 							</div>
 						</div>
+						
 		
 						<!-- Right Section - Order Summary -->
 						<div class="col-lg-4 col-md-5">
