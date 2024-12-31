@@ -10,7 +10,7 @@ const { getDashboard, updateProfile, resetDashPassword } = require('../controlle
 const { getAllAddresses, addAddress, getAddress, updateAddress, deleteAddress, setDefaultAddress } = require('../controllers/user/addressController'); 
 const { getCart, addToCart, updateCartQuantity, cartCount, removeFromCart, clearCart, verifyCart  } = require('../controllers/user/cartController');
 const { getCheckoutPage, placeOrder} = require('../controllers/user/checkoutController');
-
+const { getOrders } = require('../controllers/user/orderController');
 
 const { userAuth }= require('../middleware/userAuth');
 
@@ -75,6 +75,8 @@ router.get('/cart/verify', userAuth, verifyCart);
 router.get('/checkout', userAuth, getCheckoutPage);
 router.post('/place-order', userAuth, placeOrder);
 
+//order routes
+router.get('/dashboard/orders', userAuth, getOrders);
 
 
 module.exports = router;
