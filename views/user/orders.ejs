@@ -295,6 +295,77 @@
         });
     }
 }
+async function cancelOrder(orderId) {
+    try {
+        const result = await Swal.fire({
+            title: 'Cancel Order?',
+            text: "Are you sure you want to cancel this order?",
+            icon: 'warning',
+            input: 'textarea',
+            inputLabel: 'Reason for cancellation',
+            inputPlaceholder: 'Please provide a reason...',
+            inputAttributes: {
+                'aria-label': 'Reason for cancellation'
+            },
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, cancel it',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Please enter a reason for cancellation';
+                }
+            }
+        });
+
+        if (result.isConfirmed) {
+            const response = await fetch('/orders/cancel', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    orderId,
+                    reason: result.value
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Order Cancelled',
+                    text: 'Your order has been cancelled successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.reload();
+                });
+            } else {
+                throw new Error(data.message);
+            }
+        }
+    } catch (error) {
+        console.error('Cancel order error:', error);
+        showErrorNotification(error.message || 'Failed to cancel order');
+    }
+}
+
+// Show notifications
+function showErrorNotification(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+}
+
+
 	</script>
 
 </body>
