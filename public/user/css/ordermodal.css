@@ -1,0 +1,297 @@
+/* Modal Base Styles */
+.modal-content {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.modal-header {
+    background: #f8fafc;
+    border-bottom: 1px solid #e9ecef;
+    padding: 20px 24px;
+}
+
+.modal-title {
+    font-size: 20px;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.modal-body {
+    padding: 0;
+}
+
+/* Order Detail Content */
+.order-detail-content {
+    padding: 24px;
+}
+
+.detail-section {
+    margin-bottom: 24px;
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.detail-section h6 {
+    color: #1e293b;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Add icons to section headers */
+.detail-section h6::before {
+    font-family: 'Unicons';
+    font-size: 20px;
+    color: #3b82f6;
+}
+
+.detail-section:nth-child(1) h6::before {
+    content: '\e8d9'; /* Order icon */
+}
+
+.detail-section:nth-child(2) h6::before {
+    content: '\e811'; /* Location icon */
+}
+
+.detail-section:nth-child(3) h6::before {
+    content: '\e835'; /* Box icon */
+}
+
+.detail-section:nth-child(4) h6::before {
+    content: '\e85e'; /* Bill icon */
+}
+
+/* Order Information Styles */
+.detail-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.detail-info p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.detail-info strong {
+    color: #1e293b;
+    font-weight: 500;
+}
+
+/* Status Badge Styles */
+.status {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.status.pending {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.status.pending::before {
+    background: #f59e0b;
+}
+
+.status.processing {
+    background: #e0f2fe;
+    color: #075985;
+}
+
+.status.processing::before {
+    background: #0ea5e9;
+}
+
+.status.shipped {
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.status.shipped::before {
+    background: #22c55e;
+}
+
+.status.delivered {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status.delivered::before {
+    background: #16a34a;
+}
+
+.status.cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.status.cancelled::before {
+    background: #ef4444;
+}
+
+/* Order Items Styles */
+.detail-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.detail-item:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.detail-item img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-info h6 {
+    font-size: 15px;
+    color: #1e293b;
+    margin: 0 0 4px;
+    padding: 0;
+    border: none;
+}
+
+.item-info p {
+    color: #64748b;
+    font-size: 14px;
+    margin: 0;
+}
+
+.item-total {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 15px;
+}
+
+/* Price Breakdown Styles */
+.price-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.price-row.discount {
+    color: #059669;
+}
+
+.price-row.discount span:last-child {
+    color: #059669;
+    font-weight: 500;
+}
+
+.price-row .free {
+    color: #059669;
+    font-weight: 500;
+}
+
+.price-row.total {
+    padding-top: 12px;
+    border-top: 1px dashed #e2e8f0;
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 16px;
+}
+
+/* Animations */
+.modal.fade .modal-dialog {
+    transform: scale(0.95);
+    transition: transform 0.2s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: scale(1);
+}
+
+.detail-section {
+    animation: slideIn 0.3s ease-out forwards;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.detail-section:nth-child(1) { animation-delay: 0s; }
+.detail-section:nth-child(2) { animation-delay: 0.1s; }
+.detail-section:nth-child(3) { animation-delay: 0.2s; }
+.detail-section:nth-child(4) { animation-delay: 0.3s; }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 1rem;
+    }
+
+    .order-detail-content {
+        padding: 16px;
+    }
+
+    .detail-section {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .item-total {
+        align-self: flex-end;
+    }
+}

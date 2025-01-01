@@ -32,4 +32,34 @@ const getOrders = async (req, res) => {
     }
 };
 
-module.exports = { getOrders }
+// Get single order details
+const getOrderDetails = async (req, res) => {
+    try {
+        const order = await Order.findOne({
+            _id: req.params.id,
+            user: req.session.user.id
+        })
+        .populate('items.product')
+        .populate('deliveryAddress');
+        console.log(req.params.id)
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            order
+        });
+    } catch (error) {
+        console.error('Get order details error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to load order details'
+        });
+    }
+};
+
+module.exports = { getOrders, getOrderDetails }

@@ -153,18 +153,96 @@
         const data = await response.json();
 
         if (data.success) {
+            // Get the modal content container
+            const modalContent = document.getElementById('orderDetailsContent');
             const order = data.order;
-			const orderModal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+
+            // Update the modal content with order details
+            modalContent.innerHTML = `
+                <div class="order-detail-content">
+                    <!-- Order Information Section -->
+                    <div class="detail-section">
+                        <h6>Order Information</h6>
+                        <div class="detail-info">
+                            <p><strong>Order ID:</strong> #${order._id.toString().slice(-6)}</p>
+                            <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleString()}</p>
+                            <p><strong>Status:</strong> <span class="status ${order.orderStatus.toLowerCase()}">${order.orderStatus}</span></p>
+                            <p><strong>Payment Method:</strong> ${order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}</p>
+                        </div>
+                    </div>
+
+                    <!-- Delivery Address Section -->
+                    <div class="detail-section">
+                        <h6>Delivery Address</h6>
+                        <div class="detail-info">
+                            <p><strong>${order.deliveryAddress.name}</strong></p>
+                            <p>${order.deliveryAddress.mobile}</p>
+                            <p>${order.deliveryAddress.flat}, ${order.deliveryAddress.addressLine}</p>
+                            <p>${order.deliveryAddress.city}, ${order.deliveryAddress.state} - ${order.deliveryAddress.pincode}</p>
+                        </div>
+                    </div>
+
+                    <!-- Order Items Section -->
+                    <div class="detail-section">
+                        <h6>Order Items</h6>
+                        <div class="detail-items">
+                            ${order.items.map(item => `
+                                <div class="detail-item">
+                                    <img src="${item.product.images[0]}" alt="${item.product.name}">
+                                    <div class="item-info">
+                                        <h6>${item.product.name}</h6>
+                                        <p>${item.quantity} × ₹${item.product.discountPrice || item.product.price}</p>
+                                    </div>
+                                    <div class="item-total">
+                                        ₹${((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2)}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Price Details Section -->
+                    <div class="detail-section">
+                        <h6>Price Details</h6>
+                        <div class="price-breakdown">
+                            <div class="price-row">
+                                <span>Subtotal</span>
+                                <span>₹${order.total.toFixed(2)}</span>
+                            </div>
+                            ${order.total - order.discountTotal > 0 ? `
+                                <div class="price-row discount">
+                                    <span>Discount</span>
+                                    <span>-₹${(order.total - order.discountTotal).toFixed(2)}</span>
+                                </div>
+                            ` : ''}
+                            <div class="price-row">
+                                <span>Delivery</span>
+                                <span class="free">FREE</span>
+                            </div>
+                            <div class="price-row total">
+                                <span>Total Amount</span>
+                                <span>₹${order.discountTotal.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Show the modal
+            const orderModal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
             orderModal.show();
         } else {
-            throw new Error(data.message);
+            throw new Error(data.message || 'Failed to load order details');
         }
     } catch (error) {
         console.error('View order details error:', error);
-        showErrorNotification('Failed to load order details');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to load order details'
+        });
     }
 }
-
 	</script>
 
 </body>
