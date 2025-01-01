@@ -91,6 +91,57 @@
 														</div>
 													<% }); %>
 												</div>
+												<!-- Add this to your order details modal -->
+												<div class="order-status-tracker">
+													<div class="status-flow">
+														<div class="status-step <%= order.orderStatus === 'Pending' || order.orderStatus === 'Processing' || order.orderStatus === 'Shipped' || order.orderStatus === 'Delivered' ? 'completed' : '' %>">
+															<div class="status-icon">
+																<i class="uil uil-shopping-cart-alt"></i>
+															</div>
+															<div class="status-label">Order Placed</div>
+															<div class="status-time"><%= new Date(order.createdAt).toLocaleDateString() %></div>
+														</div>
+												
+														<div class="status-step <%= order.orderStatus === 'Processing' || order.orderStatus === 'Shipped' || order.orderStatus === 'Delivered' ? 'completed' : order.orderStatus === 'Cancelled' ? 'cancelled' : '' %>">
+															<div class="status-icon">
+																<i class="uil uil-process"></i>
+															</div>
+															<div class="status-label">Processing</div>
+															<div class="status-time"><%= order.processingAt ? new Date(order.processingAt).toLocaleDateString() : '--' %></div>
+														</div>
+												
+														<div class="status-step <%= order.orderStatus === 'Shipped' || order.orderStatus === 'Delivered' ? 'completed' : order.orderStatus === 'Cancelled' ? 'cancelled' : '' %>">
+															<div class="status-icon">
+																<i class="uil uil-truck"></i>
+															</div>
+															<div class="status-label">Shipped</div>
+															<div class="status-time"><%= order.shippedAt ? new Date(order.shippedAt).toLocaleDateString() : '--' %></div>
+														</div>
+												
+														<div class="status-step <%= order.orderStatus === 'Delivered' ? 'completed' : order.orderStatus === 'Cancelled' ? 'cancelled' : '' %>">
+															<div class="status-icon">
+																<i class="uil uil-check-circle"></i>
+															</div>
+															<div class="status-label">Delivered</div>
+															<div class="status-time"><%= order.deliveredAt ? new Date(order.deliveredAt).toLocaleDateString() : '--' %></div>
+														</div>
+													</div>
+												
+													<% if(order.orderStatus === 'Cancelled') { %>
+														<div class="cancellation-info">
+															<div class="cancel-header">
+																<i class="uil uil-times-circle"></i>
+																<span>Order Cancelled</span>
+															</div>
+															<% if(order.cancelReason) { %>
+																<div class="cancel-reason">
+																	<span>Reason:</span> <%= order.cancelReason %>
+																</div>
+															<% } %>
+														</div>
+													<% } %>
+												</div>
+												
 				
 												<div class="order-footer">
 													<div class="order-total">
@@ -109,6 +160,7 @@
 													</div>
 												</div>
 											</div>
+											
 										<% }); %>
 									<% } else { %>
 										<div class="no-orders">
