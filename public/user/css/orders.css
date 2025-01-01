@@ -296,3 +296,232 @@
         height: 60px;
     }
 }
+
+/* Order Status Tracker Styles */
+.order-status-tracker {
+    padding: 40px 20px;
+    background: #f8fafc;
+    border-radius: 12px;
+    margin: 20px 0;
+    position: relative;
+}
+
+.status-flow {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+}
+
+/* Progress Line */
+.status-flow::before {
+    content: '';
+    position: absolute;
+    top: 35px;
+    left: 50px;
+    right: 50px;
+    height: 3px;
+    background: #e2e8f0;
+    z-index: -1;
+}
+
+/* Progress Line Fill */
+.status-flow::after {
+    content: '';
+    position: absolute;
+    top: 35px;
+    left: 50px;
+    height: 3px;
+    background: #3b82f6;
+    z-index: -1;
+    transition: width 0.5s ease;
+}
+
+/* Different progress states */
+.status-flow[data-progress="0"]::after { width: 0; }
+.status-flow[data-progress="1"]::after { width: calc(33.33% - 50px); }
+.status-flow[data-progress="2"]::after { width: calc(66.66% - 50px); }
+.status-flow[data-progress="3"]::after { width: calc(100% - 100px); }
+
+.status-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 120px;
+}
+
+.status-icon {
+    width: 70px;
+    height: 70px;
+    background: white;
+    border: 3px solid #e2e8f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.status-icon i {
+    font-size: 28px;
+    color: #94a3b8;
+    transition: all 0.3s ease;
+}
+
+/* Completed Step */
+.status-step.completed .status-icon {
+    border-color: #3b82f6;
+    background: #3b82f6;
+}
+
+.status-step.completed .status-icon i {
+    color: white;
+}
+
+/* Current Step */
+.status-step.current .status-icon {
+    border-color: #3b82f6;
+    animation: pulse 2s infinite;
+}
+
+.status-step.current .status-icon i {
+    color: #3b82f6;
+}
+
+/* Cancelled Step */
+.status-step.cancelled .status-icon {
+    border-color: #ef4444;
+    background: #fee2e2;
+}
+
+.status-step.cancelled .status-icon i {
+    color: #ef4444;
+}
+
+.status-label {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.status-time {
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* Cancelled Order Info */
+.cancellation-info {
+    margin-top: 30px;
+    padding: 20px;
+    background: #fff1f2;
+    border-radius: 12px;
+    border: 1px solid #fecdd3;
+}
+
+.cancel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #be123c;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.cancel-header i {
+    font-size: 20px;
+}
+
+.cancel-reason {
+    font-size: 14px;
+    color: #881337;
+}
+
+.cancel-reason span {
+    font-weight: 500;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
+}
+
+/* Step-specific icons and colors */
+.status-step:nth-child(1) .status-icon i {
+    color: #f59e0b;
+}
+
+.status-step:nth-child(2) .status-icon i {
+    color: #0ea5e9;
+}
+
+.status-step:nth-child(3) .status-icon i {
+    color: #8b5cf6;
+}
+
+.status-step:nth-child(4) .status-icon i {
+    color: #10b981;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .order-status-tracker {
+        padding: 20px 10px;
+    }
+
+    .status-flow {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 30px;
+    }
+
+    .status-flow::before,
+    .status-flow::after {
+        top: 35px;
+        left: 35px;
+        width: 3px;
+        height: calc(100% - 70px);
+    }
+
+    .status-step {
+        width: 100%;
+        flex-direction: row;
+        gap: 20px;
+    }
+
+    .status-icon {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 0;
+    }
+
+    .status-icon i {
+        font-size: 24px;
+    }
+
+    .status-text {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* Hover Effects */
+.status-step:hover .status-icon {
+    transform: scale(1.1);
+}
+
+.status-step.completed:hover .status-icon {
+    background: #2563eb;
+    border-color: #2563eb;
+}
