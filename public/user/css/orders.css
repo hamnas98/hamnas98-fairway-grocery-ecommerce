@@ -525,3 +525,187 @@
     background: #2563eb;
     border-color: #2563eb;
 }
+
+/* public/css/orders.css */
+.order-item.cancelled {
+    opacity: 0.7;
+    background: #f8f8f8;
+    position: relative;
+}
+
+.cancelled-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    background: #dc3545;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    z-index: 1;
+}
+
+.cancel-reason {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #dc3545;
+}
+
+.cancel-reason span {
+    font-weight: 500;
+}
+
+.cancel-reason small {
+    color: #666;
+    display: block;
+    margin-top: 4px;
+}
+
+/* Status badge for partial cancellation */
+.order-status.partially-cancelled {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.order-status.partially-cancelled::before {
+    background: #ffc107;
+}
+
+/* Cancel Dropdown Styles */
+.dropdown {
+    position: relative;
+}
+
+.cancel-options-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #fff;
+    color: #ef4444;
+    border: 1.5px solid #ef4444;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.cancel-options-btn i {
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+
+.cancel-options-btn:hover {
+    background: #fee2e2;
+    transform: translateY(-1px);
+}
+
+.cancel-options-btn:hover i {
+    transform: rotate(90deg);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    min-width: 200px;
+    padding: 8px;
+    margin-top: 8px;
+    background: white;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    animation: slideDown 0.2s ease;
+}
+
+.dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    right: 20px;
+    width: 8px;
+    height: 8px;
+    background: white;
+    transform: rotate(45deg);
+    border-radius: 2px;
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+    color: #374151;
+    font-size: 14px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:first-child::before {
+    content: '\e923'; /* Cancel icon */
+    font-family: 'Unicons';
+    color: #ef4444;
+    font-size: 18px;
+}
+
+.dropdown-item:last-child::before {
+    content: '\e8ac'; /* Items icon */
+    font-family: 'Unicons';
+    color: #f59e0b;
+    font-size: 18px;
+}
+
+.dropdown-item:hover {
+    background: #f3f4f6;
+    color: #111827;
+    transform: translateX(4px);
+}
+
+/* Animation */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .cancel-options-btn {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .dropdown-menu {
+        min-width: 180px;
+    }
+
+    .dropdown-item {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+}
+
+/* Active/Focus States */
+.cancel-options-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #fecaca;
+}
+
+.dropdown-item:active {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+/* Show animation when dropdown opens */
+.dropdown.show .cancel-options-btn {
+    background: #fee2e2;
+}
+
+.dropdown.show .cancel-options-btn i {
+    transform: rotate(90deg);
+}

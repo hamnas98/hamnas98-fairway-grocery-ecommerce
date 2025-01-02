@@ -1,31 +1,43 @@
 // models/Order.js
 const mongoose = require('mongoose');
 
+const orderItemSchema = new mongoose.Schema({
+    product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true
+    },
+    quantity: {
+        type: Number,
+        required: true,
+        min: 1
+    },
+    price: {
+        type: Number,
+        required: true
+    },
+    discountPrice: {
+        type: Number
+    },
+    cancelled: {
+        type: Boolean,
+        default: false
+    },
+    cancelReason: {
+        type: String
+    },
+    cancelledAt: {
+        type: Date
+    }
+});
+
 const orderSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-    items: [{
-        product: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Product',
-            required: true
-        },
-        quantity: {
-            type: Number,
-            required: true,
-            min: 1
-        },
-        price: {
-            type: Number,
-            required: true
-        },
-        discountPrice: {
-            type: Number
-        }
-    }],
+    items: [orderItemSchema],
     deliveryAddress: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Address',
@@ -46,18 +58,25 @@ const orderSchema = new mongoose.Schema({
     },
     orderStatus: {
         type: String,
-        enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
+        enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Partially Cancelled'],
         default: 'Pending'
     },
     cancelReason: {
         type: String
     },
-    deliveredAt: {
+    cancelledAt: {
         type: Date
     },
-    cancelledAt: {
+    processingAt: {
+        type: Date
+    },
+    shippedAt: {
+        type: Date
+    },
+    deliveredAt: {
         type: Date
     }
 }, { timestamps: true });
+
 
 module.exports = mongoose.model('Order', orderSchema);

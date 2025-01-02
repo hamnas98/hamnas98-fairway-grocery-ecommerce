@@ -44,8 +44,10 @@
 	<!-- Add Address Model End-->
 		<%- include('../partials/user/header', { parentCategories: parentCategories }) %>
 		<%- include('../partials/user/viewOrderDetailsModal') %>
+        <%- include('../partials/user/cancelModel') %>
+		<!-- Add this modal for cancel items -->
+<!-- Cancel Order Modal -->
 
-		
 		<!-- Header End -->
 	
 		<!-- Body Start -->
@@ -74,25 +76,38 @@
 														<%= order.orderStatus %>
 													</div>
 												</div>
-												
-				
-												<div class="order-items">
-													<% order.items.forEach(item => { %>
-														<div class="order-item">
-															<div class="item-image">
-																<img src="<%= item.product.images[0] %>" alt="<%= item.product.name %>">
+												<div class="order-items-section">
+													<h6>Order Items</h6>
+													<div class="order-items">
+														<% order.items.forEach(item => { %>
+															<div class="order-item <%= item.cancelled ? 'cancelled' : '' %>">
+																<div class="item-image">
+																	<img src="<%= item.product.images[0] %>" alt="<%= item.product.name %>">
+																	<% if(item.cancelled) { %>
+																		<div class="cancelled-overlay">Cancelled</div>
+																	<% } %>
+																</div>
+																<div class="item-details">
+																	<h5><%= item.product.name %></h5>
+																	<p class="item-qty"><%= item.product.quantity + item.product.unit %></p>
+																	<p class="item-price">
+																		<%= item.quantity %> × ₹<%= item.product.discountPrice || item.product.price %>
+																	</p>
+																	<% if(item.cancelled) { %>
+																		<p class="cancel-reason">
+																			<span>Cancel Reason:</span> <%= item.cancelReason %>
+																			<br>
+																			<small>Cancelled on <%= new Date(item.cancelledAt).toLocaleDateString() %></small>
+																		</p>
+																	<% } %>
+																</div>
+																<div class="item-total">
+																	₹<%= ((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2) %>
+																</div>
 															</div>
-															<div class="item-details">
-																<h5><%= item.product.name %></h5>
-																<p class="item-qty"><%= item.product.quantity + item.product.unit %></p>
-																<p class="item-price">
-																	<%= item.quantity %> × ₹<%= item.product.discountPrice || item.product.price %>
-																</p>
-															</div>
-														</div>
-													<% }); %>
+														<% }); %>
+													</div>
 												</div>
-												<!-- Add this to your order details modal -->
 												<div class="order-status-tracker">
 													<div class="status-flow">
 														<div class="status-step <%= order.orderStatus === 'Pending' || order.orderStatus === 'Processing' || order.orderStatus === 'Shipped' || order.orderStatus === 'Delivered' ? 'completed' : '' %>">
@@ -154,9 +169,24 @@
 															View Details
 														</button>
 														<% if(order.orderStatus === 'Pending' || order.orderStatus === 'Processing') { %>
-															<button class="cancel-order-btn" onclick="cancelOrder('<%= order._id %>')">
-																Cancel Order
-															</button>
+                                                            <div class="dropdown">
+                                                                <button class="cancel-options-btn" data-bs-toggle="dropdown">
+                                                                    <i class="uil uil-times"></i> 
+                                                                    <span>Cancel Order</span>
+                                                                </button>
+                                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                                    <li>
+                                                                        <a class="dropdown-item" href="#" onclick="showCancelModal('<%= order._id %>', 'full')">
+                                                                            Cancel Entire Order
+                                                                        </a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a class="dropdown-item" href="#" onclick="showCancelModal('<%= order._id %>', 'partial')">
+                                                                            Cancel Selected Items
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
 														<% } %>
 													</div>
 												</div>
@@ -199,6 +229,7 @@
 	<script src="/user/js/editReset.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script >
 		async function viewOrderDetails(orderId) {
     try {
@@ -227,77 +258,162 @@
         });
     }
 }
-async function cancelOrder(orderId) {
-    try {
-        const result = await Swal.fire({
-            title: 'Cancel Order?',
-            text: "Are you sure you want to cancel this order?",
-            icon: 'warning',
-            input: 'textarea',
-            inputLabel: 'Reason for cancellation',
-            inputPlaceholder: 'Please provide a reason...',
-            inputAttributes: {
-                'aria-label': 'Reason for cancellation'
-            },
-            showCancelButton: true,
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Yes, cancel it',
-            inputValidator: (value) => {
-                if (!value) {
-                    return 'Please enter a reason for cancellation';
-                }
-            }
-        });
+// Global variables
+let selectedItemsForCancel = new Set();
+let currentOrderId = null;
 
-        if (result.isConfirmed) {
-            const response = await fetch('/orders/cancel', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    orderId,
-                    reason: result.value
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Order Cancelled',
-                    text: 'Your order has been cancelled successfully',
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    window.location.reload();
-                });
-            } else {
-                throw new Error(data.message);
-            }
-        }
-    } catch (error) {
-        console.error('Cancel order error:', error);
-        showErrorNotification(error.message || 'Failed to cancel order');
-    }
+// Show cancel modal
+function showCancelModal(orderId, type) {
+   currentOrderId = orderId;
+   const modal = document.getElementById('cancelOrderModal');
+   const itemsSection = modal.querySelector('.cancel-items-section');
+   
+   // Reset form
+   document.getElementById('cancelOrderForm').reset();
+   document.getElementById('cancelOrderId').value = orderId;
+   document.getElementById('cancelType').value = type;
+   selectedItemsForCancel.clear();
+   
+   // Show/hide items section based on cancel type
+   itemsSection.style.display = type === 'partial' ? 'block' : 'none';
+   
+   const bsModal = new bootstrap.Modal(modal);
+   bsModal.show();
 }
 
-// Show notifications
-function showErrorNotification(message) {
-    Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: message,
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
+// Toggle item selection
+function toggleCancelItem(itemId) {
+   if (selectedItemsForCancel.has(itemId)) {
+       selectedItemsForCancel.delete(itemId);
+   } else {
+       selectedItemsForCancel.add(itemId);
+   }
+   updateCancelUI();
 }
 
+// Update UI based on selections
+function updateCancelUI() {
+   const submitBtn = document.querySelector('#cancelOrderModal .btn-danger');
+   submitBtn.disabled = selectedItemsForCancel.size === 0;
+   
+   // Update totals
+   const selectedItems = document.querySelectorAll('#cancelOrderModal input[type="checkbox"]:checked');
+   let totalAmount = 0;
+   selectedItems.forEach(item => {
+       const priceEl = item.closest('.cancel-item').querySelector('.item-total');
+       totalAmount += parseFloat(priceEl.textContent.replace('₹', ''));
+   });
+   
+   const totalEl = document.querySelector('.cancel-total');
+   if (totalEl) {
+       totalEl.textContent = `₹${totalAmount.toFixed(2)}`;
+   }
+}
 
+// Handle reason selection
+document.getElementById('cancelReason')?.addEventListener('change', function() {
+   const otherReasonGroup = document.getElementById('otherReasonGroup');
+   otherReasonGroup.style.display = this.value === 'Other' ? 'block' : 'none';
+   
+   // Required validation for other reason
+   const otherReason = document.getElementById('otherReason');
+   otherReason.required = this.value === 'Other';
+});
+
+// Process cancellation
+async function processCancellation() {
+   try {
+       const form = document.getElementById('cancelOrderForm');
+       if (!form.checkValidity()) {
+           form.reportValidity();
+           return;
+       }
+
+       const cancelType = document.getElementById('cancelType').value;
+       const reasonSelect = document.getElementById('cancelReason');
+       const otherReasonText = document.getElementById('otherReason');
+
+       if (!reasonSelect.value) {
+           showNotification('Please select a cancellation reason', 'error');
+           return;
+       }
+
+       if (cancelType === 'partial' && selectedItemsForCancel.size === 0) {
+           showNotification('Please select items to cancel', 'error');
+           return;
+       }
+
+       // Show loading state
+       const submitBtn = document.querySelector('#cancelOrderModal .btn-danger');
+       const originalText = submitBtn.innerHTML;
+       submitBtn.disabled = true;
+       submitBtn.innerHTML = `<i class="uil uil-spinner-alt"></i> Processing...`;
+
+       const response = await fetch('/orders/cancel', {
+           method: 'POST',
+           headers: {
+               'Content-Type': 'application/json'
+           },
+           body: JSON.stringify({
+               orderId: currentOrderId,
+               cancelType,
+               items: Array.from(selectedItemsForCancel),
+               reason: reasonSelect.value === 'Other' ? otherReasonText.value : reasonSelect.value
+           })
+       });
+
+       const data = await response.json();
+
+       if (data.success) {
+           bootstrap.Modal.getInstance(document.getElementById('cancelOrderModal')).hide();
+           showNotification('Order cancelled successfully', 'success');
+           setTimeout(() => window.location.reload(), 1500);
+       } else {
+           throw new Error(data.message);
+       }
+
+   } catch (error) {
+       showNotification(error.message || 'Failed to cancel order', 'error');
+       // Reset button
+       const submitBtn = document.querySelector('#cancelOrderModal .btn-danger');
+       submitBtn.disabled = false;
+       submitBtn.innerHTML = 'Confirm Cancellation';
+   }
+}
+
+// Notification helper
+function showNotification(message, type = 'success') {
+   Swal.fire({
+       text: message,
+       icon: type,
+       toast: true,
+       position: 'top-end',
+       showConfirmButton: false,
+       timer: 3000,
+       timerProgressBar: true,
+       customClass: {
+           popup: `notification-${type}`
+       }
+   });
+}
+
+// Add animation classes when modal opens
+document.getElementById('cancelOrderModal')?.addEventListener('shown.bs.modal', function() {
+   document.querySelectorAll('.cancel-item').forEach((item, index) => {
+       setTimeout(() => {
+           item.classList.add('fade-in');
+       }, index * 100);
+   });
+});
+
+// Clean up when modal closes
+document.getElementById('cancelOrderModal')?.addEventListener('hidden.bs.modal', function() {
+   selectedItemsForCancel.clear();
+   currentOrderId = null;
+   document.querySelectorAll('.cancel-item').forEach(item => {
+       item.classList.remove('fade-in');
+   });
+});
 	</script>
 
 </body>

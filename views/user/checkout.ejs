@@ -312,7 +312,7 @@ async function placeOrder() {
                 confirmButtonText: 'View Order',
                 allowOutsideClick: false
             }).then((result) => {
-                window.location.href = `/orders/${data.orderId}`;
+                window.location.href = '/dashboard/orders';
             });
         } else {
             throw new Error(data.message || 'Failed to place order');

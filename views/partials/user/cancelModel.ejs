@@ -1,0 +1,243 @@
+<!-- Cancel Order Modal -->
+
+<% orders.forEach(order => { %>
+    <div class="modal fade" id="cancelOrderModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="uil uil-times-circle"></i> Cancel Order</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="cancelOrderForm">
+                    <input type="hidden" id="cancelOrderId">
+                    <input type="hidden" id="cancelType">
+
+                    <div class="cancel-items-section">
+                        <h6>Select items to cancel:</h6>
+                        
+                        <div class="cancel-items-list">
+                            <% order.items.forEach(item => { %>
+                                <div class="cancel-item">
+                                    <div class="form-check custom-checkbox">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               value="<%= item._id %>" 
+                                               id="item_<%= item._id %>"
+                                               onchange="toggleCancelItem('<%= item._id %>')">
+                                        <label class="form-check-label" for="item_<%= item._id %>">
+                                            <div class="cancel-item-content">
+                                                <div class="item-image">
+                                                    <img src="<%= item.product.images[0] %>" 
+                                                         alt="<%= item.product.name %>">
+                                                </div>
+                                                <div class="item-info">
+                                                    <h6><%= item.product.name %></h6>
+                                                    <div class="item-details">
+                                                        <span class="quantity">
+                                                            Qty: <%= item.quantity %>
+                                                        </span>
+                                                        <span class="price">
+                                                            ₹<%= item.product.discountPrice || item.product.price %>
+                                                        </span>
+                                                    </div>
+                                                    <div class="item-total">
+                                                        Total: ₹<%= (item.product.discountPrice || item.product.price) * item.quantity %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="reason-section">
+                        <label class="form-label">Reason for cancellation*</label>
+                        <select class="form-select custom-select" id="cancelReason" required>
+                            <option value="">Select a reason</option>
+                            <option value="Changed my mind">Changed my mind</option>
+                            <option value="Ordered by mistake">Ordered by mistake</option>
+                            <option value="Found better price elsewhere">Found better price elsewhere</option>
+                            <option value="Shipping time too long">Shipping time too long</option>
+                            <option value="Other">Other</option>
+                        </select>
+
+                        <div class="other-reason" id="otherReasonGroup">
+                            <label class="form-label">Please specify your reason*</label>
+                            <textarea class="form-control custom-textarea" 
+                                      id="otherReason" 
+                                      rows="3"
+                                      placeholder="Tell us why you want to cancel..."></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    Keep Order
+                </button>
+                <button type="button" class="btn btn-danger" onclick="processCancellation()">
+                    Confirm Cancellation
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<% }); %>
+<style>
+.modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.modal-header {
+    border-bottom: 1px solid #eef2f7;
+    padding: 20px 24px;
+}
+
+.modal-header .modal-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ef4444;
+    font-size: 18px;
+}
+
+.modal-header .modal-title i {
+    font-size: 24px;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.cancel-items-section h6 {
+    color: #1e293b;
+    font-size: 16px;
+    margin-bottom: 16px;
+}
+
+.cancel-items-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.cancel-item {
+    background: #f8fafc;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+}
+
+.cancel-item:hover {
+    background: #f1f5f9;
+}
+
+.cancel-item-content {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+}
+
+.item-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-info h6 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    color: #1e293b;
+}
+
+.item-details {
+    display: flex;
+    gap: 16px;
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.item-total {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.reason-section {
+    margin-top: 24px;
+}
+
+.form-label {
+    color: #1e293b;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.custom-select {
+    padding: 12px;
+    border-color: #e2e8f0;
+    border-radius: 8px;
+}
+
+.custom-textarea {
+    padding: 12px;
+    border-color: #e2e8f0;
+    border-radius: 8px;
+    resize: none;
+}
+
+.custom-checkbox {
+    padding-left: 0;
+}
+
+.custom-checkbox input {
+    display: none;
+}
+
+.custom-checkbox label {
+    cursor: pointer;
+    width: 100%;
+}
+
+.cancel-item input:checked + label .cancel-item-content {
+    background: #fef2f2;
+    border-color: #ef4444;
+}
+
+.modal-footer {
+    border-top: 1px solid #eef2f7;
+    padding: 16px 24px;
+}
+
+.btn-outline-secondary {
+    border-color: #cbd5e1;
+    color: #64748b;
+}
+
+.btn-danger {
+    background: #ef4444;
+    border-color: #ef4444;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+}
+</style>
