@@ -9,7 +9,7 @@ const adminAuth = require('../middleware/amninAuth');
 const { getAllProducts, getAddProduct, getParentCategory, addProduct, getEditProduct, 
         updateProduct, listingProduct, deleteProduct, getProductDetails  } = require('../controllers/admin/productController');
 const { getUsers, toggleUserBlock, deleteUser } = require('../controllers/admin/userController');
-const { getOrders } = require('../controllers/admin/orderController');
+const { getOrders, getOrderDetails, updateOrderStatus } = require('../controllers/admin/orderController');
 
 
 // router.use(adminAuth);
@@ -46,5 +46,7 @@ router.delete('/users/delete/:id', adminAuth, deleteUser);
 
 //order routes
 router.get('/orders', adminAuth, getOrders);
+router.get('/orders/:id', adminAuth, getOrderDetails);
+router.post('/orders/status', adminAuth, updateOrderStatus);
 
 module.exports = router;
