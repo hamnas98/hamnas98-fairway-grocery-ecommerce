@@ -743,3 +743,32 @@
     margin-top: 8px;
     font-weight: 600;
 }
+
+.cancelled {
+    opacity: 0.7;
+    background: #f8f8f8;
+}
+
+.cancelled-badge {
+    background: #dc3545;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-left: 8px;
+}
+
+.cancel-reason {
+    color: #dc3545;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.cancel-reason i {
+    margin-right: 5px;
+}
+
+.item-header {
+    display: flex;
+    align-items: center;
+}

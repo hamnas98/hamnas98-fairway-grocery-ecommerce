@@ -271,16 +271,30 @@
                         <h6>Order Items</h6>
                         <div class="detail-items">
                             ${order.items.map(item => `
-                                <div class="detail-item">
-                                    <img src="${item.product.images[0]}" alt="${item.product.name}">
-                                    <div class="item-info">
-                                        <h6>${item.product.name}</h6>
-                                        <p>${item.quantity} × ₹${item.product.discountPrice || item.product.price}</p>
-                                    </div>
-                                    <div class="item-total">
-                                        ₹${((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2)}
-                                    </div>
-                                </div>
+                                <div class="order-item ${item.cancelled ? 'cancelled' : ''}">
+                       <div class="item-image">
+                           <img src="${item.product.images[0]}" alt="${item.product.name}">
+                       </div>
+                       <div class="item-details">
+                           <div class="item-header">
+                               <h6>${item.product.name}</h6>
+                               ${item.cancelled ? '<span class="cancelled-badge">Cancelled</span>' : ''}
+                           </div>
+                           <span>${item.product.quantity} ${item.product.unit}</span>
+                           <div class="item-price">
+                               ${item.quantity} × ₹${item.product.discountPrice || item.product.price}
+                           </div>
+                           ${item.cancelReason ? `
+                               <div class="cancel-reason">
+                                   <i class="fas fa-info-circle"></i>
+                                   Cancellation Reason: ${item.cancelReason}
+                               </div>
+                           ` : ''}
+                       </div>
+                       <div class="item-total ${item.cancelled ? 'cancelled' : ''}">
+                           ₹${((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2)}
+                       </div>
+                   </div>
                             `).join('')}
                         </div>
                     </div>

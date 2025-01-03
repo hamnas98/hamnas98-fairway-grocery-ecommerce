@@ -57,7 +57,6 @@ const getOrderDetails = async (req, res) => {
                 message: 'Order not found'
             });
         }
-
         res.json({
             success: true,
             order

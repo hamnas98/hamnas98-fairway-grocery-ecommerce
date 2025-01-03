@@ -6,11 +6,21 @@ const getOrders = async (req, res) => {
             .populate('user', 'name email')
             .sort({ createdAt: -1 });
 
+            orders.forEach(order => {
+                const cancelledItems = order.items.filter(item => item.cancelled).length;
+                if (cancelledItems > 0 && cancelledItems < order.items.length) {
+                    order.partialCancellation = true;
+                    order.cancelledItemsCount = cancelledItems;
+                }
+            });
+
         // Calculate stats
         const totalOrders = orders.length;
         const pendingOrders = orders.filter(order => order.orderStatus === 'Pending').length;
         const deliveredOrders = orders.filter(order => order.orderStatus === 'Delivered').length;
-        const cancelledOrders = orders.filter(order => order.orderStatus === 'Cancelled').length;
+        const cancelledOrders = orders.filter(order => 
+            order.orderStatus === 'Cancelled' || order.partialCancellation
+        ).length;
 
         res.render('adminOrders', {
             orders,
@@ -71,10 +81,10 @@ const updateOrderStatus = async (req, res) => {
         if (status === 'Cancelled') {
             order.cancelReason = cancelReason;
             order.cancelledAt = new Date();
-        } else if (status === 'Processed') {
-            order.processed = new Date();
+        } else if (status === 'Processing') {
+            order.processingAt = new Date();
         }else if (status === 'Shipped') {
-            order.shippedeAt = new Date();
+            order.shippedAt = new Date();
         }else if (status === 'Delivered') {
             order.deliveredAt = new Date();
         }
