@@ -130,15 +130,13 @@ const cancelOrder = async (req, res) => {
                 return sum;
             }, 0);
         }
-         // Update product stock for cancelled items
-         for (const itemId of items) {
-            const orderItem = order.items.find(item => item._id.toString() === itemId);
-            if (orderItem) {
-                await Product.findByIdAndUpdate(orderItem.product, {
-                    $inc: { stock: orderItem.quantity }
-                });
-            }
+        for (const item of order.items) {
+            await Product.findByIdAndUpdate(
+                item.product._id,
+                { $inc: { stock: item.quantity } }  // Increment stock by cancelled quantity
+            );
         }
+        
 
         await order.save();
 
