@@ -156,72 +156,7 @@ const cancelOrder = async (req, res) => {
     }
 };
 
-const cancelOrderItems = async (req, res) => {
-    try {
-        const { orderId } = req.params;
-        const { items, reason } = req.body;
 
-        const order = await Order.findOne({
-            _id: orderId,
-            user: req.session.user.id
-        });
 
-        if (!order) {
-            return res.status(404).json({
-                success: false,
-                message: 'Order not found'
-            });
-        }
 
-        if (!['Pending', 'Processing'].includes(order.orderStatus)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Order cannot be cancelled at this stage'
-            });
-        }
-
-        // Update cancelled items
-        order.items = order.items.map(item => {
-            if (items.includes(item._id.toString())) {
-                return {
-                    ...item,
-                    isCancelled: true,
-                    cancelledAt: new Date(),
-                    cancelReason: reason
-                };
-            }
-            return item;
-        });
-
-        // If all items are cancelled, update order status
-        const allCancelled = order.items.every(item => item.isCancelled);
-        if (allCancelled) {
-            order.orderStatus = 'Cancelled';
-            order.cancelledAt = new Date();
-            order.cancelReason = reason;
-        }
-
-        // Recalculate order totals
-        const activeItems = order.items.filter(item => !item.isCancelled);
-        order.total = activeItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        order.discountTotal = activeItems.reduce((sum, item) => 
-            sum + ((item.discountPrice || item.price) * item.quantity), 0);
-
-        await order.save();
-
-       
-
-        res.json({
-            success: true,
-            message: 'Items cancelled successfully'
-        });
-
-    } catch (error) {
-        console.error('Cancel items error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to cancel items'
-        });
-    }
-};
-module.exports = { getOrders, getOrderDetails, cancelOrder, cancelOrderItems }
+module.exports = { getOrders, getOrderDetails, cancelOrder, cancelOrder }

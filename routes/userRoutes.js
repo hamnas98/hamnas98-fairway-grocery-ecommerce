@@ -79,7 +79,6 @@ router.post('/place-order', userAuth, placeOrder);
 router.get('/dashboard/orders', userAuth, getOrders);
 router.get('/orders/:id', userAuth, getOrderDetails);
 router.post('/orders/cancel', userAuth, cancelOrder);
-// routes/orderRoutes.js
 
-router.post('/orders/:orderId/cancel-items', userAuth, cancelOrderItems);
+
 module.exports = router;

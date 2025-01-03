@@ -241,7 +241,76 @@
             const modalContent = document.getElementById('orderDetailsContent');
             const order = data.order;
 
-            
+            // Update the modal content with order details
+            modalContent.innerHTML = `
+                <div class="order-detail-content">
+                    <!-- Order Information Section -->
+                    <div class="detail-section">
+                        <h6>Order Information</h6>
+                        <div class="detail-info">
+                            <p><strong>Order ID:</strong> #${order._id.toString().slice(-6)}</p>
+                            <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleString()}</p>
+                            <p><strong>Status:</strong> <span class="status ${order.orderStatus.toLowerCase()}">${order.orderStatus}</span></p>
+                            <p><strong>Payment Method:</strong> ${order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}</p>
+                        </div>
+                    </div>
+
+                    <!-- Delivery Address Section -->
+                    <div class="detail-section">
+                        <h6>Delivery Address</h6>
+                        <div class="detail-info">
+                            <p><strong>${order.deliveryAddress.name}</strong></p>
+                            <p>${order.deliveryAddress.mobile}</p>
+                            <p>${order.deliveryAddress.flat}, ${order.deliveryAddress.addressLine}</p>
+                            <p>${order.deliveryAddress.city}, ${order.deliveryAddress.state} - ${order.deliveryAddress.pincode}</p>
+                        </div>
+                    </div>
+
+                    <!-- Order Items Section -->
+                    <div class="detail-section">
+                        <h6>Order Items</h6>
+                        <div class="detail-items">
+                            ${order.items.map(item => `
+                                <div class="detail-item">
+                                    <img src="${item.product.images[0]}" alt="${item.product.name}">
+                                    <div class="item-info">
+                                        <h6>${item.product.name}</h6>
+                                        <p>${item.quantity} × ₹${item.product.discountPrice || item.product.price}</p>
+                                    </div>
+                                    <div class="item-total">
+                                        ₹${((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2)}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Price Details Section -->
+                    <div class="detail-section">
+                        <h6>Price Details</h6>
+                        <div class="price-breakdown">
+                            <div class="price-row">
+                                <span>Subtotal</span>
+                                <span>₹${order.total.toFixed(2)}</span>
+                            </div>
+                            ${order.total - order.discountTotal > 0 ? `
+                                <div class="price-row discount">
+                                    <span>Discount</span>
+                                    <span>-₹${(order.total - order.discountTotal).toFixed(2)}</span>
+                                </div>
+                            ` : ''}
+                            <div class="price-row">
+                                <span>Delivery</span>
+                                <span class="free">FREE</span>
+                            </div>
+                            <div class="price-row total">
+                                <span>Total Amount</span>
+                                <span>₹${order.discountTotal.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
 
             // Show the modal
             const orderModal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
@@ -258,161 +327,141 @@
         });
     }
 }
-// Global variables
 let selectedItemsForCancel = new Set();
-let currentOrderId = null;
 
-// Show cancel modal
 function showCancelModal(orderId, type) {
-   currentOrderId = orderId;
-   const modal = document.getElementById('cancelOrderModal');
-   const itemsSection = modal.querySelector('.cancel-items-section');
-   
-   // Reset form
-   document.getElementById('cancelOrderForm').reset();
-   document.getElementById('cancelOrderId').value = orderId;
-   document.getElementById('cancelType').value = type;
-   selectedItemsForCancel.clear();
-   
-   // Show/hide items section based on cancel type
-   itemsSection.style.display = type === 'partial' ? 'block' : 'none';
-   
-   const bsModal = new bootstrap.Modal(modal);
-   bsModal.show();
+    const modal = document.getElementById('cancelOrderModal');
+    const itemsSection = modal.querySelector('.cancel-items-section');
+    
+    document.getElementById('cancelOrderId').value = orderId;
+    document.getElementById('cancelType').value = type;
+    
+    if (type === 'partial') {
+        // Fetch order details and populate items
+        fetchOrderItems(orderId).then(items => {
+            const itemsList = modal.querySelector('.cancel-items-list');
+            itemsList.innerHTML = items.map(item => `
+                <div class="cancel-item">
+        <div class="item-selection">
+            <input class="custom-checkbox" type="checkbox" 
+                   value="${item._id}" 
+                   id="item_${item._id}"
+                   onchange="toggleCancelItem('${item._id}')">
+            <label class="checkbox-label" for="item_${item._id}">
+                <span class="checkmark"></span>
+            </label>
+        </div>
+        <div class="item-content">
+            <div class="item-image">
+                <img src="${item.product.images[0]}" alt="${item.product.name}">
+                ${item.quantity > 1 ? `<span class="item-quantity">×${item.quantity}</span>` : ''}
+            </div>
+            <div class="item-details">
+                <h6 class="item-name">${item.product.name}</h6>
+                <div class="item-meta">
+                    <p class="item-unit">${item.product.quantity} ${item.product.unit}</p>
+                    <div class="item-price">
+                        ${item.product.discountPrice ? `
+                            <span class="current-price">₹${item.product.discountPrice}</span>
+                            <span class="original-price">₹${item.product.price}</span>
+                        ` : `
+                            <span class="current-price">₹${item.product.price}</span>
+                        `}
+                    </div>
+                </div>
+                <div class="item-total">
+                    <span class="total-label">Total:</span>
+                    <span class="total-amount">₹${((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2)}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+            `).join('');
+        });
+        itemsSection.style.display = 'block';
+    } else {
+        itemsSection.style.display = 'none';
+    }
+    
+    selectedItemsForCancel.clear();
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
 }
 
-// Toggle item selection
+async function fetchOrderItems(orderId) {
+    try {
+        const response = await fetch(`/orders/${orderId}`);
+        const data = await response.json();
+        return data.success ? data.order.items : [];
+    } catch (error) {
+        console.error('Fetch order items error:', error);
+        showErrorNotification('Failed to load order items');
+        return [];
+    }
+}
+
 function toggleCancelItem(itemId) {
-   if (selectedItemsForCancel.has(itemId)) {
-       selectedItemsForCancel.delete(itemId);
-   } else {
-       selectedItemsForCancel.add(itemId);
-   }
-   updateCancelUI();
+    if (selectedItemsForCancel.has(itemId)) {
+        selectedItemsForCancel.delete(itemId);
+    } else {
+        selectedItemsForCancel.add(itemId);
+    }
 }
 
-// Update UI based on selections
-function updateCancelUI() {
-   const submitBtn = document.querySelector('#cancelOrderModal .btn-danger');
-   submitBtn.disabled = selectedItemsForCancel.size === 0;
-   
-   // Update totals
-   const selectedItems = document.querySelectorAll('#cancelOrderModal input[type="checkbox"]:checked');
-   let totalAmount = 0;
-   selectedItems.forEach(item => {
-       const priceEl = item.closest('.cancel-item').querySelector('.item-total');
-       totalAmount += parseFloat(priceEl.textContent.replace('₹', ''));
-   });
-   
-   const totalEl = document.querySelector('.cancel-total');
-   if (totalEl) {
-       totalEl.textContent = `₹${totalAmount.toFixed(2)}`;
-   }
-}
-
-// Handle reason selection
-document.getElementById('cancelReason')?.addEventListener('change', function() {
-   const otherReasonGroup = document.getElementById('otherReasonGroup');
-   otherReasonGroup.style.display = this.value === 'Other' ? 'block' : 'none';
-   
-   // Required validation for other reason
-   const otherReason = document.getElementById('otherReason');
-   otherReason.required = this.value === 'Other';
-});
-
-// Process cancellation
 async function processCancellation() {
-   try {
-       const form = document.getElementById('cancelOrderForm');
-       if (!form.checkValidity()) {
-           form.reportValidity();
-           return;
-       }
+    const orderId = document.getElementById('cancelOrderId').value;
+    const cancelType = document.getElementById('cancelType').value;
+    const reasonSelect = document.getElementById('cancelReason');
+    const otherReasonText = document.getElementById('otherReason');
+    
+    if (!reasonSelect.value) {
+        showErrorNotification('Please select a reason for cancellation');
+        return;
+    }
 
-       const cancelType = document.getElementById('cancelType').value;
-       const reasonSelect = document.getElementById('cancelReason');
-       const otherReasonText = document.getElementById('otherReason');
+    if (cancelType === 'partial' && selectedItemsForCancel.size === 0) {
+        showErrorNotification('Please select items to cancel');
+        return;
+    }
 
-       if (!reasonSelect.value) {
-           showNotification('Please select a cancellation reason', 'error');
-           return;
-       }
+    try {
+        const response = await fetch('/orders/cancel', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                orderId,
+                cancelType,
+                items: Array.from(selectedItemsForCancel),
+                reason: reasonSelect.value === 'Other' ? otherReasonText.value : reasonSelect.value
+            })
+        });
 
-       if (cancelType === 'partial' && selectedItemsForCancel.size === 0) {
-           showNotification('Please select items to cancel', 'error');
-           return;
-       }
+        const data = await response.json();
 
-       // Show loading state
-       const submitBtn = document.querySelector('#cancelOrderModal .btn-danger');
-       const originalText = submitBtn.innerHTML;
-       submitBtn.disabled = true;
-       submitBtn.innerHTML = `<i class="uil uil-spinner-alt"></i> Processing...`;
-
-       const response = await fetch('/orders/cancel', {
-           method: 'POST',
-           headers: {
-               'Content-Type': 'application/json'
-           },
-           body: JSON.stringify({
-               orderId: currentOrderId,
-               cancelType,
-               items: Array.from(selectedItemsForCancel),
-               reason: reasonSelect.value === 'Other' ? otherReasonText.value : reasonSelect.value
-           })
-       });
-
-       const data = await response.json();
-
-       if (data.success) {
-           bootstrap.Modal.getInstance(document.getElementById('cancelOrderModal')).hide();
-           showNotification('Order cancelled successfully', 'success');
-           setTimeout(() => window.location.reload(), 1500);
-       } else {
-           throw new Error(data.message);
-       }
-
-   } catch (error) {
-       showNotification(error.message || 'Failed to cancel order', 'error');
-       // Reset button
-       const submitBtn = document.querySelector('#cancelOrderModal .btn-danger');
-       submitBtn.disabled = false;
-       submitBtn.innerHTML = 'Confirm Cancellation';
-   }
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Order Cancelled',
+                text: cancelType === 'full' ? 'Order has been cancelled successfully' : 'Selected items have been cancelled',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.reload();
+            });
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        showErrorNotification(error.message || 'Failed to cancel order');
+    }
 }
 
-// Notification helper
-function showNotification(message, type = 'success') {
-   Swal.fire({
-       text: message,
-       icon: type,
-       toast: true,
-       position: 'top-end',
-       showConfirmButton: false,
-       timer: 3000,
-       timerProgressBar: true,
-       customClass: {
-           popup: `notification-${type}`
-       }
-   });
-}
-
-// Add animation classes when modal opens
-document.getElementById('cancelOrderModal')?.addEventListener('shown.bs.modal', function() {
-   document.querySelectorAll('.cancel-item').forEach((item, index) => {
-       setTimeout(() => {
-           item.classList.add('fade-in');
-       }, index * 100);
-   });
-});
-
-// Clean up when modal closes
-document.getElementById('cancelOrderModal')?.addEventListener('hidden.bs.modal', function() {
-   selectedItemsForCancel.clear();
-   currentOrderId = null;
-   document.querySelectorAll('.cancel-item').forEach(item => {
-       item.classList.remove('fade-in');
-   });
+// Event listener for reason select
+document.getElementById('cancelReason').addEventListener('change', function() {
+    const otherReasonGroup = document.getElementById('otherReasonGroup');
+    otherReasonGroup.style.display = this.value === 'Other' ? 'block' : 'none';
 });
 	</script>
 
