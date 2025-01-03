@@ -240,24 +240,76 @@
     }
 }
 
-// Update order status
 function updateStatus(orderId) {
-    document.getElementById('updateOrderId').value = orderId;
-    const modal = new bootstrap.Modal(document.getElementById('updateStatusModal'));
-    modal.show();
+    try {
+        Swal.fire({
+            title: 'Update Order Status',
+            html: `
+                <div class="form-group">
+                    <label class="mb-2">Select Status</label>
+                    <select class="form-select" id="statusSelect">
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Update',
+            confirmButtonColor: '#2b2f4c',
+            cancelButtonColor: '#6c757d',
+            preConfirm: () => {
+                return {
+                    status: document.getElementById('statusSelect').value
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                saveStatus(orderId, result.value.status);
+            }
+        });
+    } catch (error) {
+        console.error('Status update error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to update status'
+        });
+    }
 }
 
-async function saveStatus() {
+// Save updated status
+async function saveStatus(orderId, newStatus) {
     try {
-        const orderId = document.getElementById('updateOrderId').value;
-        const status = document.getElementById('newStatus').value;
+        let statusData = { status: newStatus };
 
-        const response = await fetch('/admin/orders/status', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ orderId, status })
+        if (newStatus === 'Cancelled') {
+            const result = await Swal.fire({
+                title: 'Cancel Order',
+                input: 'textarea',
+                inputLabel: 'Cancellation Reason',
+                inputPlaceholder: 'Enter reason for cancellation...',
+                inputAttributes: {
+                    'aria-label': 'Cancellation reason'
+                },
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Please enter a reason for cancellation';
+                    }
+                },
+                showCancelButton: true
+            });
+
+            if (!result.isConfirmed) return;
+            statusData.cancelReason = result.value;
+        }
+
+        const response = await fetch(`/admin/orders/update-status/${orderId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(statusData)
         });
 
         const data = await response.json();
@@ -269,15 +321,14 @@ async function saveStatus() {
                 text: 'Order status updated successfully',
                 showConfirmButton: false,
                 timer: 1500
-            }).then(() => {
-                window.location.reload();
-            });
-        } else {
-            throw new Error(data.message);
+            }).then(() => window.location.reload());
         }
     } catch (error) {
-        console.error('Update status error:', error);
-        showErrorAlert('Failed to update order status');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to update order status'
+        });
     }
 }
 

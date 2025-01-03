@@ -59,20 +59,23 @@ const getOrderDetails = async (req, res) => {
 // Update order status
 const updateOrderStatus = async (req, res) => {
     try {
-        const { orderId, status } = req.body;
-
-        const order = await Order.findById(orderId);
+        const { status, cancelReason } = req.body;
+        const order = await Order.findById(req.params.id);
 
         if (!order) {
-            return res.status(404).json({
-                success: false,
-                message: 'Order not found'
-            });
+            return res.status(404).json({ success: false, message: 'Order not found' });
         }
 
-        // Update status
         order.orderStatus = status;
-        if (status === 'Delivered') {
+
+        if (status === 'Cancelled') {
+            order.cancelReason = cancelReason;
+            order.cancelledAt = new Date();
+        } else if (status === 'Processed') {
+            order.processed = new Date();
+        }else if (status === 'Shipped') {
+            order.shippedeAt = new Date();
+        }else if (status === 'Delivered') {
             order.deliveredAt = new Date();
         }
 

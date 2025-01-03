@@ -47,6 +47,6 @@ router.delete('/users/delete/:id', adminAuth, deleteUser);
 //order routes
 router.get('/orders', adminAuth, getOrders);
 router.get('/orders/:id', adminAuth, getOrderDetails);
-router.post('/orders/status', adminAuth, updateOrderStatus);
+router.put('/orders/update-status/:id', adminAuth, updateOrderStatus);
 
 module.exports = router;

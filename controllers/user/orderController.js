@@ -103,6 +103,7 @@ const cancelOrder = async (req, res) => {
             order.items = order.items.map(item => {
                 if (items.includes(item._id.toString())) {
                     item.cancelled = true;
+                    item.cancelledAt = new Date();
                     item.cancelReason = reason;
                 }
                 return item;
