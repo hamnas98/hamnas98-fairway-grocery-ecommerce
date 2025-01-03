@@ -8,7 +8,8 @@ const { categoryUpload, productUpload } = require('../config/multer');
 const adminAuth = require('../middleware/amninAuth');
 const { getAllProducts, getAddProduct, getParentCategory, addProduct, getEditProduct, 
         updateProduct, listingProduct, deleteProduct, getProductDetails  } = require('../controllers/admin/productController');
-const { getUsers,toggleUserBlock,deleteUser } = require('../controllers/admin/userController')
+const { getUsers, toggleUserBlock, deleteUser } = require('../controllers/admin/userController');
+const { getOrders } = require('../controllers/admin/orderController');
 
 
 // router.use(adminAuth);
@@ -43,5 +44,7 @@ router.get('/users', adminAuth, getUsers);
 router.put('/users/isBlocked/:id', adminAuth, toggleUserBlock);
 router.delete('/users/delete/:id', adminAuth, deleteUser);
 
+//order routes
+router.get('/orders', adminAuth, getOrders);
 
 module.exports = router;

@@ -1,0 +1,165 @@
+.stats-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+}
+
+.stats-card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stats-info h5 {
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.stats-info h3 {
+    color: #2b2f4c;
+    font-size: 24px;
+    margin: 0;
+}
+
+.stats-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.stats-card .stats-icon {
+    background: #eef2ff;
+    color: #2b2f4c;
+}
+
+.stats-card.pending .stats-icon {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+.stats-card.delivered .stats-icon {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.stats-card.cancelled .stats-icon {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+/* Orders Table */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.card-header {
+    background: white;
+    padding: 20px;
+    border-bottom: 1px solid #eef0f5;
+}
+
+.card-title {
+    color: #2b2f4c;
+    font-size: 18px;
+}
+
+.order-filters {
+    display: flex;
+    gap: 12px;
+}
+
+.form-select, .form-control {
+    border-color: #eef0f5;
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+
+/* Table Styles */
+.table {
+    margin: 0;
+}
+
+.table th {
+    font-weight: 600;
+    color: #2b2f4c;
+    border-bottom: 2px solid #eef0f5;
+    padding: 12px 16px;
+}
+
+.table td {
+    padding: 16px;
+    vertical-align: middle;
+    color: #4b5563;
+    border-bottom: 1px solid #eef0f5;
+}
+
+.user-info h6 {
+    color: #2b2f4c;
+    margin: 0;
+}
+
+.user-info small {
+    color: #6b7280;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-badge.pending {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+.status-badge.processing {
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.status-badge.shipped {
+    background: #f0f9ff;
+    color: #0284c7;
+}
+
+.status-badge.delivered {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.status-badge.cancelled {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.action-buttons .btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+}
