@@ -87,9 +87,9 @@ const getCategoryProducts = async (req, res) => {
         const hasPreviousPage = page > 1;
 
         res.render('category', {
-            category,          // Current category (parent / sub)
-            parentCategory,    // Parent category
-            subcategories,     // List of subcategories
+            category,          
+            parentCategory,    
+            subcategories,    
             products,
             parentCategories,
             pageTitle: category.name,

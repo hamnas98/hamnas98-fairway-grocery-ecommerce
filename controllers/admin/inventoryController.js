@@ -21,7 +21,7 @@ const getInventory = async (req, res) => {
             lowStockProducts,
             outOfStockProducts,
             pageTitle: 'Inventory Management',
-            path:'/admin/Inventory'
+            path:'/admin/inventory'
         });
     } catch (error) {
         console.error('Get inventory error:', error);
