@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description-gambolthemes" content="">
+		<meta name="author-gambolthemes" content="">
+		<title>Fairway Supermarket Admin</title>
+		<link href="css/styles.css" rel="stylesheet">
+		<link href="css/admin-style.css" rel="stylesheet">
+		<link href="css/admin-custom" rel="stylesheet">
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<link  href="/admin/css/order.css"  rel="stylesheet">
+		<style>
+			
+			</style>
+		
+		<!-- Vendor Stylesheets -->
+		<link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+		
+	</head>
+
+    <body class="sb-nav-fixed">
+		<%- include('../partials/admin/topnav') %>
+        <div id="layoutSidenav">
+			<%- include('../partials/admin/sidebar') %>
+            <div id="layoutSidenav_content">
+                <main>
+					<div class="container-fluid">
+						<h2 class="mt-30 page-title">Inventory</h2>
+						<ol class="breadcrumb mb-30">
+							<li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+							<li class="breadcrumb-item active">Inventory</li>
+						</ol>
+					
+						<div class="container-fluid">
+                            <!-- Inventory Stats -->
+                            <div class="row mb-4">
+                                <div class="col-xl-3 col-sm-6">
+                                    <div class="stats-card">
+                                        <div class="stats-content">
+                                            <h3><%= totalProducts %></h3>
+                                            <p>Total Products</p>
+                                        </div>
+                                        <div class="stats-icon">
+                                            <i class="fas fa-box"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-sm-6">
+                                    <div class="stats-card warning">
+                                        <div class="stats-content">
+                                            <h3><%= lowStockProducts %></h3>
+                                            <p>Low Stock Items</p>
+                                        </div>
+                                        <div class="stats-icon">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-sm-6">
+                                    <div class="stats-card danger">
+                                        <div class="stats-content">
+                                            <h3><%= outOfStockProducts %></h3>
+                                            <p>Out of Stock</p>
+                                        </div>
+                                        <div class="stats-icon">
+                                            <i class="fas fa-times-circle"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-sm-6">
+                                    <div class="stats-card success">
+                                        <div class="stats-content">
+                                            <h3><%= categories.length %></h3>
+                                            <p>Categories</p>
+                                        </div>
+                                        <div class="stats-icon">
+                                            <i class="fas fa-tags"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+          </main>
+            </div>
+        </div>
+        <script src="js/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="js/scripts.js"></script>   
+        <script>
+            async function viewOrder(orderId) {
+    try {
+        const response = await fetch(`/admin/orders/${orderId}`);
+        const data = await response.json();
+
+        if (data.success) {
+            const order = data.order;
+            document.getElementById('orderDetailsContent').innerHTML = generateOrderDetailsHtml(order);
+            
+            const modal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+            modal.show();
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('View order error:', error);
+        showErrorAlert('Failed to load order details');
+    }
+}
+
+function updateStatus(orderId) {
+    try {
+        Swal.fire({
+            title: 'Update Order Status',
+            html: `
+                <div class="form-group">
+                    <label class="mb-2">Select Status</label>
+                    <select class="form-select" id="statusSelect">
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Update',
+            confirmButtonColor: '#2b2f4c',
+            cancelButtonColor: '#6c757d',
+            preConfirm: () => {
+                return {
+                    status: document.getElementById('statusSelect').value
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                saveStatus(orderId, result.value.status);
+            }
+        });
+    } catch (error) {
+        console.error('Status update error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to update status'
+        });
+    }
+}
+
+// Save updated status
+async function saveStatus(orderId, newStatus) {
+    try {
+        let statusData = { status: newStatus };
+
+        if (newStatus === 'Cancelled') {
+            const result = await Swal.fire({
+                title: 'Cancel Order',
+                input: 'textarea',
+                inputLabel: 'Cancellation Reason',
+                inputPlaceholder: 'Enter reason for cancellation...',
+                inputAttributes: {
+                    'aria-label': 'Cancellation reason'
+                },
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Please enter a reason for cancellation';
+                    }
+                },
+                showCancelButton: true
+            });
+
+            if (!result.isConfirmed) return;
+            statusData.cancelReason = result.value;
+        }
+
+        const response = await fetch(`/admin/orders/update-status/${orderId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(statusData)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Order status updated successfully',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => window.location.reload());
+        }
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to update order status'
+        });
+    }
+}
+
+// Filter orders
+function filterOrders() {
+    const status = document.getElementById('statusFilter').value;
+    const date = document.getElementById('dateFilter').value;
+    
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        let show = true;
+        
+        // Status filter
+        if (status && row.querySelector('.status-badge').textContent.trim() !== status) {
+            show = false;
+        }
+        
+        // Date filter
+        if (date) {
+            const orderDate = new Date(row.querySelector('td:nth-child(6)').textContent).toLocaleDateString();
+            if (orderDate !== new Date(date).toLocaleDateString()) {
+                show = false;
+            }
+        }
+        
+        row.style.display = show ? '' : 'none';
+    });
+}
+
+// Helper functions
+function generateOrderDetailsHtml(order) {
+   return `
+       <div class="order-detail-content">
+           <div class="order-detail-header">
+               <div class="order-info">
+                   <h6>Order #${order._id.slice(-6)}</h6>
+                   <span>Placed on: ${new Date(order.createdAt).toLocaleString()}</span>
+                   <span class="status-badge ${order.orderStatus.toLowerCase()}">${order.orderStatus}</span>
+               </div>
+               <div class="customer-info">
+                   <h6>${order.user.name}</h6>
+                   <span>${order.user.email}</span>
+               </div>
+           </div>
+
+           <div class="delivery-address">
+               <h6>Delivery Address</h6>
+               <p>
+                   ${order.deliveryAddress.name}<br>
+                   ${order.deliveryAddress.mobile}<br>
+                   ${order.deliveryAddress.flat}, ${order.deliveryAddress.addressLine}<br>
+                   ${order.deliveryAddress.city}, ${order.deliveryAddress.state} - ${order.deliveryAddress.pincode}
+               </p>
+           </div>
+
+           <div class="order-items">
+               <h6>Order Items</h6>
+               ${order.items.map(item => `
+                   <div class="order-item ${item.cancelled ? 'cancelled' : ''}">
+                       <div class="item-image">
+                           <img src="${item.product.images[0]}" alt="${item.product.name}">
+                       </div>
+                       <div class="item-details">
+                           <div class="item-header">
+                               <h6>${item.product.name}</h6>
+                               ${item.cancelled ? '<span class="cancelled-badge">Cancelled</span>' : ''}
+                           </div>
+                           <span>${item.product.quantity} ${item.product.unit}</span>
+                           <div class="item-price">
+                               ${item.quantity} × ₹${item.product.discountPrice || item.product.price}
+                           </div>
+                           ${item.cancelReason ? `
+                               <div class="cancel-reason">
+                                   <i class="fas fa-info-circle"></i>
+                                   Cancellation Reason: ${item.cancelReason}
+                               </div>
+                           ` : ''}
+                       </div>
+                       <div class="item-total ${item.cancelled ? 'cancelled' : ''}">
+                           ₹${((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2)}
+                       </div>
+                   </div>
+               `).join('')}
+           </div>
+
+           <div class="order-summary">
+               <div class="summary-row">
+                   <span>Subtotal</span>
+                   <span>₹${order.total.toFixed(2)}</span>
+               </div>
+               ${order.total - order.discountTotal > 0 ? `
+                   <div class="summary-row">
+                       <span>Discount</span>
+                       <span>-₹${(order.total - order.discountTotal).toFixed(2)}</span>
+                   </div>
+               ` : ''}
+               <div class="summary-row">
+                   <span>Delivery</span>
+                   <span class="free">FREE</span>
+               </div>
+               <div class="summary-row total">
+                   <span>Total Amount</span>
+                   <span>₹${order.discountTotal.toFixed(2)}</span>
+               </div>
+           </div>
+       </div>
+   `;
+}
+
+function showErrorAlert(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message
+    });
+}
+        </script>
+    </body>
+</html>

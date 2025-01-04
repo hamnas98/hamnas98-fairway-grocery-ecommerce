@@ -38,7 +38,7 @@ const getOrders = async (req, res) => {
     }
 };
 
-// Get single order details
+
 const getOrderDetails = async (req, res) => {
     try {
         const order = await Order.findById(req.params.id)
@@ -66,7 +66,7 @@ const getOrderDetails = async (req, res) => {
     }
 };
 
-// Update order status
+
 const updateOrderStatus = async (req, res) => {
     try {
         const { status, cancelReason } = req.body;
