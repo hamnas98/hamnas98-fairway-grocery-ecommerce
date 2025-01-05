@@ -1,7 +1,7 @@
 const Product = require('../../models/Product');
 const Category = require('../../models/Category');
 const StockHistory = require('../../models/StockHistory');
-
+const excel = require('exceljs');
 const getInventory = async (req, res) => {
     try {
         const products = await Product.find({ isDeleted: false })
@@ -82,6 +82,13 @@ const updateStock = async (req, res) => {
     try {
         const { productId, updateType, quantity, notes } = req.body;
 
+        if (!productId || !updateType || !quantity) {
+            return res.status(400).json({
+                success: false,
+                message: 'Missing required fields'
+            });
+        }
+
         const product = await Product.findById(productId);
         if (!product) {
             return res.status(404).json({
@@ -91,34 +98,41 @@ const updateStock = async (req, res) => {
         }
 
         let newStock;
+        const currentStock = parseInt(product.stock);
+        const updateQuantity = parseInt(quantity);
+
         switch (updateType) {
             case 'add':
-                newStock = product.stock + parseInt(quantity);
+                newStock = currentStock + updateQuantity;
                 break;
-            case 'remove':
-                newStock = Math.max(0, product.stock - parseInt(quantity));
+            case 'subtract': // Changed from 'remove' to 'subtract' to match schema
+                newStock = Math.max(0, currentStock - updateQuantity);
                 break;
             case 'set':
-                newStock = parseInt(quantity);
+                newStock = updateQuantity;
                 break;
             default:
-                throw new Error('Invalid update type');
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid update type'
+                });
         }
 
         // Create stock history entry
         const stockHistory = new StockHistory({
             product: productId,
             updateType,
-            previousStock: product.stock,
-            updatedStock: newStock,
-            quantity: parseInt(quantity),
-            notes,
+            quantity: updateQuantity,
+            previousStock: currentStock,
+            newStock: newStock,
+            notes: notes || '',
             updatedBy: req.session.admin.id
         });
 
         // Update product stock
         product.stock = newStock;
 
+        // Save both product and history
         await Promise.all([
             product.save(),
             stockHistory.save()
@@ -127,16 +141,24 @@ const updateStock = async (req, res) => {
         res.json({
             success: true,
             message: 'Stock updated successfully',
-            newStock
+            newStock,
+            product: {
+                id: product._id,
+                name: product.name,
+                stock: newStock
+            }
         });
+
     } catch (error) {
         console.error('Update stock error:', error);
         res.status(500).json({
             success: false,
-            message: 'Failed to update stock'
+            message: 'Failed to update stock. Please try again.'
         });
     }
 };
+//
+
 const getStockHistory = async (req, res) => {
     try {
         const history = await StockHistory.find({ product: req.params.id })
@@ -159,30 +181,47 @@ const getStockHistory = async (req, res) => {
 
 const bulkUpdateStock = async (req, res) => {
     try {
-        const { updates } = req.body;
-        
-        const updatePromises = updates.map(async update => {
-            const product = await Product.findById(update.productId);
+        const { updateType, updates, notes } = req.body;
+
+        const updatePromises = updates.map(async ({ productId, quantity }) => {
+            const product = await Product.findById(productId);
             if (!product) return null;
 
+            const currentStock = parseInt(product.stock);
+            const updateQuantity = parseInt(quantity);
+            let newStock;
+
+            switch (updateType) {
+                case 'add':
+                    newStock = currentStock + updateQuantity;
+                    break;
+                case 'subtract':
+                    newStock = Math.max(0, currentStock - updateQuantity);
+                    break;
+                case 'set':
+                    newStock = updateQuantity;
+                    break;
+                default:
+                    throw new Error('Invalid update type');
+            }
+
+            // Create stock history
             const stockHistory = new StockHistory({
-                product: update.productId,
-                updateType: 'set',
-                previousStock: product.stock,
-                updatedStock: update.quantity,
-                quantity: update.quantity,
-                notes: 'Bulk update',
+                product: productId,
+                updateType,
+                quantity: updateQuantity,
+                previousStock: currentStock,
+                newStock,
+                notes,
                 updatedBy: req.session.admin.id
             });
 
-            product.stock = update.quantity;
+            product.stock = newStock;
 
-            await Promise.all([
+            return Promise.all([
                 product.save(),
                 stockHistory.save()
             ]);
-
-            return product;
         });
 
         await Promise.all(updatePromises);
@@ -200,6 +239,12 @@ const bulkUpdateStock = async (req, res) => {
     }
 };
 
+function getStockStatus(stock, lowStockThreshold = 10) {
+    if (stock === 0) return 'Out of Stock';
+    if (stock <= lowStockThreshold) return 'Low Stock';
+    return 'In Stock';
+}
+
 const exportInventory = async (req, res) => {
     try {
         const products = await Product.find({ isDeleted: false })
@@ -209,6 +254,7 @@ const exportInventory = async (req, res) => {
         const workbook = new excel.Workbook();
         const worksheet = workbook.addWorksheet('Inventory');
 
+        // Define columns
         worksheet.columns = [
             { header: 'Product Name', key: 'name', width: 30 },
             { header: 'SKU', key: 'sku', width: 15 },
@@ -219,21 +265,68 @@ const exportInventory = async (req, res) => {
             { header: 'Last Updated', key: 'updatedAt', width: 20 }
         ];
 
+        // Style the header row
+        worksheet.getRow(1).font = { bold: true };
+        worksheet.getRow(1).fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFE8EAED' }
+        };
+
+        // Add products data
         products.forEach(product => {
+            const status = getStockStatus(product.stock);
             worksheet.addRow({
                 name: product.name,
                 sku: product.sku || '-',
                 category: product.category.name,
                 stock: product.stock,
-                lowStockAlert: product.lowStockAlert,
-                status: getStockStatus(product.stock),
+                lowStockAlert: product.lowStockAlert || '-',
+                status: status,
                 updatedAt: product.updatedAt.toLocaleDateString()
             });
         });
 
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.setHeader('Content-Disposition', 'attachment; filename=inventory.xlsx');
+        // Add style to status column based on value
+        worksheet.getColumn('status').eachCell((cell, rowNumber) => {
+            if (rowNumber > 1) { // Skip header
+                switch(cell.value) {
+                    case 'Out of Stock':
+                        cell.font = { color: { argb: 'FFFF0000' } }; // Red
+                        break;
+                    case 'Low Stock':
+                        cell.font = { color: { argb: 'FFFF9900' } }; // Orange
+                        break;
+                    case 'In Stock':
+                        cell.font = { color: { argb: 'FF008000' } }; // Green
+                        break;
+                }
+            }
+        });
 
+        // Format all borders
+        worksheet.eachRow((row, rowNumber) => {
+            row.eachCell((cell) => {
+                cell.border = {
+                    top: { style: 'thin' },
+                    left: { style: 'thin' },
+                    bottom: { style: 'thin' },
+                    right: { style: 'thin' }
+                };
+            });
+        });
+
+        // Set content type and headers
+        res.setHeader(
+            'Content-Type', 
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition', 
+            'attachment; filename=inventory-report.xlsx'
+        );
+
+        // Write to response
         await workbook.xlsx.write(res);
         res.end();
 

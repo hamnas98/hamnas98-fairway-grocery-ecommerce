@@ -339,3 +339,89 @@ select:not([value=""]) {
     background-color: #f8fafd;
 }
 
+.stock-history-table {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.stock-history-table::-webkit-scrollbar {
+    width: 6px;
+}
+
+.stock-history-table::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.stock-history-table::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.stock-history-table::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.stock-history-table th {
+    position: sticky;
+    top: 0;
+    background: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    z-index: 1;
+    padding: 12px;
+}
+
+.stock-history-table td {
+    padding: 12px;
+    vertical-align: middle;
+}
+
+.history-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.history-badge.add {
+    background: #e6ffed;
+    color: #28a745;
+}
+
+.history-badge.subtract {
+    background: #fff5f5;
+    color: #dc3545;
+}
+
+.history-badge.set {
+    background: #e8f0fe;
+    color: #2b2f4c;
+}
+
+.modal-body {
+    padding: 0 !important;
+}
+
+.modal-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-header .modal-title i {
+    margin-right: 8px;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.notes-cell {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
