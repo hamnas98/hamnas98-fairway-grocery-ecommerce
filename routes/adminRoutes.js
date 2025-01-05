@@ -10,8 +10,7 @@ const { getAllProducts, getAddProduct, getParentCategory, addProduct, getEditPro
         updateProduct, listingProduct, deleteProduct, getProductDetails  } = require('../controllers/admin/productController');
 const { getUsers, toggleUserBlock, deleteUser } = require('../controllers/admin/userController');
 const { getOrders, getOrderDetails, updateOrderStatus } = require('../controllers/admin/orderController');
-const { getInventory } = require('../controllers/admin/inventoryController')
-
+const { getInventory } = require('../controllers/admin/inventoryController');
 
 
 // admin routes
@@ -51,6 +50,7 @@ router.get('/orders/:id', adminAuth, getOrderDetails);
 router.put('/orders/update-status/:id', adminAuth, updateOrderStatus);
 
 //inventory routes
+
 router.get('/inventory', adminAuth, getInventory);
 
 module.exports = router;

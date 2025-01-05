@@ -29,169 +29,155 @@
             <div id="layoutSidenav_content">
                 <main>
 					<div class="container-fluid">
-						<h2 class="mt-30 page-title">Inventory</h2>
+						<h2 class="mt-30 page-title">Orders</h2>
 						<ol class="breadcrumb mb-30">
 							<li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
 							<li class="breadcrumb-item active">Inventory</li>
 						</ol>
 					
 						<div class="container-fluid">
-                            <!-- Inventory Stats -->
-                            <div class="row mb-4">
-                                <div class="col-xl-3 col-sm-6">
-                                    <div class="stats-card">
-                                        <div class="stats-content">
-                                            <h3><%= totalProducts %></h3>
-                                            <p>Total Products</p>
-                                        </div>
-                                        <div class="stats-icon">
-                                            <i class="fas fa-box"></i>
+                            <!-- Header -->
+                            <div class="inventory-header">
+                                <div class="header-content">
+                                    <div class="header-left">
+                                        <h2><i class="fas fa-boxes"></i> Inventory Management</h2>
+                                        <div class="stats-cards">
+                                            <div class="stat-card">
+                                                <div class="stat-icon low">
+                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                </div>
+                                                <div class="stat-info">
+                                                    <h4><%= lowStockCount %></h4>
+                                                    <span>Low Stock Items</span>
+                                                </div>
+                                            </div>
+                                            <div class="stat-card">
+                                                <div class="stat-icon total">
+                                                    <i class="fas fa-cube"></i>
+                                                </div>
+                                                <div class="stat-info">
+                                                    <h4><%= totalProducts %></h4>
+                                                    <span>Total Products</span>
+                                                </div>
+                                            </div>
+                                            <div class="stat-card">
+                                                <div class="stat-icon out">
+                                                    <i class="fas fa-times-circle"></i>
+                                                </div>
+                                                <div class="stat-info">
+                                                    <h4><%= outOfStockCount %></h4>
+                                                    <span>Out of Stock</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-xl-3 col-sm-6">
-                                    <div class="stats-card warning">
-                                        <div class="stats-content">
-                                            <h3><%= lowStockProducts %></h3>
-                                            <p>Low Stock Items</p>
-                                        </div>
-                                        <div class="stats-icon">
-                                            <i class="fas fa-exclamation-triangle"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-3 col-sm-6">
-                                    <div class="stats-card danger">
-                                        <div class="stats-content">
-                                            <h3><%= outOfStockProducts %></h3>
-                                            <p>Out of Stock</p>
-                                        </div>
-                                        <div class="stats-icon">
-                                            <i class="fas fa-times-circle"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-3 col-sm-6">
-                                    <div class="stats-card success">
-                                        <div class="stats-content">
-                                            <h3><%= categories.length %></h3>
-                                            <p>Categories</p>
-                                        </div>
-                                        <div class="stats-icon">
-                                            <i class="fas fa-tags"></i>
-                                        </div>
+                                    <div class="header-actions">
+                                        <button class="btn custom-btn" onclick="updateBulkStock()">
+                                            <i class="fas fa-sync-alt"></i> Bulk Update
+                                        </button>
+                                        <button class="btn custom-btn" onclick="downloadInventoryReport()">
+                                            <i class="fas fa-download"></i> Export Report
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                            <!-- Inventory Table -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <h5 class="card-title">Inventory Management</h5>
-                                        <div class="header-actions">
-                                            <button class="btn btn-outline-primary me-2" onclick="exportInventory()">
-                                                <i class="fas fa-download"></i> Export
-                                            </button>
-                                            <button class="btn btn-primary" onclick="openBulkUpdateModal()">
-                                                <i class="fas fa-upload"></i> Bulk Update
-                                            </button>
-                                        </div>
+                        
+                            <!-- Main Content -->
+                            <div class="inventory-content">
+                                <!-- Filters -->
+                                <div class="filters-section">
+                                    <div class="search-box">
+                                        <i class="fas fa-search"></i>
+                                        <input type="text" id="searchInventory" placeholder="Search products...">
                                     </div>
-                                    <div class="filter-section mt-3">
-                                        <div class="row g-3">
-                                            <div class="col-md-3">
-                                                <input type="text" class="form-control" id="searchInput" 
-                                                       placeholder="Search products..." onkeyup="filterProducts()">
-                                            </div>
-                                            <div class="col-md-3">
-                                                <select class="form-select" id="categoryFilter" onchange="filterProducts()">
-                                                    <option value="">All Categories</option>
-                                                    <% categories.forEach(category => { %>
-                                                        <option value="<%= category._id %>"><%= category.name %></option>
-                                                    <% }); %>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <select class="form-select" id="stockFilter" onchange="filterProducts()">
-                                                    <option value="">All Stock Status</option>
-                                                    <option value="inStock">In Stock</option>
-                                                    <option value="lowStock">Low Stock</option>
-                                                    <option value="outOfStock">Out of Stock</option>
-                                                </select>
-                                            </div>
-                                        </div>
+                                    <div class="filter-group">
+                                        <select id="categoryFilter" class="form-select">
+                                            <option value="">All Categories</option>
+                                            <% categories.forEach(category => { %>
+                                                <option value="<%= category._id %>"><%= category.name %></option>
+                                            <% }); %>
+                                        </select>
+                                        <select id="stockFilter" class="form-select">
+                                            <option value="">All Stock Status</option>
+                                            <option value="low">Low Stock</option>
+                                            <option value="out">Out of Stock</option>
+                                            <option value="in">In Stock</option>
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
+                        
+                                <!-- Inventory Table -->
+                                <div class="inventory-table-container">
+                                    <table class="inventory-table">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <input type="checkbox" id="selectAll">
+                                                </th>
+                                                <th>Product</th>
+                                                <th>Category</th>
+                                                <th>SKU</th>
+                                                <th>Stock</th>
+                                                <th>Status</th>
+                                                <th>Last Updated</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% products.forEach(product => { %>
                                                 <tr>
-                                                    <th>Product</th>
-                                                    <th>Category</th>
-                                                    <th>Stock</th>
-                                                    <th>Price</th>
-                                                    <th>Status</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <% products.forEach(product => { %>
-                                                    <tr>
-                                                        <td>
-                                                            <div class="product-cell">
-                                                                <img src="<%= product.images[0] %>" alt="<%= product.name %>">
-                                                                <div class="product-info">
-                                                                    <h6><%= product.name %></h6>
-                                                                    <small><%= product.quantity + product.unit %></small>
-                                                                </div>
+                                                    <td>
+                                                        <input type="checkbox" class="product-select" value="<%= product._id %>">
+                                                    </td>
+                                                    <td>
+                                                        <div class="product-cell">
+                                                            <img src="<%= product.images[0] %>" alt="<%= product.name %>">
+                                                            <div class="product-info">
+                                                                <h6><%= product.name %></h6>
+                                                                <span><%= product.quantity + product.unit %></span>
                                                             </div>
-                                                        </td>
-                                                        <td><%= product.category.name %></td>
-                                                        <td>
-                                                            <div class="stock-cell">
-                                                                <span class="stock-count"><%= product.stock %></span>
-                                                                <div class="quick-update">
-                                                                    <button class="btn btn-sm btn-light" 
-                                                                            onclick="quickUpdateStock('<%= product._id %>', 'decrease')">
-                                                                        <i class="fas fa-minus"></i>
-                                                                    </button>
-                                                                    <button class="btn btn-sm btn-light"
-                                                                            onclick="quickUpdateStock('<%= product._id %>', 'increase')">
-                                                                        <i class="fas fa-plus"></i>
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        
-                                                        <td>₹<%= product.price.toFixed(2) %></td>
-                                                        <td>
-                                                            <span class="status-badge">
-                                                                <%= (product.stock) %>
+                                                        </div>
+                                                    </td>
+                                                    <td><%= product.category.name %></td>
+                                                    <td><%= product.sku || '-' %></td>
+                                                    <td>
+                                                        <div class="stock-cell">
+                                                            <span class="stock-value <%= getStockClass(product.stock) %>">
+                                                                <%= product.stock %>
                                                             </span>
-                                                        </td>
-                                                        <td>
-                                                            <div class="action-buttons">
-                                                                <button class="btn btn-sm btn-info" 
-                                                                        onclick="viewStockHistory('<%= product._id %>')">
-                                                                    <i class="fas fa-history"></i>
-                                                                </button>
-                                                                <button class="btn btn-sm btn-primary"
-                                                                        onclick="updateStock('<%= product._id %>')">
-                                                                    <i class="fas fa-edit"></i>
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                <% }); %>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                            <button class="update-stock-btn" onclick="openStockModal('<%= product._id %>')">
+                                                                <i class="fas fa-pen"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="status-badge <%= getStockStatusClass(product.stock) %>">
+                                                            <%= getStockStatus(product.stock) %>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <%= new Date(product.updatedAt).toLocaleDateString() %>
+                                                    </td>
+                                                    <td>
+                                                        <div class="action-buttons">
+                                                            <button class="btn-icon view" onclick="viewStockHistory('<%= product._id %>')" 
+                                                                    title="View History">
+                                                                <i class="fas fa-history"></i>
+                                                            </button>
+                                                            <button class="btn-icon alert" onclick="setStockAlert('<%= product._id %>')"
+                                                                    title="Set Alert">
+                                                                <i class="fas fa-bell"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            <% }); %>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                         
-                            
           </main>
             </div>
         </div>
@@ -199,48 +185,231 @@
         <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="js/scripts.js"></script>   
         <script>
-          // Filter products
-          function filterProducts() {
-    const search = document.getElementById('searchInput').value.toLowerCase();
-    const category = document.getElementById('categoryFilter').value;
-    const stockStatus = document.getElementById('stockFilter').value;
+            async function viewOrder(orderId) {
+    try {
+        const response = await fetch(`/admin/orders/${orderId}`);
+        const data = await response.json();
 
+        if (data.success) {
+            const order = data.order;
+            document.getElementById('orderDetailsContent').innerHTML = generateOrderDetailsHtml(order);
+            
+            const modal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+            modal.show();
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('View order error:', error);
+        showErrorAlert('Failed to load order details');
+    }
+}
+
+function updateStatus(orderId) {
+    try {
+        Swal.fire({
+            title: 'Update Order Status',
+            html: `
+                <div class="form-group">
+                    <label class="mb-2">Select Status</label>
+                    <select class="form-select" id="statusSelect">
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Update',
+            confirmButtonColor: '#2b2f4c',
+            cancelButtonColor: '#6c757d',
+            preConfirm: () => {
+                return {
+                    status: document.getElementById('statusSelect').value
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                saveStatus(orderId, result.value.status);
+            }
+        });
+    } catch (error) {
+        console.error('Status update error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to update status'
+        });
+    }
+}
+
+// Save updated status
+async function saveStatus(orderId, newStatus) {
+    try {
+        let statusData = { status: newStatus };
+
+        if (newStatus === 'Cancelled') {
+            const result = await Swal.fire({
+                title: 'Cancel Order',
+                input: 'textarea',
+                inputLabel: 'Cancellation Reason',
+                inputPlaceholder: 'Enter reason for cancellation...',
+                inputAttributes: {
+                    'aria-label': 'Cancellation reason'
+                },
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Please enter a reason for cancellation';
+                    }
+                },
+                showCancelButton: true
+            });
+
+            if (!result.isConfirmed) return;
+            statusData.cancelReason = result.value;
+        }
+
+        const response = await fetch(`/admin/orders/update-status/${orderId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(statusData)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Order status updated successfully',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => window.location.reload());
+        }
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to update order status'
+        });
+    }
+}
+
+// Filter orders
+function filterOrders() {
+    const status = document.getElementById('statusFilter').value;
+    const date = document.getElementById('dateFilter').value;
+    
     const rows = document.querySelectorAll('tbody tr');
     rows.forEach(row => {
         let show = true;
-        const productName = row.querySelector('.product-info h6').textContent.toLowerCase();
-        const productCategory = row.querySelector('td:nth-child(2)').textContent;
-        const stock = parseInt(row.querySelector('.stock-count').textContent);
-
-        // Search filter
-        if (search && !productName.includes(search)) {
+        
+        // Status filter
+        if (status && row.querySelector('.status-badge').textContent.trim() !== status) {
             show = false;
         }
-
-        // Category filter
-        if (category && row.dataset.category !== category) {
-            show = false;
-        }
-
-        // Stock status filter
-        if (stockStatus) {
-            switch(stockStatus) {
-                case 'inStock':
-                    if (stock <= 10) show = false;
-                    break;
-                case 'lowStock':
-                    if (stock === 0 || stock > 10) show = false;
-                    break;
-                case 'outOfStock':
-                    if (stock > 0) show = false;
-                    break;
+        
+        // Date filter
+        if (date) {
+            const orderDate = new Date(row.querySelector('td:nth-child(6)').textContent).toLocaleDateString();
+            if (orderDate !== new Date(date).toLocaleDateString()) {
+                show = false;
             }
         }
-
+        
         row.style.display = show ? '' : 'none';
     });
 }
 
+// Helper functions
+function generateOrderDetailsHtml(order) {
+   return `
+       <div class="order-detail-content">
+           <div class="order-detail-header">
+               <div class="order-info">
+                   <h6>Order #${order._id.slice(-6)}</h6>
+                   <span>Placed on: ${new Date(order.createdAt).toLocaleString()}</span>
+                   <span class="status-badge ${order.orderStatus.toLowerCase()}">${order.orderStatus}</span>
+               </div>
+               <div class="customer-info">
+                   <h6>${order.user.name}</h6>
+                   <span>${order.user.email}</span>
+               </div>
+           </div>
+
+           <div class="delivery-address">
+               <h6>Delivery Address</h6>
+               <p>
+                   ${order.deliveryAddress.name}<br>
+                   ${order.deliveryAddress.mobile}<br>
+                   ${order.deliveryAddress.flat}, ${order.deliveryAddress.addressLine}<br>
+                   ${order.deliveryAddress.city}, ${order.deliveryAddress.state} - ${order.deliveryAddress.pincode}
+               </p>
+           </div>
+
+           <div class="order-items">
+               <h6>Order Items</h6>
+               ${order.items.map(item => `
+                   <div class="order-item ${item.cancelled ? 'cancelled' : ''}">
+                       <div class="item-image">
+                           <img src="${item.product.images[0]}" alt="${item.product.name}">
+                       </div>
+                       <div class="item-details">
+                           <div class="item-header">
+                               <h6>${item.product.name}</h6>
+                               ${item.cancelled ? '<span class="cancelled-badge">Cancelled</span>' : ''}
+                           </div>
+                           <span>${item.product.quantity} ${item.product.unit}</span>
+                           <div class="item-price">
+                               ${item.quantity} × ₹${item.product.discountPrice || item.product.price}
+                           </div>
+                           ${item.cancelReason ? `
+                               <div class="cancel-reason">
+                                   <i class="fas fa-info-circle"></i>
+                                   Cancellation Reason: ${item.cancelReason}
+                               </div>
+                           ` : ''}
+                       </div>
+                       <div class="item-total ${item.cancelled ? 'cancelled' : ''}">
+                           ₹${((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2)}
+                       </div>
+                   </div>
+               `).join('')}
+           </div>
+
+           <div class="order-summary">
+               <div class="summary-row">
+                   <span>Subtotal</span>
+                   <span>₹${order.total.toFixed(2)}</span>
+               </div>
+               ${order.total - order.discountTotal > 0 ? `
+                   <div class="summary-row">
+                       <span>Discount</span>
+                       <span>-₹${(order.total - order.discountTotal).toFixed(2)}</span>
+                   </div>
+               ` : ''}
+               <div class="summary-row">
+                   <span>Delivery</span>
+                   <span class="free">FREE</span>
+               </div>
+               <div class="summary-row total">
+                   <span>Total Amount</span>
+                   <span>₹${order.discountTotal.toFixed(2)}</span>
+               </div>
+           </div>
+       </div>
+   `;
+}
+
+function showErrorAlert(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message
+    });
+}
         </script>
     </body>
 </html>

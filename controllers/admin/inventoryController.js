@@ -1,32 +1,55 @@
 const Product = require('../../models/Product');
 const Category = require('../../models/Category');
+const StockHistory = require('../../models/StockHistory');
 
 const getInventory = async (req, res) => {
     try {
         const products = await Product.find({ isDeleted: false })
             .populate('category')
-            .sort('name');
+            .sort({ updatedAt: -1 });
+
+        const lowStockCount = products.filter(p => p.stock <= p.lowStockAlert).length;
+        const outOfStockCount = products.filter(p => p.stock === 0).length;
 
         const categories = await Category.find({ isDeleted: false });
-
-        // Calculate stats
-        const totalProducts = products.length;
-        const lowStockProducts = products.filter(p => p.stock > 0 && p.stock <= 10).length;
-        const outOfStockProducts = products.filter(p => p.stock === 0).length;
 
         res.render('inventory', {
             products,
             categories,
-            totalProducts,
-            lowStockProducts,
-            outOfStockProducts,
-            pageTitle: 'Inventory Management',
+            lowStockCount,
+            outOfStockCount,
+            totalProducts: products.length,
+            totalProducts: products.length,
+            getStockClass: helpers.getStockClass,        // Add these helper functions
+            getStockStatusClass: helpers.getStockStatusClass,
+            getStockStatus: helpers.getStockStatus,
             path:'/admin/inventory'
         });
     } catch (error) {
         console.error('Get inventory error:', error);
-        req.flash('error', 'Failed to load inventory');
-        res.redirect('/admin/dashboard');
+        res.status(500).json({ 
+            success: false, 
+            message: 'Failed to load inventory' 
+        });
+    }
+};
+const helpers = {
+    getStockClass: (stock) => {
+        if (stock === 0) return 'out';
+        if (stock <= 10) return 'low';  // You can adjust this threshold
+        return 'normal';
+    },
+
+    getStockStatusClass: (stock) => {
+        if (stock === 0) return 'out-of-stock';
+        if (stock <= 10) return 'low-stock';
+        return 'in-stock';
+    },
+
+    getStockStatus: (stock) => {
+        if (stock === 0) return 'Out of Stock';
+        if (stock <= 10) return 'Low Stock';
+        return 'In Stock';
     }
 };
 
