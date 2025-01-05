@@ -313,4 +313,29 @@
 .update-form {
     padding: 20px;
 }
+/* Hide/Show Animation */
+.inventory-table tbody tr {
+    transition: opacity 0.3s ease;
+}
+
+.inventory-table tbody tr[style*="display: none"] {
+    opacity: 0;
+}
+
+/* Count Display */
+.count-display {
+    margin: 10px 0;
+    color: #666;
+    font-size: 14px;
+}
+
+/* Active Filters */
+.search-box input:not(:placeholder-shown) {
+    border-color: #2b2f4c;
+}
+
+select:not([value=""]) {
+    border-color: #2b2f4c;
+    background-color: #f8fafd;
+}
 
