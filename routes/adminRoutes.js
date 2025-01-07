@@ -10,10 +10,11 @@ const { getAllProducts, getAddProduct, getParentCategory, addProduct, getEditPro
         updateProduct, listingProduct, deleteProduct, getProductDetails  } = require('../controllers/admin/productController');
 const { getUsers, toggleUserBlock, deleteUser } = require('../controllers/admin/userController');
 const { getOrders, getOrderDetails, updateOrderStatus } = require('../controllers/admin/orderController');
-const { getInventory, getProductStock, updateStock, getStockHistory, bulkUpdateStock,
-        exportInventory, setStockAlert
-} = require('../controllers/admin/inventoryController');
+// const { getInventory, getProductStock, updateStock, getStockHistory, bulkUpdateStock,
+//         exportInventory, setStockAlert
+// } = require('../controllers/admin/inventoryController');
 
+const {getInventory} = require('../controllers/admin/inventory')
 
 // admin routes
 router.get('/login', getLoginPage);
@@ -53,11 +54,12 @@ router.put('/orders/update-status/:id', adminAuth, updateOrderStatus);
 
 //inventory routes
 
+// router.get('/inventory', adminAuth, getInventory);
+// router.get('/inventory/product/:id', adminAuth, getProductStock);
+// router.post('/inventory/update-stock', adminAuth, updateStock);
+// router.get('/inventory/history/:id', adminAuth, getStockHistory);
+// router.post('/inventory/bulk-update', adminAuth, bulkUpdateStock);
+// router.get('/inventory/export', adminAuth, exportInventory);
+// router.post('/inventory/set-alert', adminAuth, setStockAlert);
 router.get('/inventory', adminAuth, getInventory);
-router.get('/inventory/product/:id', adminAuth, getProductStock);
-router.post('/inventory/update-stock', adminAuth, updateStock);
-router.get('/inventory/history/:id', adminAuth, getStockHistory);
-router.post('/inventory/bulk-update', adminAuth, bulkUpdateStock);
-router.get('/inventory/export', adminAuth, exportInventory);
-router.post('/inventory/set-alert', adminAuth, setStockAlert);
 module.exports = router;
