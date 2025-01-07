@@ -1,0 +1,366 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, shrink-to-fit=9">
+		<meta name="description" content="Gambolthemes">
+		<meta name="author" content="Gambolthemes">		
+		<title>Fairaway</title>
+		
+		<!-- Favicon Icon -->
+		<link rel="icon" type="image/png" href="images/fav.png">
+		
+		<!-- Stylesheets -->
+		<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		<link href='/user/vendor/unicons-2.0.1/css/unicons.css' rel='stylesheet'>
+		<link href="/user/css/style.css" rel="stylesheet">
+		<link href="/user/css/responsive.css" rel="stylesheet">
+		<link href="/user/css/night-mode.css" rel="stylesheet">
+		<link href="/user/css/customstyle.css" rel="stylesheet">
+		
+		<!-- Vendor Stylesheets -->
+		<link href="/user/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+		<link href="/user/vendor/OwlCarousel/assets/owl.carousel.css" rel="stylesheet">
+		<link href="/user/vendor/OwlCarousel/assets/owl.theme.default.min.css" rel="stylesheet">
+		<link href="/user/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/user/vendor/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">
+		<style>.search-results-container {
+			padding: 40px 0;
+		}
+		
+		.search-header {
+			margin-bottom: 30px;
+		}
+		
+		.search-header h2 {
+			font-size: 24px;
+			color: #2b2f4c;
+			margin: 0 0 10px;
+		}
+		
+		.search-header p {
+			color: #8f91ac;
+			margin: 0;
+		}
+		
+		/* Filters Card */
+		.filters-card {
+			background: #fff;
+			border-radius: 12px;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+			padding: 20px;
+			margin-bottom: 20px;
+		}
+		
+		.filters-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 20px;
+		}
+		
+		.filters-header h3 {
+			font-size: 16px;
+			margin: 0;
+			color: #2b2f4c;
+		}
+		
+		.clear-filters {
+			border: none;
+			background: none;
+			color: #dc3545;
+			font-size: 13px;
+			cursor: pointer;
+		}
+		
+		/* Filter Groups */
+		.filter-group {
+			padding-bottom: 15px;
+			margin-bottom: 15px;
+			border-bottom: 1px solid #eee;
+		}
+		
+		.filter-group:last-child {
+			border: none;
+			padding: 0;
+			margin: 0;
+		}
+		
+		.filter-group h4 {
+			font-size: 14px;
+			color: #2b2f4c;
+			margin: 0 0 10px;
+		}
+		
+		/* Product Sort */
+		.product-sort {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+		
+		.product-sort select {
+			padding: 8px 15px;
+			border: 1px solid #eee;
+			border-radius: 8px;
+			color: #2b2f4c;
+			font-size: 14px;
+			outline: none;
+		}
+		
+		/* Pagination */
+		.pagination-wrapper {
+			margin-top: 40px;
+		}
+		
+		.pagination {
+			gap: 5px;
+		}
+		
+		.pagination .page-link {
+			padding: 8px 15px;
+			border: none;
+			border-radius: 6px;
+			color: #2b2f4c;
+			transition: all 0.2s ease;
+		}
+		
+		.pagination .page-item.active .page-link {
+			background: #2b2f4c;
+			color: #fff;
+		}
+		/* Add to your existing CSS */
+.product-list-view {
+    transition: opacity 0.3s ease;
+}
+
+.loading {
+    position: relative;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.filter-group .custom-control {
+    padding-left: 1.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    border-color: #2b2f4c;
+    background-color: #2b2f4c;
+}
+
+.product-sort select:focus {
+    border-color: #2b2f4c;
+    box-shadow: 0 0 0 0.2rem rgba(43, 47, 76, 0.25);
+}
+		
+		/* Animations */
+		@keyframes spin {
+			from { transform: rotate(0deg); }
+			to { transform: rotate(360deg); }
+		}</style>
+		
+	</head>
+
+<body>	
+
+
+	<%- include('../partials/user/header', { parentCategories: parentCategories }) %><!-- views/search.ejs -->
+	<div class="wrapper">
+		<div class="gambo-Breadcrumb">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="/">Home</a></li>
+								<li class="breadcrumb-item active">Search Results</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+		<div class="search-results-container">
+			<div class="container">
+				<div class="row">
+					<!-- Search Header -->
+					<div class="col-12 mb-4">
+						<div class="search-header">
+							<h2>Search Results for "<%= query %>"</h2>
+							<p><%= totalProducts %> products found</p>
+						</div>
+					</div>
+	
+					<!-- Filters Sidebar -->
+					<div class="col-lg-3">
+						<div class="filters-card">
+							<div class="filters-header">
+								<h3>Filters</h3>
+								<button class="clear-filters" onclick="clearAllFilters()">Clear All</button>
+							</div>
+	
+							<!-- Stock Filter -->
+							<div class="filter-group">
+								<h4>Availability</h4>
+								<div class="custom-control custom-checkbox">
+									<input type="checkbox" 
+										   class="custom-control-input" 
+										   id="showOutOfStock" 
+										   <%= showOutOfStock ? 'checked' : '' %>
+										   onchange="updateFilters()">
+									<label class="custom-control-label" for="showOutOfStock">
+										Show Out of Stock
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+	
+					<div class="col-lg-9">
+						<div class="product-top-dt">
+							<div class="product-left-title small">
+				
+							</div>
+							<div class="product-sort main-form">
+								<select class="form-control" onchange="updateSort(this.value)">
+									<option value="featured" <%= currentSort === 'featured' ? 'selected' : '' %>>Featured</option>
+									<option value="popularity" <%= currentSort === 'popularity' ? 'selected' : '' %>>Popularity</option>
+									<option value="priceLow" <%= currentSort === 'priceLow' ? 'selected' : '' %>>Price: Low to High</option>
+									<option value="priceHigh" <%= currentSort === 'priceHigh' ? 'selected' : '' %>>Price: High to Low</option>
+									<option value="rating" <%= currentSort === 'rating' ? 'selected' : '' %>>Average Rating</option>
+									<option value="newest" <%= currentSort === 'newest' ? 'selected' : '' %>>New Arrivals</option>
+									<option value="nameAsc" <%= currentSort === 'nameAsc' ? 'selected' : '' %>>Name: A to Z</option>
+									<option value="nameDesc" <%= currentSort === 'nameDesc' ? 'selected' : '' %>>Name: Z to A</option>
+								</select>
+								</select>
+							</div>
+						</div>
+	
+						<div class="product-list-view">
+							<div class="row">
+								<% if(products.length > 0) { %>
+									<% products.forEach(product => { %>
+										<div class="col-lg-3 col-md-6">
+											<div class="product-item mb-30">
+												<a href="/product/<%= product._id %>" class="product-img">
+													<img src="<%= product.images[0] %>" alt="<%= product.name %>">
+													<div class="product-absolute-options">
+														<% if (product.discountPercentage > 0) { %>
+															<span class="offer-badge-1"><%= product.discountPercentage %>% off</span>
+														<% } %>
+														<span class="like-icon" title="wishlist"></span>
+													</div>
+												</a>
+												<div class="product-text-dt">
+													<p>
+														<% if (product.stock > 0) { %>
+														
+														<% } else { %>
+															<span>Out of Stock</span>
+														<% } %>
+													</p>
+													<h4><%= product.name %></h4>
+													<h4><%= product.quantity+product.unit %></h4>
+													<div class="product-price">
+														<% if (product.discountPrice) { %>
+															<%= product.discountPrice %> <span><%= product.price %></span>
+														<% } else { %>
+															$<%= product.price %>
+														<% } %>
+													</div>
+													<div class="add-to-cart-wrapper">
+														<% if (product.stock > 0) { %>
+															<div class="cart-controls" data-product-id="<%= product._id %>">
+																<button class="add-to-cart-btn" onclick="toggleQuantitySelector(this, '<%= product._id %>')">
+																	<i class="uil uil-shopping-cart-alt"></i> Add to Cart
+																</button>
+																<div class="quantity-selector" style="display: none;">
+																	<button class="qty-btn minus" onclick="handleQuantity(this, false, '<%= product._id %>')">
+																		<i class="uil uil-minus"></i>
+																	</button>
+																	<span class="qty-value">1</span>
+																	<button class="qty-btn plus" onclick="handleQuantity(this, true, '<%= product._id %>')">
+																		<i class="uil uil-plus"></i>
+																	</button>
+																</div>
+															</div>
+														<% } else { %>
+															<button class="out-of-stock-btn" disabled>
+																Out of Stock
+															</button>
+														<% } %>
+													</div>
+												</div>
+											</div>
+										</div>
+									<% }); %>
+								<% } else { %>
+
+									<div class="col-12">
+										<div class="no-results">
+											<i class="uil uil-search-alt"></i>
+											<h3>No products found</h3>
+											<p>Try adjusting your search or filters to find what you're looking for.</p>
+										</div>
+									</div>
+								<% } %>
+							</div>
+						</div>
+	
+						<!-- Pagination -->
+						<% if (totalPages > 1) { %>
+							<div class="pagination-wrapper">
+								<ul class="pagination justify-content-center">
+									<% for(let i = 1; i <= totalPages; i++) { %>
+										<li class="page-item <%= currentPage === i ? 'active' : '' %>">
+											<a class="page-link" href="#" onclick="changePage(<%= i %>)"><%= i %></a>
+										</li>
+									<% } %>
+								</ul>
+							</div>
+						<% } %>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+	
+
+	<!-- Body End -->
+	<!-- Footer Start -->
+	
+	<!-- Footer End -->
+
+	<!-- Javascripts -->
+	<script src="/user/js/cart.js"></script>
+	<script src="/user/js/jquery.min.js"></script>
+	<script src="/user/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/user/vendor/bootstrap-select/js/bootstrap-select.min.js"></script>
+	<script src="/user/vendor/OwlCarousel/owl.carousel.js"></script>
+	<script src="/user/js/jquery.countdown.min.js"></script>
+	<script src="/user/js/custom.js"></script>
+	<script src="/user/js/offset_overlay.js"></script>
+	<script src="/user/js/night-mode.js"></script>
+	<script src="/user/js/search.js"></script>
+	
+</body>
+</html>
