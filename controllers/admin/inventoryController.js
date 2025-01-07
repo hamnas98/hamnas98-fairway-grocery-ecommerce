@@ -2,41 +2,12 @@ const Product = require('../../models/Product');
 const Category = require('../../models/Category');
 const StockHistory = require('../../models/StockHistory');
 const excel = require('exceljs');
-const getInventory = async (req, res) => {
-    try {
-        const products = await Product.find({ isDeleted: false })
-            .populate('category')
-            .sort({ updatedAt: -1 });
 
-        const lowStockCount = products.filter(p => p.stock <= p.lowStockAlert).length;
-        const outOfStockCount = products.filter(p => p.stock === 0).length;
-
-        const categories = await Category.find({ isDeleted: false });
-
-        res.render('inventory', {
-            products,
-            categories,
-            lowStockCount,
-            outOfStockCount,
-            totalProducts: products.length,
-            totalProducts: products.length,
-            getStockClass: helpers.getStockClass,        // Add these helper functions
-            getStockStatusClass: helpers.getStockStatusClass,
-            getStockStatus: helpers.getStockStatus,
-            path:'/admin/inventory'
-        });
-    } catch (error) {
-        console.error('Get inventory error:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Failed to load inventory' 
-        });
-    }
-};
+// Helper functions
 const helpers = {
     getStockClass: (stock) => {
         if (stock === 0) return 'out';
-        if (stock <= 10) return 'low';  // You can adjust this threshold
+        if (stock <= 10) return 'low';
         return 'normal';
     },
 
@@ -53,6 +24,39 @@ const helpers = {
     }
 };
 
+// Main inventory page
+const getInventory = async (req, res) => {
+    try {
+        // Get all active products with their categories
+        const products = await Product.find({ isDeleted: false })
+            .populate('category')
+            .sort({ updatedAt: -1 });
+
+        // Get counts for dashboard
+        const lowStockCount = products.filter(p => p.stock <= 10).length;
+        const outOfStockCount = products.filter(p => p.stock === 0).length;
+
+        // Get all active categories
+        const categories = await Category.find({ isDeleted: false });
+
+        res.render('inventory', {
+            products,
+            categories,
+            lowStockCount,
+            outOfStockCount,
+            totalProducts: products.length,
+            getStockClass: helpers.getStockClass,
+            getStockStatusClass: helpers.getStockStatusClass,
+            getStockStatus: helpers.getStockStatus,
+            path:'/admin/inventory'
+        });
+    } catch (error) {
+        console.error('Get inventory error:', error);
+        res.status(500).json({ success: false, message: 'Failed to load inventory' });
+    }
+};
+
+// Get single product stock details
 const getProductStock = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id)
@@ -78,10 +82,12 @@ const getProductStock = async (req, res) => {
     }
 };
 
+// Update product stock
 const updateStock = async (req, res) => {
     try {
         const { productId, updateType, quantity, notes } = req.body;
 
+        // Validate input
         if (!productId || !updateType || !quantity) {
             return res.status(400).json({
                 success: false,
@@ -97,6 +103,7 @@ const updateStock = async (req, res) => {
             });
         }
 
+        // Calculate new stock based on update type
         let newStock;
         const currentStock = parseInt(product.stock);
         const updateQuantity = parseInt(quantity);
@@ -105,7 +112,7 @@ const updateStock = async (req, res) => {
             case 'add':
                 newStock = currentStock + updateQuantity;
                 break;
-            case 'subtract': // Changed from 'remove' to 'subtract' to match schema
+            case 'subtract':
                 newStock = Math.max(0, currentStock - updateQuantity);
                 break;
             case 'set':
@@ -124,9 +131,9 @@ const updateStock = async (req, res) => {
             updateType,
             quantity: updateQuantity,
             previousStock: currentStock,
-            newStock: newStock,
+            newStock,
             notes: notes || '',
-            updatedBy: req.session.admin.id
+            updatedBy: req.session.adminId // Assuming you have admin session
         });
 
         // Update product stock
@@ -141,24 +148,19 @@ const updateStock = async (req, res) => {
         res.json({
             success: true,
             message: 'Stock updated successfully',
-            newStock,
-            product: {
-                id: product._id,
-                name: product.name,
-                stock: newStock
-            }
+            newStock
         });
 
     } catch (error) {
         console.error('Update stock error:', error);
         res.status(500).json({
             success: false,
-            message: 'Failed to update stock. Please try again.'
+            message: 'Failed to update stock'
         });
     }
 };
-//
 
+// Get stock history
 const getStockHistory = async (req, res) => {
     try {
         const history = await StockHistory.find({ product: req.params.id })
@@ -179,72 +181,7 @@ const getStockHistory = async (req, res) => {
     }
 };
 
-const bulkUpdateStock = async (req, res) => {
-    try {
-        const { updateType, updates, notes } = req.body;
-
-        const updatePromises = updates.map(async ({ productId, quantity }) => {
-            const product = await Product.findById(productId);
-            if (!product) return null;
-
-            const currentStock = parseInt(product.stock);
-            const updateQuantity = parseInt(quantity);
-            let newStock;
-
-            switch (updateType) {
-                case 'add':
-                    newStock = currentStock + updateQuantity;
-                    break;
-                case 'subtract':
-                    newStock = Math.max(0, currentStock - updateQuantity);
-                    break;
-                case 'set':
-                    newStock = updateQuantity;
-                    break;
-                default:
-                    throw new Error('Invalid update type');
-            }
-
-            // Create stock history
-            const stockHistory = new StockHistory({
-                product: productId,
-                updateType,
-                quantity: updateQuantity,
-                previousStock: currentStock,
-                newStock,
-                notes,
-                updatedBy: req.session.admin.id
-            });
-
-            product.stock = newStock;
-
-            return Promise.all([
-                product.save(),
-                stockHistory.save()
-            ]);
-        });
-
-        await Promise.all(updatePromises);
-
-        res.json({
-            success: true,
-            message: 'Bulk update completed successfully'
-        });
-    } catch (error) {
-        console.error('Bulk update error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to update stock'
-        });
-    }
-};
-
-function getStockStatus(stock, lowStockThreshold = 10) {
-    if (stock === 0) return 'Out of Stock';
-    if (stock <= lowStockThreshold) return 'Low Stock';
-    return 'In Stock';
-}
-
+// Export inventory report
 const exportInventory = async (req, res) => {
     try {
         const products = await Product.find({ isDeleted: false })
@@ -260,12 +197,11 @@ const exportInventory = async (req, res) => {
             { header: 'SKU', key: 'sku', width: 15 },
             { header: 'Category', key: 'category', width: 20 },
             { header: 'Current Stock', key: 'stock', width: 15 },
-            { header: 'Low Stock Alert', key: 'lowStockAlert', width: 15 },
             { header: 'Status', key: 'status', width: 15 },
             { header: 'Last Updated', key: 'updatedAt', width: 20 }
         ];
 
-        // Style the header row
+        // Add styles
         worksheet.getRow(1).font = { bold: true };
         worksheet.getRow(1).fill = {
             type: 'pattern',
@@ -273,58 +209,21 @@ const exportInventory = async (req, res) => {
             fgColor: { argb: 'FFE8EAED' }
         };
 
-        // Add products data
+        // Add data
         products.forEach(product => {
-            const status = getStockStatus(product.stock);
             worksheet.addRow({
                 name: product.name,
                 sku: product.sku || '-',
                 category: product.category.name,
                 stock: product.stock,
-                lowStockAlert: product.lowStockAlert || '-',
-                status: status,
+                status: helpers.getStockStatus(product.stock),
                 updatedAt: product.updatedAt.toLocaleDateString()
             });
         });
 
-        // Add style to status column based on value
-        worksheet.getColumn('status').eachCell((cell, rowNumber) => {
-            if (rowNumber > 1) { // Skip header
-                switch(cell.value) {
-                    case 'Out of Stock':
-                        cell.font = { color: { argb: 'FFFF0000' } }; // Red
-                        break;
-                    case 'Low Stock':
-                        cell.font = { color: { argb: 'FFFF9900' } }; // Orange
-                        break;
-                    case 'In Stock':
-                        cell.font = { color: { argb: 'FF008000' } }; // Green
-                        break;
-                }
-            }
-        });
-
-        // Format all borders
-        worksheet.eachRow((row, rowNumber) => {
-            row.eachCell((cell) => {
-                cell.border = {
-                    top: { style: 'thin' },
-                    left: { style: 'thin' },
-                    bottom: { style: 'thin' },
-                    right: { style: 'thin' }
-                };
-            });
-        });
-
-        // Set content type and headers
-        res.setHeader(
-            'Content-Type', 
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        );
-        res.setHeader(
-            'Content-Disposition', 
-            'attachment; filename=inventory-report.xlsx'
-        );
+        // Set headers for download
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=inventory-report.xlsx');
 
         // Write to response
         await workbook.xlsx.write(res);
@@ -339,33 +238,10 @@ const exportInventory = async (req, res) => {
     }
 };
 
-const setStockAlert = async (req, res) => {
-    try {
-        const { productId, alertLevel } = req.body;
-
-        const product = await Product.findById(productId);
-        if (!product) {
-            return res.status(404).json({
-                success: false,
-                message: 'Product not found'
-            });
-        }
-
-        product.lowStockAlert = alertLevel;
-        await product.save();
-
-        res.json({
-            success: true,
-            message: 'Stock alert level updated successfully'
-        });
-    } catch (error) {
-        console.error('Set stock alert error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to set stock alert'
-        });
-    }
+module.exports = {
+    getInventory,
+    getProductStock,
+    updateStock,
+    getStockHistory,
+    exportInventory
 };
-
-
-module.exports = { getInventory, getProductStock, updateStock, getStockHistory, bulkUpdateStock, exportInventory, setStockAlert }

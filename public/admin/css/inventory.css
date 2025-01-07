@@ -425,3 +425,172 @@ select:not([value=""]) {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+/* Stock status colors */
+.stock-value {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.stock-value.out {
+    color: #dc3545;
+    background-color: #fde8e8;
+}
+
+.stock-value.low {
+    color: #ff9800;
+    background-color: #fff3e0;
+}
+
+.stock-value.normal {
+    color: #28a745;
+    background-color: #e8f5e9;
+}
+
+/* Status badges */
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.badge.out-of-stock {
+    background-color: #dc3545;
+    color: white;
+}
+
+.badge.low-stock {
+    background-color: #ff9800;
+    color: white;
+}
+
+.badge.in-stock {
+    background-color: #28a745;
+    color: white;
+}
+
+/* Table styles */
+.table img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.btn-icon {
+    padding: 6px;
+    border-radius: 4px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-icon:hover {
+    background-color: #f0f0f0;
+}
+
+.btn-icon.view {
+    color: #007bff;
+}
+
+.btn-icon.alert {
+    color: #ff9800;
+}
+
+/* Modal styles */
+.modal-body .form-group {
+    margin-bottom: 1rem;
+}
+
+.stock-history-table {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Stats cards */
+.stats-card {
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stats-card h3 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Search and filter section */
+.filters-section {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .filters-section .row {
+        margin-bottom: 1rem;
+    }
+    
+    .btn-icon {
+        padding: 8px;
+    }
+    
+    .table-responsive {
+        margin: 0 -15px;
+    }
+}
+
+/* Animation for status changes */
+.stock-value, .badge {
+    transition: all 0.3s ease;
+}
+
+/* Custom scrollbar for modals */
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* History table styles */
+#historyTable th {
+    background-color: #f8f9fa;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.history-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.history-badge.add {
+    background-color: #e8f5e9;
+    color: #28a745;
+}
+
+.history-badge.subtract {
+    background-color: #fde8e8;
+    color: #dc3545;
+}
+
+.history-badge.set {
+    background-color: #e3f2fd;
+    color: #007bff;
+}

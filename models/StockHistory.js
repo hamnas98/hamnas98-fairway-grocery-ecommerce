@@ -28,7 +28,7 @@ const stockHistorySchema = new mongoose.Schema({
     updatedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Admin',
-        required: true
+        required: false
     }
 }, { timestamps: true });
 
