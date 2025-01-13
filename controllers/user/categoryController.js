@@ -103,7 +103,7 @@ const getCategoryProducts = async (req, res) => {
                 limit: limit,
                 totalProducts: totalProducts
             },
-            user: req.session.user || null
+            user: req.session.user || null,
         });
 
     } catch (error) {

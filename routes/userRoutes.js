@@ -22,7 +22,7 @@ router.get('/', getHome);
 
 router.get('/quick-search', searchProducts);
 router.get('/search', getSearchPage);
-// router.get('/signup', getSignup);
+
 router.post('/signup', signup);
 router.post('/resend-otp', resendOTP);
 router.post('/verify-signup-otp',verifySignupOTP);

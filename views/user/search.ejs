@@ -180,7 +180,7 @@
 <body>	
 
 
-	<%- include('../partials/user/header', { parentCategories: parentCategories }) %><!-- views/search.ejs -->
+	<%- include('../partials/user/header', { parentCategories: parentCategories }) %>
 	<div class="wrapper">
 		<div class="gambo-Breadcrumb">
 			<div class="container">
@@ -280,7 +280,7 @@
 													<h4><%= product.quantity+product.unit %></h4>
 													<div class="product-price">
 														<% if (product.discountPrice) { %>
-															<%= product.discountPrice %> <span><%= product.price %></span>
+															₹<%= product.discountPrice %> <span>₹<%= product.price %></span>
 														<% } else { %>
 															$<%= product.price %>
 														<% } %>

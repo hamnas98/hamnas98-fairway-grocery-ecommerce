@@ -10,7 +10,7 @@ const { getAllProducts, getAddProduct, getParentCategory, addProduct, getEditPro
         updateProduct, listingProduct, deleteProduct, getProductDetails  } = require('../controllers/admin/productController');
 const { getUsers, toggleUserBlock, deleteUser } = require('../controllers/admin/userController');
 const { getOrders, getOrderDetails, updateOrderStatus } = require('../controllers/admin/orderController');
-const { getInventory, getProductStock, updateStock, getStockHistory, exportInventory,} = require('../controllers/admin/inventoryController');
+const { getInventory, getProductStock, updateStock, getStockHistory} = require('../controllers/admin/inventoryController');
 
 
 
@@ -56,7 +56,6 @@ router.get('/inventory', adminAuth, getInventory);
 router.get('/inventory/product/:id', adminAuth, getProductStock);
 router.post('/inventory/update-stock', adminAuth, updateStock);
 router.get('/inventory/history/:id', adminAuth, getStockHistory);
-router.get('/inventory/export', adminAuth, exportInventory);
 
 
 module.exports = router;

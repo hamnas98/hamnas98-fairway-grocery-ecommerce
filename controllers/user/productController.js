@@ -3,6 +3,7 @@ const Product = require('../../models/Product');
 
 const getProductDetails = async (req, res) => {
     try {
+
         const productId = req.params.id;
         
         // Get product details with populated category
@@ -40,7 +41,8 @@ const getProductDetails = async (req, res) => {
             relatedProducts,
             parentCategories,
             pageTitle: product.name,
-            user: req.session.user || null
+            user: req.session.user || null,
+
         });
 
     } catch (error) {
@@ -52,6 +54,9 @@ const getProductDetails = async (req, res) => {
 };
 const getNewProducts = async (req, res) => {
     try {
+
+        console.log(query,'q')
+
         const page = parseInt(req.query.page) || 1;
         const limit = 1; // Products per page
         const skip = (page - 1) * limit;
@@ -95,7 +100,8 @@ const getNewProducts = async (req, res) => {
                 nextPage: hasNextPage ? page + 1 : null,
                 previousPage: hasPreviousPage ? page - 1 : null,
                 limit: limit,
-                totalProducts: totalProducts
+                totalProducts: totalProducts,
+
             },
             user: req.session.user || null
         });
@@ -107,7 +113,10 @@ const getNewProducts = async (req, res) => {
 };
 
 const getBestvalueProducts = async (req, res) => {
+
     try {
+
+    
         const page = parseInt(req.query.page) || 1;
         const limit = 1; // Products per page
         const skip = (page - 1) * limit;
@@ -153,7 +162,7 @@ const getBestvalueProducts = async (req, res) => {
                 nextPage: hasNextPage ? page + 1 : null,
                 previousPage: hasPreviousPage ? page - 1 : null,
                 limit: limit,
-                totalProducts: totalProducts
+                totalProducts: totalProducts,
             },
             user: req.session.user || null
         });

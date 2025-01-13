@@ -65,7 +65,8 @@ const getHome = async (req, res) => {
             bestvalueProducts,
             newProducts,
             user: req.session.user || null,
-            pageTitle: 'Fairway Supermarket'
+            pageTitle: 'Fairway Supermarket',
+            
         });
 
     } catch (error) {
@@ -76,7 +77,7 @@ const getHome = async (req, res) => {
             featuredProducts: [],
             newProducts: [],
             user: req.session.user || null,
-            pageTitle: 'Fairway Supermarket'
+            pageTitle: 'Fairway Supermarket',
         });
     }
 };
@@ -423,7 +424,7 @@ const resetPassword = async (req, res) => {
 
 const googleCallback = async (req, res) => {
     try {
-        // Check if user is blocked or deleted
+     
         const user = await User.findById(req.user._id);
         // console.log(user)
         
@@ -442,7 +443,7 @@ const googleCallback = async (req, res) => {
             return res.redirect('/');
         }
 
-        // If user is not blocked, set session
+        //set session for user
         req.session.user = {
             id: user._id,
             name: user.name
@@ -450,7 +451,7 @@ const googleCallback = async (req, res) => {
 
         console.log(req.session.user,'gs')
 
-        // Successful authentication
+ 
         res.redirect('/');
         
     } catch (error) {

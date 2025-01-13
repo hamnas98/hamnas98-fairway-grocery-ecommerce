@@ -182,66 +182,12 @@ const getStockHistory = async (req, res) => {
 };
 
 // Export inventory report
-const exportInventory = async (req, res) => {
-    try {
-        const products = await Product.find({ isDeleted: false })
-            .populate('category')
-            .select('name sku category stock lowStockAlert updatedAt');
 
-        const workbook = new excel.Workbook();
-        const worksheet = workbook.addWorksheet('Inventory');
-
-        // Define columns
-        worksheet.columns = [
-            { header: 'Product Name', key: 'name', width: 30 },
-            { header: 'SKU', key: 'sku', width: 15 },
-            { header: 'Category', key: 'category', width: 20 },
-            { header: 'Current Stock', key: 'stock', width: 15 },
-            { header: 'Status', key: 'status', width: 15 },
-            { header: 'Last Updated', key: 'updatedAt', width: 20 }
-        ];
-
-        // Add styles
-        worksheet.getRow(1).font = { bold: true };
-        worksheet.getRow(1).fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'FFE8EAED' }
-        };
-
-        // Add data
-        products.forEach(product => {
-            worksheet.addRow({
-                name: product.name,
-                sku: product.sku || '-',
-                category: product.category.name,
-                stock: product.stock,
-                status: helpers.getStockStatus(product.stock),
-                updatedAt: product.updatedAt.toLocaleDateString()
-            });
-        });
-
-        // Set headers for download
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.setHeader('Content-Disposition', 'attachment; filename=inventory-report.xlsx');
-
-        // Write to response
-        await workbook.xlsx.write(res);
-        res.end();
-
-    } catch (error) {
-        console.error('Export inventory error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to export inventory'
-        });
-    }
-};
 
 module.exports = {
     getInventory,
     getProductStock,
     updateStock,
     getStockHistory,
-    exportInventory
+  
 };

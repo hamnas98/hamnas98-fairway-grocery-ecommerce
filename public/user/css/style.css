@@ -1546,7 +1546,7 @@ i.icon1 {
     font-size: 10px;
     font-weight: 700;
     color: #fff;
-    background: #f55d2c;
+    background:#1B2430;
     padding: 1px 10px 0px;
     border-radius: 3px;
     line-height: 20px;
@@ -1739,7 +1739,7 @@ i.icon1 {
     font-size: 18px;
     font-weight: 700;
     line-height: 24px;
-    color: #f55d2c;
+    color: black;
     text-align: right;
 	display: inline-flex;
 	margin-left: auto;
@@ -2075,7 +2075,7 @@ i.icon1 {
     font-weight: 500;
     text-align: left;
     color: #fff;
-    background: #f55d2c;
+    background: #1A2B3C;
     margin-bottom: 10px;
     display: inline-block;
     line-height: 27px;
@@ -2267,8 +2267,8 @@ span.like-icon {
     left: 0;
     font-size: 12px;
     font-weight: 500;
-    color: #fff;
-    background: #f55d2c;
+    color: #F0F4F8;
+    background: #1A2B3C;
     padding: 3px 10px;
     border-radius: 5px;
     line-height: 20px;
@@ -2301,7 +2301,7 @@ span.like-icon {
     font-size: 18px;
     font-weight: 600;
     line-height: 24px;
-    color: #f55d2c;
+    color: black;
     text-align: center;
 }
 

@@ -6,7 +6,6 @@
 
 <%- include('../partials/user/forgotPassword') %>
 <style>
-    /* public/css/search.css */
 .header-search {
     position: relative;
     flex: 1;
@@ -355,16 +354,16 @@
     <div class="top-header-group">
         <div class="top-header">
             <div class="main_logo" id="logo">
-                <a href="/"><img src="images/logo.svg" alt=""></a>
-                <a href="/"><img class="logo-inverse" src="images/dark-logo.svg" alt="Fairway Supermarket"></a>
+                <a href="/"><img src="user/images/fairway logo.jpg" alt="Fairway"></a>
+                <a href="/"><img class="logo-inverse" src="images/fairway logo.jpg" alt="Fairway Supermarket"></a>
             </div><!-- Search Component in Header -->
             <div class="header-search">
                 <div class="search-input-wrapper">
                     <input type="text" 
                            id="searchInput" 
                            class="search-input" 
-                           placeholder="Search for products..."
-                           autocomplete="off">
+                           value="<%= typeof query!== 'undefined' ? query : '' %>"
+                           placeholder='<%= typeof query !== 'undefined' && query ? query : "Search for products..." %>'  >
                     <button class="search-btn">
                         <i class="uil uil-search"></i>
                     </button>

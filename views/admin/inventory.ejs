@@ -101,11 +101,7 @@
                                                 <option value="out">Out of Stock</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-2">
-                                            <button class="btn btn-primary w-100" onclick="downloadInventoryReport()">
-                                                <i class="fas fa-download"></i> Export
-                                            </button>
-                                        </div>
+                                       
                                     </div>
                                 </div>
                             </div>
@@ -388,11 +384,7 @@
                 }
             }
             
-            // Export inventory report
-            function downloadInventoryReport() {
-                window.location.href = '/admin/inventory/export';
-            }
-            
+         
             // Toast notifications using SweetAlert2
             function showSuccess(message) {
                 Swal.fire({

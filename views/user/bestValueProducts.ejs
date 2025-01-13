@@ -92,9 +92,9 @@
 													<h4><%= product.quantity+product.unit %></h4>
 													<div class="product-price">
 														<% if (product.discountPrice) { %>
-															<%= product.discountPrice %> <span><%= product.price %></span>
+															₹ <%= product.discountPrice %> <span>₹ <%= product.price %></span>
 														<% } else { %>
-															$<%= product.price %>
+															₹<%= product.price %>
 														<% } %>
 													</div>
 													<div class="add-to-cart-wrapper">

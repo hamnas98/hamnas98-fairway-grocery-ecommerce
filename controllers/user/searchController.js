@@ -57,7 +57,7 @@ const getSearchPage = async (req, res) => {
         const limit = 12;
         const skip = (page - 1) * limit;
 
-        // Base search query
+        
         let searchQuery = {
             $or: [
                 { name: { $regex: query, $options: 'i' } },
