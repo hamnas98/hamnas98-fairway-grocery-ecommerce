@@ -3,7 +3,6 @@ const Product = require('../../models/Product');
 
 const getProductDetails = async (req, res) => {
     try {
-
         const productId = req.params.id;
         
         // Get product details with populated category
@@ -55,8 +54,6 @@ const getProductDetails = async (req, res) => {
 const getNewProducts = async (req, res) => {
     try {
 
-        console.log(query,'q')
-
         const page = parseInt(req.query.page) || 1;
         const limit = 1; // Products per page
         const skip = (page - 1) * limit;
@@ -101,7 +98,6 @@ const getNewProducts = async (req, res) => {
                 previousPage: hasPreviousPage ? page - 1 : null,
                 limit: limit,
                 totalProducts: totalProducts,
-
             },
             user: req.session.user || null
         });
@@ -116,7 +112,7 @@ const getBestvalueProducts = async (req, res) => {
 
     try {
 
-    
+
         const page = parseInt(req.query.page) || 1;
         const limit = 1; // Products per page
         const skip = (page - 1) * limit;
