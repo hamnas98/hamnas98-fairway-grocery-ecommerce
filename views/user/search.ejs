@@ -146,7 +146,59 @@
 							<div class="row" id="productsGrid">
 								<% if(products.length > 0) { %>
 									<% products.forEach(product => { %>
-										<%- include('../partials/product-card', { product }) %>
+										<div class="col-lg-3 col-md-6">
+											<div class="product-item mb-30">
+												<a href="/product/<%= product._id %>" class="product-img">
+													<img src="<%= product.images[0] %>" alt="<%= product.name %>">
+													<div class="product-absolute-options">
+														<% if (product.discountPercentage > 0) { %>
+															<span class="offer-badge-1"><%= product.discountPercentage %>% off</span>
+														<% } %>
+														<span class="like-icon" title="wishlist"></span>
+													</div>
+												</a>
+												<div class="product-text-dt">
+													<p>
+														<% if (product.stock > 0) { %>
+														
+														<% } else { %>
+															<span>Out of Stock</span>
+														<% } %>
+													</p>
+													<h4><%= product.name %></h4>
+													<h4><%= product.quantity+product.unit %></h4>
+													<div class="product-price">
+														<% if (product.discountPrice) { %>
+															₹<%= product.discountPrice %> <span>₹<%= product.price %></span>
+														<% } else { %>
+															₹<%= product.price %>
+														<% } %>
+													</div>
+													<div class="add-to-cart-wrapper">
+														<% if (product.stock > 0) { %>
+															<div class="cart-controls" data-product-id="<%= product._id %>">
+																<button class="add-to-cart-btn" onclick="toggleQuantitySelector(this, '<%= product._id %>')">
+																	<i class="uil uil-shopping-cart-alt"></i> Add to Cart
+																</button>
+																<div class="quantity-selector" style="display: none;">
+																	<button class="qty-btn minus" onclick="handleQuantity(this, false, '<%= product._id %>')">
+																		<i class="uil uil-minus"></i>
+																	</button>
+																	<span class="qty-value">1</span>
+																	<button class="qty-btn plus" onclick="handleQuantity(this, true, '<%= product._id %>')">
+																		<i class="uil uil-plus"></i>
+																	</button>
+																</div>
+															</div>
+														<% } else { %>
+															<button class="out-of-stock-btn" disabled>
+																Out of Stock
+															</button>
+														<% } %>
+													</div>
+												</div>
+											</div>
+										</div>
 									<% }); %>
 								<% } else { %>
 									<div class="col-12">

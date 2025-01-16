@@ -68,7 +68,7 @@ function initializeSearch() {
 // Quick search functionality
 async function performQuickSearch(query) {
     try {
-        const response = await fetch(`/api/quick-search?query=${encodeURIComponent(query)}`);
+        const response = await fetch(`/quick-search?query=${encodeURIComponent(query)}`);
         const data = await response.json();
 
         if (!data.success) {
@@ -115,7 +115,7 @@ async function handleSearchSubmit(e) {
 // Save search to history
 async function saveSearchHistory(query) {
     try {
-        const response = await fetch('/api/search-history', {
+        const response = await fetch('/search-history', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -134,7 +134,7 @@ async function saveSearchHistory(query) {
 // Load and display search history
 async function loadSearchHistory() {
     try {
-        const response = await fetch('/api/search-history');
+        const response = await fetch('/search-history');
         const data = await response.json();
 
         if (!data.success) {
@@ -212,7 +212,7 @@ async function loadMoreProducts() {
         currentPage++;
         currentParams.set('page', currentPage);
 
-        const response = await fetch(`/api/products/search?${currentParams.toString()}`);
+        const response = await fetch(`/products/search?${currentParams.toString()}`);
         const data = await response.json();
 
         if (!data.success) {
@@ -456,7 +456,7 @@ function useHistoryItem(query) {
 
 async function removeHistoryItem(itemId) {
     try {
-        const response = await fetch(`/api/search-history/${itemId}`, {
+        const response = await fetch(`/search-history/${itemId}`, {
             method: 'DELETE'
         });
         const data = await response.json();
