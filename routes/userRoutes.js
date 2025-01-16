@@ -15,7 +15,7 @@ const { getAllAddresses, addAddress, getAddress, updateAddress, deleteAddress, s
 const { getCart, addToCart, updateCartQuantity, cartCount, removeFromCart, clearCart, verifyCart  } = require('../controllers/user/cartController');
 const { getCheckoutPage, placeOrder} = require('../controllers/user/checkoutController');
 const { getOrders, getOrderDetails, cancelOrder } = require('../controllers/user/orderController');
-const { quickSearch, getSearchPage, getSearchHistory, deleteSearchHistory } = require("../controllers/user/searchController")
+const { quickSearch, getSearchPage, getSearchHistory, SaveSearchHistory, deleteSearchHistory } = require("../controllers/user/searchController")
 
 
 
@@ -50,8 +50,9 @@ router.get('/auth/google/callback',
 //search routes
 router.get('/quick-search', quickSearch);
 router.get('/search-history', userAuth, getSearchHistory);
-router.post('/search-history', userAuth, saveSearchHistory);
+router.post('/search-history', userAuth,SaveSearchHistory);
 router.delete('/search-history/:itemId', userAuth, deleteSearchHistory);
+router.get('/search', getSearchPage);
 //user product & category routes
 router.get('/category/:id', getCategoryProducts);
 router.get('/product/:id', getProductDetails);

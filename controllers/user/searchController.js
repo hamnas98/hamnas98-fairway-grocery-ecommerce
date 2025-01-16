@@ -203,5 +203,6 @@ module.exports = {
     quickSearch,
     getSearchPage,
     getSearchHistory,
-    deleteSearchHistory
+    deleteSearchHistory,
+    SaveSearchHistory
 };
