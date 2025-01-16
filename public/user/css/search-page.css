@@ -1,0 +1,257 @@
+.search-page {
+    padding: 30px 0;
+    background: #f8f9fa;
+    min-height: calc(100vh - 200px);
+}
+
+.search-header {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.search-header h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.search-header p {
+    color: #666;
+    font-size: 16px;
+}
+
+/* Filters Card */
+.filters-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.filters-header h3 {
+    font-size: 18px;
+    color: #333;
+    margin: 0;
+}
+
+.clear-filters {
+    color: #4CAF50;
+    background: none;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.clear-filters:hover {
+    color: #43a047;
+}
+
+.filter-group {
+    margin-bottom: 25px;
+}
+
+.filter-group h4 {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Price Range Inputs */
+.price-range-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.price-range-inputs input {
+    width: 100px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.price-range-inputs button {
+    padding: 8px 15px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.price-range-inputs button:hover {
+    background: #43a047;
+}
+
+/* Custom Checkboxes */
+.custom-control {
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.custom-control-input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.custom-control-label {
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+.custom-control-label::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.custom-control-input:checked + .custom-control-label::before {
+    background: #4CAF50;
+    border-color: #4CAF50;
+}
+
+.custom-control-label::after {
+    content: '✓';
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    color: white;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.custom-control-input:checked + .custom-control-label::after {
+    opacity: 1;
+}
+
+/* Products Grid */
+.product-list-view {
+    margin-top: 20px;
+}
+
+.product-sort {
+    margin-bottom: 20px;
+}
+
+.product-sort select {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    width: 200px;
+}
+
+/* Load More Button */
+.load-more-wrapper {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.load-more-btn {
+    padding: 12px 30px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.load-more-btn:hover {
+    background: #43a047;
+    transform: translateY(-2px);
+}
+
+.load-more-btn.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* No Results State */
+.no-results {
+    text-align: center;
+    padding: 50px 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.no-results i {
+    font-size: 48px;
+    color: #999;
+    margin-bottom: 15px;
+}
+
+.no-results h3 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.no-results p {
+    color: #666;
+    font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+    .search-input-wrapper {
+        max-width: 100%;
+    }
+
+    .filters-card {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 767px) {
+    .search-header h2 {
+        font-size: 20px;
+    }
+
+    .product-sort select {
+        width: 100%;
+    }
+
+    .price-range-inputs {
+        flex-wrap: wrap;
+    }
+
+    .price-range-inputs input {
+        width: calc(50% - 5px);
+    }
+
+    .price-range-inputs button {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
