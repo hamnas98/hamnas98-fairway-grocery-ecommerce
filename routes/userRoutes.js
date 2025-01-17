@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 
 const passport = require('passport');
+
+const { userAuth }= require('../middleware/userAuth');
+
+
 const { getHome ,signup, resendOTP, verifySignupOTP, login , verifyLoginOTP,
         logout, forgotPasswordSubmit, verifyForgotPasswordOTP, resetPassword, googleCallback } = require('../controllers/user/userController');
 const { getCategoryProducts } = require('../controllers/user/categoryController');
@@ -11,17 +15,13 @@ const { getAllAddresses, addAddress, getAddress, updateAddress, deleteAddress, s
 const { getCart, addToCart, updateCartQuantity, cartCount, removeFromCart, clearCart, verifyCart  } = require('../controllers/user/cartController');
 const { getCheckoutPage, placeOrder} = require('../controllers/user/checkoutController');
 const { getOrders, getOrderDetails, cancelOrder } = require('../controllers/user/orderController');
-const { searchProducts, getSearchPage } = require('../controllers/user/searchController')
+const { quickSearch, getSearchPage, getSearchHistory, SaveSearchHistory, deleteSearchHistory } = require("../controllers/user/searchController")
 
-const { userAuth }= require('../middleware/userAuth');
 
 
 
 //user routes
 router.get('/', getHome);
-
-router.get('/quick-search', searchProducts);
-router.get('/search', getSearchPage);
 
 router.post('/signup', signup);
 router.post('/resend-otp', resendOTP);
@@ -47,7 +47,12 @@ router.get('/auth/google/callback',
     googleCallback
 );
 
-
+//search routes
+router.get('/quick-search', quickSearch);
+router.get('/search-history', userAuth, getSearchHistory);
+router.post('/search-history', userAuth,SaveSearchHistory);
+router.delete('/search-history/:itemId', userAuth, deleteSearchHistory);
+router.get('/search', getSearchPage);
 //user product & category routes
 router.get('/category/:id', getCategoryProducts);
 router.get('/product/:id', getProductDetails);
