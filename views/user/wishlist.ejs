@@ -33,7 +33,21 @@
 		<link href="/user/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 		<link href="/user/vendor/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">	
         
-		
+		<style>
+            .wishlist-items-grid {
+    margin-top: 20px;
+}
+
+
+
+
+.empty-wishlist-container {
+    padding: 40px 20px;
+    text-align: center;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+        </style>
 		
 	</head>
 
@@ -86,55 +100,50 @@
                                                             <span class="offer-badge-1"><%= product.discountPercentage %>% off</span>
                                                         <% } %>
                                                         <span class="like-icon liked" 
-                                                              title="Remove from wishlist"
-                                                              onclick="removeFromWishlist('<%= product._id %>')"
-                                                              data-product-id="<%= product._id %>">
+                                                        title="Remove from wishlist"
+                                                        onclick="removeFromWishlist('<%= product._id %>')"
+                                                        data-product-id="<%= product._id %>">
                                                         </span>
                                                     </div>
                                                 </a>
                                                 <div class="product-text-dt">
-                                                    <h4 class="product-name"><%= product.name %></h4>
-                                                    <p class="product-quantity"><%= product.quantity + product.unit %></p>
-                                                    
-                                                    <div class="product-price">
-                                                        <% if (product.discountPrice) { %>
-                                                            <span class="current-price">₹<%= product.discountPrice %></span>
-                                                            <span class="original-price">₹<%= product.price %></span>
-                                                        <% } else { %>
-                                                            <span class="current-price">₹<%= product.price %></span>
-                                                        <% } %>
-                                                    </div>
-        
-                                                    <p class="stock-status <%= product.stock > 0 ? 'in-stock' : 'out-of-stock' %>">
+                                                    <p>
                                                         <% if (product.stock > 0) { %>
-                                                            <i class="uil uil-check-circle"></i> In Stock
+                                                            Available<span>(In Stock)</span>
+                                                        <% } else if (product.soldOut) { %>
+                                                            <span>Sold Out</span>
                                                         <% } else { %>
-                                                            <i class="uil uil-times-circle"></i> Out of Stock
+                                                            <span>Out of Stock</span>
                                                         <% } %>
                                                     </p>
-        
-                                                    <div class="product-actions">
+                                                    <h4><%= product.name %></h4>
+                                                    <h4><%= product.quantity + product.unit %></h4>
+                                                    <div class="product-price">
+                                                        <% if (product.discountPrice) { %>
+                                                            ₹<%= product.discountPrice %> <span>₹<%= product.price %></span>
+                                                        <% } else { %>
+                                                            ₹<%= product.price %>
+                                                        <% } %>
+                                                    </div>
+                                                    <div class="add-to-cart-wrapper">
                                                         <% if (product.stock > 0) { %>
                                                             <div class="cart-controls" data-product-id="<%= product._id %>">
-                                                                <button class="add-to-cart-btn" 
-                                                                        onclick="toggleQuantitySelector(this, '<%= product._id %>')">
+                                                                <button class="add-to-cart-btn" onclick="toggleQuantitySelector(this, '<%= product._id %>')">
                                                                     <i class="uil uil-shopping-cart-alt"></i> Add to Cart
                                                                 </button>
                                                                 <div class="quantity-selector" style="display: none;">
-                                                                    <button class="qty-btn minus" 
-                                                                            onclick="handleQuantity(this, false, '<%= product._id %>')">
+                                                                    <button class="qty-btn minus" onclick="handleQuantity(this, false, '<%= product._id %>')">
                                                                         <i class="uil uil-minus"></i>
                                                                     </button>
                                                                     <span class="qty-value">1</span>
-                                                                    <button class="qty-btn plus" 
-                                                                            onclick="handleQuantity(this, true, '<%= product._id %>')">
+                                                                    <button class="qty-btn plus" onclick="handleQuantity(this, true, '<%= product._id %>')">
                                                                         <i class="uil uil-plus"></i>
                                                                     </button>
                                                                 </div>
                                                             </div>
                                                         <% } else { %>
                                                             <button class="out-of-stock-btn" disabled>
-                                                                <i class="uil uil-ban"></i> Out of Stock
+                                                                Out of Stock
                                                             </button>
                                                         <% } %>
                                                     </div>

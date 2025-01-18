@@ -31,7 +31,7 @@ const getWishlist = async (req, res) => {
 const toggleWishlist = async (req, res) => {
     try {
         const { productId } = req.body;
-        console.log('Request body:', req.body); // Debug log
+        console.log('Toggle request for product:', productId);
 
         if (!req.session.user) {
             return res.status(401).json({
@@ -41,9 +41,7 @@ const toggleWishlist = async (req, res) => {
         }
 
         let wishlist = await Wishlist.findOne({ user: req.session.user.id });
-        console.log('Found wishlist:', wishlist); // Debug log
         
-        // Create new wishlist if doesn't exist
         if (!wishlist) {
             wishlist = new Wishlist({ 
                 user: req.session.user.id,
@@ -51,30 +49,33 @@ const toggleWishlist = async (req, res) => {
             });
         }
 
-        // Convert product IDs to strings for comparison
         const productIndex = wishlist.products.findIndex(id => 
             id.toString() === productId.toString()
         );
-        console.log('Product index:', productIndex); // Debug log
         
         let message;
+        let inWishlist = false;
 
         if (productIndex === -1) {
             // Add to wishlist
             wishlist.products.push(productId);
             message = 'Product added to wishlist';
+            inWishlist = true;
         } else {
             // Remove from wishlist
             wishlist.products.splice(productIndex, 1);
             message = 'Product removed from wishlist';
+            inWishlist = false;
         }
 
         await wishlist.save();
 
+        console.log('Sending response:', { success: true, message, inWishlist });
+
         res.json({
             success: true,
             message,
-            inWishlist: productIndex === -1
+            inWishlist // explicitly send whether item is now in wishlist
         });
 
     } catch (error) {

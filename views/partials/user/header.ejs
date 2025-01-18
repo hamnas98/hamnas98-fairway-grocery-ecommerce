@@ -77,7 +77,12 @@
                 <ul>
                     <li>
                         <% if (locals.user) { %>
-                        <a href="/dashboard/wishlist" class="option_links" title="Wishlist"><i class='uil uil-heart icon_wishlist'></i><span class="noti_count1">3</span></a>
+                            <a href="/dashboard/wishlist" class="option_links" title="Wishlist">
+                                <i class='uil uil-heart icon_wishlist'></i>
+                                <span class="noti_count1" id="wishlistCount">
+                                    <%= locals.wishlist ? wishlist.products.length : 0 %>
+                                </span>
+                            </a>
                         <% } %>
                     </li>
                     <li class="dropdown account-dropdown">

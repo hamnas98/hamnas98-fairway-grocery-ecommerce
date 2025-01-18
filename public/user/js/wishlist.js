@@ -1,4 +1,14 @@
 // Wishlist Notification Functions
+function updateWishlistCount(change) {
+    const countElement = document.getElementById('wishlistCount');
+    if (countElement) {
+        const currentCount = parseInt(countElement.textContent) || 0;
+        // change will be 1 for addition, -1 for removal
+        const newCount = currentCount + change;
+        countElement.textContent = newCount;
+    }
+}
+
 function showWishlistNotification(message) {
     const Toast = Swal.mixin({
         toast: true,
@@ -41,7 +51,14 @@ function toggleWishlistItem(element, productId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            element.classList.toggle('liked');
+            // Toggle wishlist icon
+            if (data.inWishlist) {
+                element.className = 'like-icon liked';
+                updateWishlistCount(1); // Increment count
+            } else {
+                element.className = 'like-icon';
+                updateWishlistCount(-1); // Decrement count
+            }
             showWishlistNotification(data.message);
         } else {
             showWishlistError(data.message);
@@ -76,16 +93,14 @@ function removeFromWishlist(productId) {
                 if (data.success) {
                     const productCard = document.querySelector(`[data-product-id="${productId}"]`).closest('.col-xl-3');
                     productCard.remove();
-
-                    const countElement = document.querySelector('.item-count');
-                    const currentCount = parseInt(countElement.textContent);
-                    if (currentCount === 1) {
-                        location.reload();
-                    } else {
-                        countElement.textContent = `${currentCount - 1} items`;
-                    }
-
+                    updateWishlistCount(-1); // Decrement count
                     showWishlistNotification('Product removed from wishlist');
+                    
+                    // Reload if wishlist is empty
+                    const countElement = document.getElementById('wishlistCount');
+                    if (countElement && parseInt(countElement.textContent) === 0) {
+                        location.reload();
+                    }
                 } else {
                     showWishlistError(data.message);
                 }
