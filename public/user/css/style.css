@@ -3943,7 +3943,7 @@ textarea.form-control {
 
 .user-dt h4 {
     font-size: 24px;
-    color: #2b2f4c;
+    color: white;
     text-align: center;
     margin-bottom: 8px;
     margin-top: 18px;
@@ -3951,7 +3951,7 @@ textarea.form-control {
 
 .user-dt p {
     font-size: 14px;
-    color: #3e3f5e;
+    color: white;
     text-align: center;
 	margin-bottom: 20px;
 	font-weight: 500;
@@ -3959,13 +3959,16 @@ textarea.form-control {
 }
 
 .user-dt p a {
-	color: #3e3f5e !important;
+	color: white !important;
     font-size: 16px;
 	margin-left: 5px;
 }
 
 .user-dt p a:hover {
     color: #2b2f4c !important;
+}
+.btn-edit-profile {
+    color: white !important;
 }
 
 .earn-points img {
@@ -4840,7 +4843,7 @@ table {
     margin-top: 20px;
     margin-left: 20px;
     color: #fff;
-    background: #f55d2c;
+    background: #2b2f4c;
     border-radius: 5px;
     font-weight: 500;
 	margin-bottom: 10px;
@@ -4862,7 +4865,7 @@ table {
 
 .address-icon1 {
     margin-right: 10px;
-    background: #f55d2c;
+    background: #2b2f4c;
     color: #fff;
     padding: 5px;
     border-radius: 5px;

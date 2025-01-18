@@ -12,6 +12,7 @@ function initializeSearch() {
     const searchBtn = document.querySelector('.search-btn');
     const searchResults = document.getElementById('searchResults');
     const searchHistory = document.getElementById('searchHistory');
+    
 
     if (!searchInput) return;
 
@@ -134,15 +135,18 @@ async function saveSearchHistory(query) {
 // Load and display search history
 async function loadSearchHistory() {
     try {
- 
+        console.log('Loading search history...');
         const response = await fetch('/search-history');
         const data = await response.json();
+        console.log('Search history data:', data);
 
         if (!data.success) {
             throw new Error(data.message);
         }
 
         const historyList = document.querySelector('.history-list');
+        console.log('History list element:', historyList);
+
         if (!historyList) {
             console.log('History list element not found');
             hideSearchHistory();
@@ -155,15 +159,38 @@ async function loadSearchHistory() {
             return;
         }
 
+        // Log history items before rendering
+        console.log('History items to render:', data.history);
+
         historyList.innerHTML = data.history
-            .map(item => `
-                <div class="history-item">
-                    <i class="uil uil-clock-three"></i>
-                    <span onclick="useHistoryItem('${encodeURIComponent(item.query)}')">${item.query}</span>
-                    <i class="uil uil-times" onclick="removeHistoryItem('${item._id}')"></i>
-                </div>
-            `)
-            .join('');
+    .map(item => `
+        <div class="history-item" data-id="${item._id}" data-query="${encodeURIComponent(item.query)}">
+            <i class="uil uil-clock-three"></i>
+            <span class="history-query">${item.query}</span>
+            <i class="uil uil-times remove-history"></i>
+        </div>
+    `)
+    .join('');
+
+// Add event listeners after generating the list
+const historyItems = historyList.querySelectorAll('.history-item');
+historyItems.forEach(item => {
+    const querySpan = item.querySelector('.history-query');
+    querySpan.addEventListener('click', (e) => {
+        console.log('History item clicked:', item.dataset.query);
+        e.preventDefault();
+        e.stopPropagation();
+        useHistoryItem(item.dataset.query);
+    });
+
+    const removeBtn = item.querySelector('.remove-history');
+    removeBtn.addEventListener('click', async (e) => {
+        console.log('Remove button clicked for item:', item.dataset.id);
+        e.preventDefault();
+        e.stopPropagation();
+        await removeHistoryItem(item.dataset.id);
+    });
+});
         
         showSearchHistory();
     } catch (error) {
@@ -462,10 +489,16 @@ function reloadWithParams() {
 
 // Search history item handlers
 function useHistoryItem(query) {
+    console.log('Using history item:', query);
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
-        searchInput.value = query;
-        handleSearchSubmit(new Event('submit'));
+        searchInput.value = decodeURIComponent(query);
+        // Trigger the search
+        const event = new Event('submit', {
+            bubbles: true,
+            cancelable: true
+        });
+        searchInput.form.dispatchEvent(event);
     }
 }
 
@@ -473,12 +506,25 @@ function useHistoryItem(query) {
 async function removeHistoryItem(itemId) {
     try {
         const response = await fetch(`/search-history/${itemId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         });
         const data = await response.json();
 
         if (data.success) {
-            loadSearchHistory(); // Reload the history list
+            // Remove the item from DOM directly instead of reloading entire history
+            const historyItem = document.querySelector(`.history-item[data-id="${itemId}"]`);
+            if (historyItem) {
+                historyItem.remove();
+                
+                // If no more items, hide the history container
+                const historyList = document.querySelector('.history-list');
+                if (!historyList.children.length) {
+                    hideSearchHistory();
+                }
+            }
         } else {
             throw new Error(data.message);
         }

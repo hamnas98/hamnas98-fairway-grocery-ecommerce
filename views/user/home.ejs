@@ -148,7 +148,13 @@
 													<% if (product.discountPercentage > 0) { %>
 														<span class="offer-badge-1"><%= product.discountPercentage %>% off</span>
 													<% } %>
-													<span class="like-icon" title="wishlist"></span>
+												    <span class="like-icon" 
+														title="wishlist" 
+														onclick="toggleWishlistItem(this, '<%= product._id %>')"
+														data-product-id="<%= product._id %>"
+														data-in-wishlist="<%= locals.wishlist && wishlist.products.includes(product._id) ? 'true' : 'false' %>">
+											  		</span>
+													
 												</div>
 											</a>
 											<div class="product-text-dt">
@@ -379,7 +385,6 @@
 	<script src="/user/js/custom.js"></script>
 	<script src="/user/js/offset_overlay.js"></script>
 	<script src="/user/js/night-mode.js"></script>
-	<script src="/user/js/cart.js"></script>
 	
 
 	<script>

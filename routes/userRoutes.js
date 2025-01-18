@@ -16,7 +16,7 @@ const { getCart, addToCart, updateCartQuantity, cartCount, removeFromCart, clear
 const { getCheckoutPage, placeOrder} = require('../controllers/user/checkoutController');
 const { getOrders, getOrderDetails, cancelOrder } = require('../controllers/user/orderController');
 const { quickSearch, getSearchPage, getSearchHistory, saveSearchHistory, deleteSearchHistory } = require("../controllers/user/searchController")
-
+const { getWishlist } = require("../controllers/user/wishlistController")
 
 
 
@@ -78,6 +78,11 @@ router.delete('/cart/remove/:productId', removeFromCart);
 router.delete('/cart/clear', userAuth, clearCart);
 router.get('/cart/count', userAuth, cartCount);
 router.get('/cart/verify', userAuth, verifyCart);
+
+
+//wishlist routes
+
+router.get('/dashboard/wishlist', userAuth, getWishlist)
 
 //checkout routeas
 router.get('/checkout', userAuth, getCheckoutPage);
