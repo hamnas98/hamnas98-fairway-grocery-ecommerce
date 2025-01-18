@@ -148,12 +148,13 @@
 													<% if (product.discountPercentage > 0) { %>
 														<span class="offer-badge-1"><%= product.discountPercentage %>% off</span>
 													<% } %>
-												    <span class="like-icon" 
+													<span class="like-icon <%= locals.wishlist && wishlist.products.some(p => p.toString() === product._id.toString()) ? 'liked' : '' %>" 
 														title="wishlist" 
 														onclick="toggleWishlistItem(this, '<%= product._id %>')"
 														data-product-id="<%= product._id %>"
-														data-in-wishlist="<%= locals.wishlist && wishlist.products.includes(product._id) ? 'true' : 'false' %>">
-											  		</span>
+														data-in-wishlist="<%= locals.wishlist && wishlist.products.some(p => p.toString() === product._id.toString()) ? 'true' : 'false' %>">
+												  	</span>
+									
 													
 												</div>
 											</a>
