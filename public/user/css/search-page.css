@@ -1,0 +1,130 @@
+.search-results-container {
+    padding: 40px 0;
+    background-color: #f9fafb;
+}
+
+.search-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.search-header h2 {
+    font-size: 24px;
+    color: #1f2937;
+    margin-bottom: 10px;
+}
+
+.search-header p {
+    color: #6b7280;
+    font-size: 16px;
+}
+
+.filters-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.filters-header h3 {
+    font-size: 18px;
+    color: #1f2937;
+    margin: 0;
+}
+
+.clear-filters {
+    color: #3b82f6;
+    background: none;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.filter-group {
+    margin-bottom: 25px;
+}
+
+.filter-group h4 {
+    font-size: 16px;
+    color: #374151;
+    margin-bottom: 15px;
+}
+
+.price-range-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.price-range-inputs input {
+    width: 80px;
+    padding: 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 5px;
+}
+
+.price-range-inputs button {
+    padding: 8px 15px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.price-range-inputs button:hover {
+    background: #2563eb;
+}
+
+.category-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.custom-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.product-sort {
+    margin-bottom: 20px;
+}
+
+.product-sort select {
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 5px;
+    background-color: white;
+    width: 200px;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .header-search {
+        max-width: 100%;
+    }
+    
+    .price-range-inputs {
+        flex-wrap: wrap;
+    }
+    
+    .filters-card {
+        margin-bottom: 20px;
+    }
+}

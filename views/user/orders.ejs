@@ -32,9 +32,6 @@
 		<link href="/user/vendor/OwlCarousel/assets/owl.theme.default.min.css" rel="stylesheet">
 		<link href="/user/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 		<link href="/user/vendor/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">	
-        <style>
-            
-        </style>
         
 		
 		
@@ -252,7 +249,31 @@
 
             // Update the modal content with order details
             modalContent.innerHTML = `
-                <div class="detail-section">
+                <div class="order-detail-content">
+                    <!-- Order Information Section -->
+                    <div class="detail-section">
+                        <h6>Order Information</h6>
+                        <div class="detail-info">
+                            <p><strong>Order ID:</strong> #${order._id.toString().slice(-6)}</p>
+                            <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleString()}</p>
+                            <p><strong>Status:</strong> <span class="status ${order.orderStatus.toLowerCase()}">${order.orderStatus}</span></p>
+                            <p><strong>Payment Method:</strong> ${order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}</p>
+                        </div>
+                    </div>
+
+                    <!-- Delivery Address Section -->
+                    <div class="detail-section">
+                        <h6>Delivery Address</h6>
+                        <div class="detail-info">
+                            <p><strong>${order.deliveryAddress.name}</strong></p>
+                            <p>${order.deliveryAddress.mobile}</p>
+                            <p>${order.deliveryAddress.flat}, ${order.deliveryAddress.addressLine}</p>
+                            <p>${order.deliveryAddress.city}, ${order.deliveryAddress.state} - ${order.deliveryAddress.pincode}</p>
+                        </div>
+                    </div>
+
+                    <!-- Order Items Section -->
+                     <div class="detail-section">
     <h6>Order Items</h6>
     <div class="detail-items">
         ${order.items.map(item => `

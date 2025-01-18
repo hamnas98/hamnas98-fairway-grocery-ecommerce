@@ -5,334 +5,14 @@
 <%- include('../partials/user/loginmodel') %>
 
 <%- include('../partials/user/forgotPassword') %>
-<style>
-.header-search {
-    position: relative;
-    flex: 1;
-    max-width: 600px;
-}
 
-.search-input-wrapper {
-    display: flex;
-    align-items: center;
-    background: #f8f9fa;
-    border: 1px solid #eef0f5;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.search-input-wrapper:focus-within {
-    border-color: #2b2f4c;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.search-input {
-    flex: 1;
-    padding: 12px 16px;
-    border: none;
-    background: none;
-    font-size: 14px;
-    color: #2b2f4c;
-}
-
-.search-btn {
-    padding: 12px 16px;
-    background: none;
-    border: none;
-    color: #666;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.search-btn:hover {
-    color: #2b2f4c;
-}
-
-/* Dropdown Results */
-.search-results {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border-radius: 8px;
-    margin-top: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    z-index: 1000;
-}
-
-.results-content {
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.search-loading {
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    color: #666;
-}
-
-.result-item {
-    display: flex;
-    align-items: center;
-    padding: 12px;
-    text-decoration: none;
-    color: inherit;
-    gap: 12px;
-    transition: background-color 0.3s ease;
-}
-
-.result-item:hover {
-    background-color: #f8f9fa;
-}
-
-.result-image {
-    width: 50px;
-    height: 50px;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.result-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.result-info {
-    flex: 1;
-}
-
-.result-name {
-    font-size: 14px;
-    color: #2b2f4c;
-    margin-bottom: 4px;
-}
-
-.result-category {
-    font-size: 12px;
-    color: #666;
-}
-
-.result-price {
-    font-weight: 600;
-    color: #2b2f4c;
-}
-
-.view-all-results {
-    padding: 12px;
-    border-top: 1px solid #eef0f5;
-    text-align: center;
-}
-
-.view-all-results a {
-    color: #2b2f4c;
-    text-decoration: none;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.no-results {
-    padding: 24px;
-    text-align: center;
-    color: #666;
-}
-
-.no-results i {
-    font-size: 24px;
-    margin-bottom: 8px;
-    color: #999;
-}
-
-.view-all-link {
-    display: inline-block;
-    margin-top: 12px;
-    padding: 8px 16px;
-    background: #2b2f4c;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-}
-
-.view-all-link:hover {
-    background: #1a1c2e;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-.fa-spin {
-    animation: spin 1s linear infinite;
-}
-    /* Search Styles */
-.header-search {
-    position: relative;
-    flex: 1;
-    max-width: 600px;
-    margin: 0 20px;
-}
-
-.search-input-wrapper {
-    display: flex;
-    align-items: center;
-    background: #f8f9fa;
-    border: 1px solid #e4e6eb;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.search-input-wrapper:focus-within {
-    border-color: #2b2f4c;
-    background: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.search-input {
-    flex: 1;
-    padding: 12px 16px;
-    border: none;
-    background: none;
-    font-size: 14px;
-    color: #2b2f4c;
-    width: 100%;
-}
-
-.search-input:focus {
-    outline: none;
-}
-
-.search-btn {
-    padding: 8px 16px;
-    background: none;
-    border: none;
-    color: #666;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.search-btn:hover {
-    color: #2b2f4c;
-}
-
-/* Search Results Dropdown */
-.search-results {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    margin-top: 8px;
-    z-index: 1000;
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.results-content {
-    padding: 8px 0;
-}
-
-/* Loading State */
-.search-loading {
-    padding: 20px;
-    text-align: center;
-    color: #666;
-}
-
-.search-loading i {
-    animation: spin 1s linear infinite;
-    margin-right: 8px;
-}
-
-/* Results Item */
-.result-item {
-    padding: 8px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.result-item:hover {
-    background: #f8f9fa;
-}
-
-.result-image {
-    width: 48px;
-    height: 48px;
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-.result-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.result-info {
-    flex: 1;
-}
-
-.result-name {
-    font-size: 14px;
-    color: #2b2f4c;
-    margin-bottom: 4px;
-}
-
-.result-category {
-    font-size: 12px;
-    color: #666;
-}
-
-.result-price {
-    font-weight: 600;
-    color: #2b2f4c;
-}
-
-/* No Results State */
-.no-results {
-    padding: 24px;
-    text-align: center;
-    color: #666;
-}
-
-.no-results i {
-    font-size: 24px;
-    margin-bottom: 8px;
-}
-
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-@media (max-width: 768px) {
-    .header-search {
-        margin: 10px 0;
-        max-width: 100%;
-    }
-}
-</style>
 <!-- Category Model End -->
 <head>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 </head>
-
+<link href="/user/css/header-search.css" rel="stylesheet">
 <script>
     // Prevent back button after logout
     window.onpageshow = function(event) {
@@ -356,29 +36,36 @@
             <div class="main_logo" id="logo">
                 <a href="/"><img src="user/images/fairway logo.jpg" alt="Fairway"></a>
                 <a href="/"><img class="logo-inverse" src="images/fairway logo.jpg" alt="Fairway Supermarket"></a>
-            </div><!-- Search Component in Header -->
+            </div>
+            <!-- Search Component in Header -->
             <div class="header-search">
                 <div class="search-input-wrapper">
                     <input type="text" 
                            id="searchInput" 
                            class="search-input" 
-                           value="<%= typeof query!== 'undefined' ? query : '' %>"
-                           placeholder='<%= typeof query !== 'undefined' && query ? query : "Search for products..." %>'  >
+                           value="<%= typeof query !== 'undefined' ? query : '' %>"
+                           placeholder="Search for products..."
+                           autocomplete="off">
                     <button class="search-btn">
                         <i class="uil uil-search"></i>
                     </button>
                 </div>
-                <!-- Search Results Dropdown -->
+                
+                <!-- Search History Dropdown -->
+                <div class="search-history" id="searchHistory" style="display: none;">
+                    <div class="history-list">
+                        <!-- History items will be inserted here -->
+                    </div>
+                </div>
+                
+                <!-- Quick Search Results Dropdown -->
                 <div class="search-results" id="searchResults" style="display: none;">
                     <div class="results-content">
-                        <!-- Loading State -->
                         <div class="search-loading" style="display: none;">
                             <i class="uil uil-spinner-alt"></i>
                             Searching...
                         </div>
-                        <!-- Results List -->
                         <div class="results-list"></div>
-                        <!-- No Results State -->
                         <div class="no-results" style="display: none;">
                             <i class="uil uil-sad"></i>
                             <p>No products found</p>
