@@ -1160,8 +1160,9 @@ i.icon1 {
 }
 
 .main-gambo-model {
-    background-image: -webkit-linear-gradient(left, rgba(230, 92, 91, 0.9), rgba(245, 93, 44, 0.9));
-    background-image: linear-gradient(to right, rgba(230, 92, 91, 0.9), rgba(245, 93, 44, 0.9));
+    background-image: -webkit-linear-gradient(left, rgba(43, 47, 76, 0.9), rgba(65, 71, 115, 0.9));
+    background-image: linear-gradient(to right, rgba(43, 47, 76, 0.9), rgba(65, 71, 115, 0.9));
+    opacity: 50%;
 }
 
 .category-area-inner .modal-header {
@@ -3846,7 +3847,7 @@ textarea.form-control {
 /* --- User Dashboard Page --- */
 
 .dashboard-group {
-    background: rgba(245,93,44, 0.3);
+    background: #4b517a; 
     position: relative;
     padding: 50px 0;
 }
@@ -3964,7 +3965,7 @@ textarea.form-control {
 }
 
 .user-dt p a:hover {
-    color: #f55d2c !important;
+    color: #2b2f4c !important;
 }
 
 .earn-points img {
@@ -4029,19 +4030,19 @@ textarea.form-control {
 }
 
 .user-item:hover i { 
-	color: #f55d2c !important;
+	color: #5a608f !important;
 }
 
 .user-item.active { 
-	background: #f55d2c;
+	background:#2b2f4c;
 	color: #fff !important;
 	transition: all .2s ease-in-out;
 	-webkit-transition: all 0.2s ease-in-out;
     -o-transition: all 0.2s ease-in-out;
     -ms-transition: all 0.2s ease-in-out;
     -webkit-transition: all 0.2s ease-in-out;
-	background-image: -webkit-linear-gradient(left, rgba(230, 92, 91, 0.9), rgba(245, 93, 44, 0.9));
-    background-image: linear-gradient(to right, rgba(230, 92, 91, 0.9), rgba(245, 93, 44, 0.9));;
+	background-image: -webkit-linear-gradient(left, rgba(43, 47, 76, 0.9), rgba(65, 71, 115, 0.9));
+background-image: linear-gradient(to right, rgba(43, 47, 76, 0.9), rgba(65, 71, 115, 0.9));;
 	pointer-events:none;
 }
 

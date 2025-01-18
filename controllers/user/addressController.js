@@ -15,6 +15,7 @@ const getAllAddresses = async (req, res) => {
             user: req.session.user.id,
             isDeleted: false
         }).sort({ isDefault: -1, createdAt: -1 });
+        
         console.log(req.session.user,'add')
         res.render('addresses', {
             parentCategories,
