@@ -51,16 +51,16 @@ function toggleWishlistItem(element, productId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Toggle wishlist icon
             if (data.inWishlist) {
                 element.className = 'like-icon liked';
-                updateWishlistCount(1); // Increment count
+                updateWishlistCount(1);
             } else {
                 element.className = 'like-icon';
-                updateWishlistCount(-1); // Decrement count
+                updateWishlistCount(-1);
             }
             showWishlistNotification(data.message);
         } else {
+            // This will now show "Please login to manage wishlist" when user is not logged in
             showWishlistError(data.message);
         }
     })

@@ -126,6 +126,8 @@
 												<div class="current-price">₹<%= product.price %></div>
 											<% } %>
 										</div>
+		
+										
 										<div class="add-to-cart-wrapper">
 											<% if (product.stock > 0) { %>
 												<div class="cart-controls" data-product-id="<%= product._id %>">
@@ -147,9 +149,12 @@
 													Out of Stock
 												</button>
 											<% } %>
+											<span class="like-icon <%= locals.wishlist && wishlist.products.some(p => p.toString() === product._id.toString()) ? 'liked' : '' %>" 
+												title="<%= locals.wishlist && wishlist.products.some(p => p.toString() === product._id.toString()) ? 'Remove from wishlist' : 'Add to wishlist' %>"
+												onclick="toggleWishlistItem(this, '<%= product._id %>')"
+												data-product-id="<%= product._id %>">
+										  </span>
 										</div>
-										<li><span class="like-icon save-icon" title="wishlist"></span></li>	
-					
 
 											<div class="col-lg-6 col-md-12">
 												<div class="pdpt-bg">
@@ -244,7 +249,11 @@
 													<% if (relProduct.discountPercentage > 0) { %>
 														<span class="offer-badge-1"><%= relProduct.discountPercentage %>% off</span>
 													<% } %>
-													<span class="like-icon" title="wishlist"></span>
+													<span class="like-icon <%= locals.wishlist && wishlist.products.some(p => p.toString() === product._id.toString()) ? 'liked' : '' %>" 
+														title="<%= locals.wishlist && wishlist.products.some(p => p.toString() === product._id.toString()) ? 'Remove from wishlist' : 'Add to wishlist' %>"
+														onclick="toggleWishlistItem(this, '<%= product._id %>')"
+														data-product-id="<%= product._id %>">
+												  </span>
 												</div>
 											</a>
 											<div class="product-text-dt">
