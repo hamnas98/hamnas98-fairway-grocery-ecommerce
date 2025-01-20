@@ -17,6 +17,7 @@ const { getCheckoutPage, placeOrder} = require('../controllers/user/checkoutCont
 const { getOrders, getOrderDetails, cancelOrder } = require('../controllers/user/orderController');
 const { quickSearch, getSearchPage, getSearchHistory, saveSearchHistory, deleteSearchHistory } = require("../controllers/user/searchController")
 const { getWishlist, toggleWishlist, removeFromWishlist } = require("../controllers/user/wishlistController")
+const { createRazorpayOrder, verifyPayment } = require("../controllers/user/razorpayController")
 
 
 
@@ -90,6 +91,10 @@ router.delete('/wishlist/remove/:productId', userAuth, removeFromWishlist);
 //checkout routeas
 router.get('/checkout', userAuth, getCheckoutPage);
 router.post('/place-order', userAuth, placeOrder);
+
+//razorPay Routes
+router.post('/create-razorpay-order', userAuth, createRazorpayOrder);
+router.post('/verify-payment', userAuth, verifyPayment);
 
 //order routes
 router.get('/dashboard/orders', userAuth, getOrders);

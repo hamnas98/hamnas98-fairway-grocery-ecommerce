@@ -141,7 +141,7 @@
 								<div class="step-body">
 									<div class="payment-methods">
 										<div class="payment-option">
-											<input type="radio" name="paymentMethod" id="cod" value="cod" checked>
+											<input type="radio" name="paymentMethod" id="cod" value="cod">
 											<label for="cod" class="payment-card">
 												<div class="payment-left">
 													<div class="radio-mark"></div>
@@ -150,7 +150,6 @@
 													</div>
 													<div class="payment-details">
 														<span class="payment-name">Cash on Delivery</span>
-														
 													</div>
 												</div>
 												<div class="payment-right">
@@ -158,7 +157,25 @@
 												</div>
 											</label>
 										</div>
-										<!-- Add more payment options here -->
+										
+										<div class="payment-option">
+											<input type="radio" name="paymentMethod" id="razorpay" value="razorpay" checked>
+											<label for="razorpay" class="payment-card">
+												<div class="payment-left">
+													<div class="radio-mark"></div>
+													<div class="payment-icon">
+														<i class="uil uil-credit-card"></i>
+													</div>
+													<div class="payment-details">
+														<span class="payment-name">Pay Online</span>
+														<small>Credit/Debit Card, UPI, Netbanking</small>
+													</div>
+												</div>
+												<div class="payment-right">
+													<span class="status-tag">Available</span>
+												</div>
+											</label>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -220,7 +237,7 @@
 									</div>
 								</div>
 								<div class="summary-footer">
-									<button class="place-order-btn" onclick="placeOrder()">
+									<button class="place-order-btn" type="button" onclick="placeOrder()">
 										Place Order <i class="uil uil-arrow-right"></i>
 									</button>
 								</div>
@@ -236,6 +253,7 @@
 	<!-- Footer End -->
 
 	<!-- Javascripts -->
+	<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="/user/js/jquery.min.js"></script>
 	<script src="/user/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -245,127 +263,9 @@
 	<script src="/user/js/custom.js"></script>
 	<script src="/user/js/offset_overlay.js"></script>
 	<script src="/user/js/night-mode.js"></script>
-	<script src="/user/js/cart.js"></script>
 	<script src="/user/js/address.js"></script>
-	<script>
-
-
-// Handle address selection
-document.querySelectorAll('input[name="deliveryAddress"]').forEach(radio => {
-    radio.addEventListener('change', function() {
-        // Remove selected class from all cards
-        document.querySelectorAll('.address-card').forEach(card => {
-            card.classList.remove('selected');
-        });
-        
-        // Add selected class to chosen card
-        this.closest('.address-card').classList.add('selected');
-    });
-});
-
-// Place Order
-async function placeOrder() {
-    if (isProcessing) return;
-
-    // Get selected address
-    const selectedAddress = document.querySelector('input[name="deliveryAddress"]:checked');
-    if (!selectedAddress) {
-        showErrorNotification('Please select a delivery address');
-        return;
-    }
-
-    // Get payment method
-    const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
-    if (!selectedPayment) {
-        showErrorNotification('Please select a payment method');
-        return;
-    }
-
-    try {
-        isProcessing = true;
-        
-        // Show loading state
-        const orderBtn = document.querySelector('.place-order-btn');
-        const originalText = orderBtn.innerHTML;
-        orderBtn.innerHTML = '<i class="uil uil-spinner-alt"></i> Processing...';
-        orderBtn.disabled = true;
-
-        const response = await fetch('/place-order', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                addressId: selectedAddress.value,
-                paymentMethod: selectedPayment.value
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            // Show success message
-            Swal.fire({
-                icon: 'success',
-                title: 'Order Placed Successfully!',
-                text: 'Thank you for shopping with us',
-                confirmButtonText: 'View Order',
-                allowOutsideClick: false
-            }).then((result) => {
-                window.location.href = '/dashboard/orders';
-            });
-        } else {
-            throw new Error(data.message || 'Failed to place order');
-        }
-    } catch (error) {
-        showErrorNotification(error.message);
-        // Reset button
-        orderBtn.innerHTML = originalText;
-        orderBtn.disabled = false;
-    } finally {
-        isProcessing = false;
-    }
-}
-
-
-// Notifications
-function showSuccessNotification(message) {
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true
-    });
-
-    Toast.fire({
-        icon: 'success',
-        title: message
-    });
-}
-
-function showErrorNotification(message) {
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true
-    });
-
-    Toast.fire({
-        icon: 'error',
-        title: message
-    });
-}
-
-// Handle page reload/navigation
-window.onbeforeunload = function() {
-    if (isProcessing) {
-        return "Order is being processed. Are you sure you want to leave?";
-    }
-};
-	</script>
+	<script src="/user/js/checkout.js"></script>
+	
 	
 </body>
 </html>

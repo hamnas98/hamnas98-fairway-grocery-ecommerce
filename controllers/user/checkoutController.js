@@ -49,7 +49,7 @@ const getCheckoutPage = async (req, res) => {
 
 const placeOrder = async (req, res) => {
     try {
-        console.log(req.body,'po')
+        console.log(req.body)
         const { addressId, paymentMethod } = req.body;
 
         // Validate address

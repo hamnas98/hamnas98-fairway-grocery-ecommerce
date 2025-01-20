@@ -44,8 +44,19 @@ const orderSchema = new mongoose.Schema({
     },
     paymentMethod: {
         type: String,
-        enum: ['cod', 'online'],
+        enum: ['cod', 'razorpay'],
         required: true
+    },
+    paymentDetails: {
+        razorpayOrderId: String,
+        razorpayPaymentId: String,
+        razorpaySignature: String,
+        status: {
+            type: String,
+            enum: ['pending', 'paid', 'failed'],
+            default: 'pending'
+        },
+        paidAt: Date
     },
     total: {
         type: Number,
@@ -77,5 +88,8 @@ const orderSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
+// Add an index for faster payment-related queries
+orderSchema.index({ 'paymentDetails.razorpayOrderId': 1 });
+orderSchema.index({ 'paymentDetails.razorpayPaymentId': 1 });
 
 module.exports = mongoose.model('Order', orderSchema);
