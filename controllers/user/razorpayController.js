@@ -52,21 +52,13 @@ const createRazorpayOrder = async (req, res) => {
         });
 
         // Create order in pending state
-        const order = new Order({
-            user: req.session.user.id,
-            items: cart.items,
-            deliveryAddress: address,
-            paymentMethod: 'razorpay',
-            total: cart.total,
-            discountTotal: cart.discountTotal,
-            orderStatus: 'Processing',
-            paymentDetails: {
-                razorpayOrderId: razorpayOrder.id,
-                status: 'pending'
-            }
-        });
-
-        await order.save();
+        req.session.paymentIntent = {
+            razorpayOrderId: razorpayOrder.id,
+            addressId,
+            cartId: cart._id,
+            amount: cart.discountTotal,
+            createdAt: new Date()
+        };
 
         res.json({
             success: true,
@@ -98,6 +90,15 @@ const verifyPayment = async (req, res) => {
             razorpay_signature
         } = req.body;
 
+        // Verify the payment intent exists in session
+        if (!req.session.paymentIntent || 
+            req.session.paymentIntent.razorpayOrderId !== razorpay_order_id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid payment session'
+            });
+        }
+
         // Verify signature
         const body = razorpay_order_id + "|" + razorpay_payment_id;
         const expectedSignature = crypto
@@ -112,36 +113,51 @@ const verifyPayment = async (req, res) => {
             });
         }
 
-        // Find and update order
-        const order = await Order.findOne({
-            'paymentDetails.razorpayOrderId': razorpay_order_id
-        }).populate('items.product');
+        // Get cart and address
+        const [cart, address] = await Promise.all([
+            Cart.findById(req.session.paymentIntent.cartId).populate('items.product'),
+            Address.findById(req.session.paymentIntent.addressId)
+        ]);
 
-        if (!order) {
+        if (!cart || !address) {
             return res.status(404).json({
                 success: false,
-                message: 'Order not found'
+                message: 'Cart or address not found'
             });
         }
 
-        // Update order status
-        order.paymentDetails.razorpayPaymentId = razorpay_payment_id;
-        order.paymentDetails.razorpaySignature = razorpay_signature;
-        order.paymentDetails.status = 'paid';
-        order.paymentDetails.paidAt = new Date();
-        order.orderStatus = 'Processing';
+        // Create order after payment verification
+        const order = new Order({
+            user: req.session.user.id,
+            items: cart.items,
+            deliveryAddress: address,
+            paymentMethod: 'razorpay',
+            total: cart.total,
+            discountTotal: cart.discountTotal,
+            orderStatus: 'Processing',
+            paymentDetails: {
+                razorpayOrderId: razorpay_order_id,
+                razorpayPaymentId: razorpay_payment_id,
+                razorpaySignature: razorpay_signature,
+                status: 'paid',
+                paidAt: new Date()
+            }
+        });
 
         await order.save();
 
-        // Update product stock and clear cart in parallel
+        // Update stock and clear cart
         await Promise.all([
-            ...order.items.map(item => 
+            ...cart.items.map(item => 
                 Product.findByIdAndUpdate(item.product._id, {
                     $inc: { stock: -item.quantity }
                 })
             ),
-            Cart.findOneAndDelete({ user: order.user })
+            Cart.findByIdAndDelete(cart._id)
         ]);
+
+        // Clear payment intent from session
+        delete req.session.paymentIntent;
 
         res.json({
             success: true,
@@ -157,4 +173,24 @@ const verifyPayment = async (req, res) => {
     }
 };
 
-module.exports = { createRazorpayOrder, verifyPayment };
+const cancelPayment = async (req, res) => {
+    try {
+        // Clear payment intent from session
+        if (req.session.paymentIntent) {
+            delete req.session.paymentIntent;
+        }
+
+        res.json({
+            success: true,
+            message: 'Payment cancelled successfully'
+        });
+    } catch (error) {
+        console.error('Cancel payment error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to cancel payment'
+        });
+    }
+};
+
+module.exports = { createRazorpayOrder, verifyPayment, cancelPayment };

@@ -120,7 +120,6 @@ async function handleRazorpayPayment(addressId, orderBtn, originalText) {
 
                     const verifyData = await verifyResponse.json();
                     if (verifyData.success) {
-                        // First show the success notification
                         Swal.fire({
                             icon: 'success',
                             title: 'Payment Successful!',
@@ -151,14 +150,24 @@ async function handleRazorpayPayment(addressId, orderBtn, originalText) {
                 }
             },
             modal: {
-                ondismiss: function() {
-                    resetOrderButton(orderBtn, originalText);
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Payment Cancelled',
-                        text: 'You have cancelled the payment',
-                        confirmButtonText: 'OK'
-                    });
+                ondismiss: async function() {
+                    try {
+                        await fetch('/cancel-payment', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        resetOrderButton(orderBtn, originalText);
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Payment Cancelled',
+                            text: 'You have cancelled the payment',
+                            confirmButtonText: 'OK'
+                        });
+                    } catch (error) {
+                        console.error('Error cancelling payment:', error);
+                    }
                 }
             },
             theme: {
