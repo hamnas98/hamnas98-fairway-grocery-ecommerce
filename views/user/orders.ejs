@@ -163,6 +163,47 @@
 														</div>
 													<% } %>
 												</div>
+                                                <% if(order.orderStatus === 'Cancelled' && order.paymentMethod === 'razorpay') { %>
+                                                    <div class="refund-details">
+                                                        <div class="refund-header">
+                                                            <i class="uil uil-wallet"></i>
+                                                            <h6>Refund Information</h6>
+                                                        </div>
+                                                        <div class="refund-content">
+                                                            <div class="refund-info">
+                                                                <% if(order.refundDetails && order.refundDetails.amount) { %>
+                                                                    <div class="refund-amount">
+                                                                        <span>Refund Amount:</span>
+                                                                        <strong>₹<%= order.refundDetails.amount.toFixed(2) %></strong>
+                                                                    </div>
+                                                                    <div class="refund-status">
+                                                                        <span>Status:</span>
+                                                                        <span class="status-badge <%= order.refundDetails.status.toLowerCase() %>">
+                                                                            <%= order.refundDetails.status %>
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="refund-date">
+                                                                        <span>Processed on:</span>
+                                                                        <span><%= new Date(order.refundDetails.processedAt).toLocaleDateString() %></span>
+                                                                    </div>
+                                                                    <div class="refund-note">
+                                                                        <i class="uil uil-info-circle"></i>
+                                                                        Refund has been credited to your wallet
+                                                                    </div>
+                                                                <% } else { %>
+                                                                    <div class="refund-processing">
+                                                                        <i class="uil uil-sync"></i>
+                                                                        <span>Refund is being processed</span>
+                                                                    </div>
+                                                                <% } %>
+                                                            </div>
+                                                            <a href="/dashboard/wallet" class="check-wallet-btn">
+                                                                <i class="uil uil-wallet"></i>
+                                                                Check Wallet
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                <% } %>
 												
 				
 												<div class="order-footer">

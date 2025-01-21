@@ -901,3 +901,124 @@
         padding-top: 6px;
     }
 }
+/* Refund Details Styles */
+.refund-details {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    border: 1px dashed #dee2e6;
+}
+
+.refund-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.refund-header i {
+    font-size: 1.5rem;
+    color: #28a745;
+    margin-right: 0.5rem;
+}
+
+.refund-header h6 {
+    margin: 0;
+    color: #333;
+    font-weight: 600;
+}
+
+.refund-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.refund-info {
+    flex: 1;
+}
+
+.refund-amount, .refund-status, .refund-date {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.refund-amount span, .refund-status span:first-child, .refund-date span:first-child {
+    width: 120px;
+    color: #666;
+}
+
+.refund-amount strong {
+    color: #28a745;
+    font-size: 1.1rem;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.status-badge.completed {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-badge.pending {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.status-badge.failed {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.refund-note {
+    margin-top: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+
+.refund-note i {
+    margin-right: 0.5rem;
+    color: #17a2b8;
+}
+
+.check-wallet-btn {
+    background: #28a745;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s;
+    white-space: nowrap;
+}
+
+.check-wallet-btn:hover {
+    background: #218838;
+    color: white;
+    text-decoration: none;
+}
+
+.check-wallet-btn i {
+    margin-right: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .refund-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .check-wallet-btn {
+        margin-top: 1rem;
+        align-self: flex-start;
+    }
+}

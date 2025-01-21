@@ -2,6 +2,8 @@ const Order = require('../../models/Order');
 const Cart = require('../../models/Cart');
 const Category = require('../../models/Category');
 const Product = require('../../models/Product');
+const Wallet = require('../../models/Wallet');
+const {refundToWallet} = require('../../controllers/user/walletController')
 // Get all orders
 const getOrders = async (req, res) => {
 
@@ -93,10 +95,21 @@ const cancelOrder = async (req, res) => {
             });
         }
 
+        let refundAmount = 0;
+
         if (cancelType === 'full') {
             order.orderStatus = 'Cancelled';
             order.cancelReason = reason;
             order.cancelledAt = new Date();
+            refundAmount = order.discountTotal;
+
+            // Return stock for all items
+            for (const item of order.items) {
+                await Product.findByIdAndUpdate(
+                    item.product._id,
+                    { $inc: { stock: item.quantity } }
+                );
+            }
         } else {
             // Handle partial cancellation
             order.items = order.items.map(item => {
@@ -104,6 +117,13 @@ const cancelOrder = async (req, res) => {
                     item.cancelled = true;
                     item.cancelledAt = new Date();
                     item.cancelReason = reason;
+                    refundAmount += (item.discountPrice || item.price) * item.quantity;
+
+                    // Return stock for cancelled item
+                    Product.findByIdAndUpdate(
+                        item.product._id,
+                        { $inc: { stock: item.quantity } }
+                    ).catch(err => console.error('Error updating stock:', err));
                 }
                 return item;
             });
@@ -113,9 +133,11 @@ const cancelOrder = async (req, res) => {
                 order.orderStatus = 'Cancelled';
                 order.cancelReason = reason;
                 order.cancelledAt = new Date();
+            } else {
+                order.orderStatus = 'Partially Cancelled';
             }
 
-            // Recalculate order total
+            // Recalculate order totals
             order.total = order.items.reduce((sum, item) => {
                 if (!item.cancelled) {
                     return sum + (item.price * item.quantity);
@@ -130,21 +152,30 @@ const cancelOrder = async (req, res) => {
                 return sum;
             }, 0);
         }
-        // Increment stock by cancelled quantity
-        
-        for (const item of order.items) {
-            await Product.findByIdAndUpdate(
-                item.product._id,
-                { $inc: { stock: item.quantity } }  
+
+        // Process refund for online payments
+        if (order.paymentMethod === 'razorpay' && order.paymentDetails.status === 'paid' && refundAmount > 0) {
+            const refundSuccess = await refundToWallet(
+                req.session.user.id,
+                order._id,
+                refundAmount
             );
+
+            if (!refundSuccess) {
+                console.error('Failed to process refund to wallet');
+                // You might want to mark this for manual review
+                // or implement a retry mechanism
+            }
         }
-        
 
         await order.save();
 
         res.json({
             success: true,
-            message: cancelType === 'full' ? 'Order cancelled successfully' : 'Selected items cancelled successfully'
+            message: cancelType === 'full' ? 
+                'Order cancelled successfully' : 
+                'Selected items cancelled successfully',
+            refundAmount: refundAmount > 0 ? refundAmount : undefined
         });
 
     } catch (error) {
@@ -155,7 +186,6 @@ const cancelOrder = async (req, res) => {
         });
     }
 };
-
 
 
 

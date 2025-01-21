@@ -77,6 +77,16 @@ const orderSchema = new mongoose.Schema({
     cancelledAt: {
         type: Date
     },
+    refundDetails: {
+        amount: Number,
+        processedAt: Date,
+        status: {
+            type: String,
+            enum: ['Pending', 'Completed', 'Failed'],
+            default: 'Pending'
+        },
+        walletTransactionId: mongoose.Schema.Types.ObjectId
+    },
     processingAt: {
         type: Date
     },
