@@ -130,10 +130,12 @@ const cancelOrder = async (req, res) => {
                 return sum;
             }, 0);
         }
+        // Increment stock by cancelled quantity
+        
         for (const item of order.items) {
             await Product.findByIdAndUpdate(
                 item.product._id,
-                { $inc: { stock: item.quantity } }  // Increment stock by cancelled quantity
+                { $inc: { stock: item.quantity } }  
             );
         }
         

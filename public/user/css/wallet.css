@@ -1,0 +1,141 @@
+.wallet-balance-card {
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    color: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.balance-header {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.balance-label {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.balance-amount {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+}
+
+.balance-footer {
+    text-align: center;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Transaction List */
+.transactions-section {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.3s;
+}
+
+.transaction-item:hover {
+    background-color: #f8f9fa;
+}
+
+.transaction-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+}
+
+.transaction-icon i {
+    font-size: 1.2rem;
+}
+
+.transaction-details {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.transaction-info {
+    flex: 1;
+}
+
+.transaction-title {
+    margin: 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+.transaction-date {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.transaction-amount {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0 1rem;
+}
+
+.transaction-amount.credit {
+    color: #2E7D32;
+}
+
+.transaction-amount.debit {
+    color: #C62828;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.status-badge.completed {
+    background: #E8F5E9;
+    color: #2E7D32;
+}
+
+.status-badge.pending {
+    background: #FFF3E0;
+    color: #E65100;
+}
+
+.status-badge.failed {
+    background: #FFEBEE;
+    color: #C62828;
+}
+
+.transaction-filter {
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.no-transactions {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #666;
+}
+
+.no-transactions i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}

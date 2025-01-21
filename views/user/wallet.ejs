@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, shrink-to-fit=9">
+		<meta name="description" content="Gambolthemes">
+		<meta name="author" content="Gambolthemes">		
+		<title>Fairway Supermarket</title>
+		
+		<!-- Favicon Icon -->
+		<link rel="icon" type="image/png" href="images/fav.png">
+		
+		<!-- Stylesheets -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		
+		<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		<link href='/user/vendor/unicons-2.0.1/css/unicons.css' rel='stylesheet'>
+		<link href="/user/css/style.css" rel="stylesheet">
+		<link href="/user/css/responsive.css" rel="stylesheet">
+		<link href="/user/css/night-mode.css" rel="stylesheet">
+		<link href="/user/css/customstyle.css" rel="stylesheet">
+		<link  href="/user/css/signupmodals.css"  rel="stylesheet">
+		<link  href="/user/css/wallet.css"  rel="stylesheet">
+		
+		<!-- Vendor Stylesheets -->
+		<link href="/user/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+		<link href="/user/vendor/OwlCarousel/assets/owl.carousel.css" rel="stylesheet">
+		<link href="/user/vendor/OwlCarousel/assets/owl.theme.default.min.css" rel="stylesheet">
+		<link href="/user/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/user/vendor/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">	
+        
+		
+		
+	</head>
+
+
+	<body>
+		<!-- Header Start -->
+		<%- include('../partials/user/header', { parentCategories: parentCategories }) %>
+		
+
+		
+		<!-- Header End -->
+	
+		<!-- Body Start -->
+        <%- include('../partials/user/dashboardOverview') %>
+		<div class="col-xl-9 col-lg-8 col-md-12">
+			<div class="dashboard-right">
+				<div class="row">
+					<!-- Wallet Header -->
+					<div class="col-md-12">
+						<div class="main-title-tab d-flex justify-content-between align-items-center">
+							<h4><i class="uil uil-wallet"></i>My Wallet</h4>
+						</div>
+					</div>
+		
+					<!-- Wallet Balance Card -->
+					<div class="col-md-12 mb-4">
+						<div class="wallet-balance-card">
+							<div class="balance-header">
+								<span class="balance-label">Available Balance</span>
+								<h2 class="balance-amount">₹<%= wallet.balance.toFixed(2) %></h2>
+							</div>
+							<div class="balance-footer">
+								<span class="last-updated">Last updated: <%= new Date(wallet.updatedAt).toLocaleDateString() %></span>
+							</div>
+						</div>
+					</div>
+		
+					<!-- Transaction History -->
+					<div class="col-md-12">
+						<div class="transactions-section">
+							<div class="section-header d-flex justify-content-between align-items-center mb-4">
+								<h5 class="mb-0">Transaction History</h5>
+								<select class="form-select transaction-filter" style="width: auto;">
+									<option value="all">All Transactions</option>
+									<option value="credit">Credits</option>
+									<option value="debit">Debits</option>
+								</select>
+							</div>
+		
+							<% if (wallet.transactions && wallet.transactions.length > 0) { %>
+								<div class="transaction-list">
+									<% wallet.transactions.forEach(transaction => { %>
+										<div class="transaction-item">
+											<div class="transaction-icon">
+												<% if (transaction.type === 'credit') { %>
+													<i class="uil uil-arrow-down-left text-success"></i>
+												<% } else { %>
+													<i class="uil uil-arrow-up-right text-danger"></i>
+												<% } %>
+											</div>
+											<div class="transaction-details">
+												<div class="transaction-info">
+													<h6 class="transaction-title"><%= transaction.description %></h6>
+													<span class="transaction-date">
+														<%= new Date(transaction.createdAt).toLocaleDateString() %>
+														<%= new Date(transaction.createdAt).toLocaleTimeString() %>
+													</span>
+												</div>
+												<div class="transaction-amount <%= transaction.type === 'credit' ? 'credit' : 'debit' %>">
+													<%= transaction.type === 'credit' ? '+' : '-' %>₹<%= transaction.amount.toFixed(2) %>
+												</div>
+											</div>
+											<div class="transaction-status">
+												<span class="status-badge <%= transaction.status.toLowerCase() %>">
+													<%= transaction.status %>
+												</span>
+											</div>
+										</div>
+									<% }); %>
+								</div>
+							<% } else { %>
+								<div class="no-transactions">
+									<i class="uil uil-history"></i>
+									<p>No transactions yet</p>
+								</div>
+							<% } %>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+        
+	<!-- Body End -->
+	<!-- Footer Start -->
+	
+	<!-- Footer End -->
+
+	<!-- Javascripts -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="/user/js/jquery.min.js"></script>
+	<script src="/user/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/user/vendor/bootstrap-select/js/bootstrap-select.min.js"></script>	
+	<script src="/user/vendor/OwlCarousel/owl.carousel.js"></script>
+	<script src="/user/js/jquery.countdown.min.js"></script>
+	<script src="/user/js/custom.js"></script>
+	<script src="/user/js/offset_overlay.js"></script>
+	<script src="/user/js/night-mode.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+	
+	
+</body>
+</html>

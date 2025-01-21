@@ -95,7 +95,8 @@ const placeOrder = async (req, res) => {
             paymentMethod,
             total: cart.total,
             discountTotal: cart.discountTotal,
-            orderStatus: paymentMethod === 'cod' ? 'Pending' : 'Processing'
+            orderStatus: paymentMethod === 'cod' ? 'Pending' : 'Processing',
+            processingAt:new Date()
         });
 
         await order.save();

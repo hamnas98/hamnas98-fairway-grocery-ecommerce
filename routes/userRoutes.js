@@ -17,7 +17,8 @@ const { getCheckoutPage, placeOrder} = require('../controllers/user/checkoutCont
 const { getOrders, getOrderDetails, cancelOrder } = require('../controllers/user/orderController');
 const { quickSearch, getSearchPage, getSearchHistory, saveSearchHistory, deleteSearchHistory } = require("../controllers/user/searchController")
 const { getWishlist, toggleWishlist, removeFromWishlist } = require("../controllers/user/wishlistController")
-const { createRazorpayOrder, verifyPayment, cancelPayment } = require("../controllers/user/razorpayController")
+const { createRazorpayOrder, verifyPayment, cancelPayment } = require("../controllers/user/razorpayController");
+const { getWallet } = require('../controllers/user/walletController')
 
 
 
@@ -101,6 +102,9 @@ router.post('/verify-payment', userAuth, verifyPayment);
 router.get('/dashboard/orders', userAuth, getOrders);
 router.get('/orders/:id', userAuth, getOrderDetails);
 router.post('/orders/cancel', userAuth, cancelOrder);
+
+//wallet routes
+router.get('/dashboard/wallet', userAuth, getWallet);
 
 
 module.exports = router;

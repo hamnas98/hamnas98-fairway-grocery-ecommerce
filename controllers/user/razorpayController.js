@@ -135,6 +135,7 @@ const verifyPayment = async (req, res) => {
             total: cart.total,
             discountTotal: cart.discountTotal,
             orderStatus: 'Processing',
+            processingAt: new Date(),
             paymentDetails: {
                 razorpayOrderId: razorpay_order_id,
                 razorpayPaymentId: razorpay_payment_id,
