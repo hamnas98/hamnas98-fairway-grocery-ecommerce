@@ -162,8 +162,11 @@
 															<% } %>
 														</div>
 													<% } %>
-												</div>
-                                                <% if(order.orderStatus === 'Cancelled' && order.paymentMethod === 'razorpay') { %>
+												</div><% if(
+                                                    (order.orderStatus === 'Cancelled' || order.orderStatus === 'Partially Cancelled') && 
+                                                    order.paymentMethod === 'razorpay' && 
+                                                    order.items.some(item => item.cancelled)
+                                                ) { %>
                                                     <div class="refund-details">
                                                         <div class="refund-header">
                                                             <i class="uil uil-wallet"></i>
@@ -175,6 +178,11 @@
                                                                     <div class="refund-amount">
                                                                         <span>Refund Amount:</span>
                                                                         <strong>₹<%= order.refundDetails.amount.toFixed(2) %></strong>
+                                                                        <% if(order.orderStatus === 'Partially Cancelled') { %>
+                                                                            <small class="partial-refund-note">
+                                                                                (Refund for cancelled items)
+                                                                            </small>
+                                                                        <% } %>
                                                                     </div>
                                                                     <div class="refund-status">
                                                                         <span>Status:</span>
@@ -188,12 +196,38 @@
                                                                     </div>
                                                                     <div class="refund-note">
                                                                         <i class="uil uil-info-circle"></i>
-                                                                        Refund has been credited to your wallet
+                                                                        <% if(order.orderStatus === 'Partially Cancelled') { %>
+                                                                            Refund for cancelled items has been credited to your wallet
+                                                                        <% } else { %>
+                                                                            Refund has been credited to your wallet
+                                                                        <% } %>
                                                                     </div>
                                                                 <% } else { %>
                                                                     <div class="refund-processing">
                                                                         <i class="uil uil-sync"></i>
-                                                                        <span>Refund is being processed</span>
+                                                                        <span>
+                                                                            <% if(order.orderStatus === 'Partially Cancelled') { %>
+                                                                                Refund for cancelled items is being processed
+                                                                            <% } else { %>
+                                                                                Refund is being processed
+                                                                            <% } %>
+                                                                        </span>
+                                                                    </div>
+                                                                <% } %>
+                                                
+                                                                <% if(order.orderStatus === 'Partially Cancelled') { %>
+                                                                    <div class="cancelled-items-summary">
+                                                                        <h6>Cancelled Items</h6>
+                                                                        <div class="cancelled-items-list">
+                                                                            <% order.items.filter(item => item.cancelled).forEach(item => { %>
+                                                                                <div class="cancelled-item">
+                                                                                    <span class="item-name"><%= item.product.name %></span>
+                                                                                    <span class="item-refund">
+                                                                                        ₹<%= ((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2) %>
+                                                                                    </span>
+                                                                                </div>
+                                                                            <% }); %>
+                                                                        </div>
                                                                     </div>
                                                                 <% } %>
                                                             </div>
@@ -204,6 +238,7 @@
                                                         </div>
                                                     </div>
                                                 <% } %>
+                                                
 												
 				
 												<div class="order-footer">
@@ -227,11 +262,15 @@
                                                                             Cancel Entire Order
                                                                         </a>
                                                                     </li>
-                                                                    <li>
-                                                                        <a class="dropdown-item" href="#" onclick="showCancelModal('<%= order._id %>', 'partial')">
-                                                                            Cancel Selected Items
-                                                                        </a>
-                                                                    </li>
+                                                                   
+                                                                    <% if(order.items.length > 1) { %>
+                                                                        <li>
+                                                                            <a class="dropdown-item" href="#" onclick="showCancelModal('<%= order._id %>', 'partial')">
+                                                                                Cancel Selected Items
+                                                                            </a>
+                                                                        </li>
+                                                                    <% } %>
+                                                                    
                                                                 </ul>
                                                             </div>
 														<% } %>
