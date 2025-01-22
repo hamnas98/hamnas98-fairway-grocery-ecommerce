@@ -186,7 +186,101 @@ const cancelOrder = async (req, res) => {
         });
     }
 };
+const processReturn = async (req, res) => {
+    try {
+        const { orderId, returnType, items, reason, description } = req.body;
+
+        const order = await Order.findOne({
+            _id: orderId,
+            user: req.session.user.id
+        });
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found'
+            });
+        }
+
+        // Check if return is within 7 days of delivery
+        const returnWindow = new Date(order.deliveredAt);
+        returnWindow.setDate(returnWindow.getDate() + 7);
+
+        if (new Date() > returnWindow) {
+            return res.status(400).json({
+                success: false,
+                message: 'Return window has expired'
+            });
+        }
+
+        let refundAmount = 0;
+
+        if (returnType === 'full') {
+            // Process full return
+            order.items.forEach(item => {
+                if (!item.cancelled && !item.returned) {
+                    item.returned = true;
+                    item.returnedAt = new Date();
+                    item.returnReason = reason;
+                    item.returnDescription = description;
+                    item.returnStatus = 'Pending';
+                    
+                    refundAmount += (item.discountPrice || item.price) * item.quantity;
+                }
+            });
+
+            order.returnDetails = {
+                isReturned: true,
+                returnedAt: new Date(),
+                status: 'Pending',
+                refundAmount,
+                refundStatus: 'Pending'
+            };
+            
+            order.orderStatus = 'Return Pending'; // Changed from 'Return Pending'
+        } else {
+            // Process partial return
+            order.items = order.items.map(item => {
+                if (items.includes(item._id.toString()) && !item.cancelled && !item.returned) {
+                    item.returned = true;
+                    item.returnedAt = new Date();
+                    item.returnReason = reason;
+                    item.returnDescription = description;
+                    item.returnStatus = 'Pending';
+                    
+                    refundAmount += (item.discountPrice || item.price) * item.quantity;
+                }
+                return item;
+            });
+
+            order.returnDetails = {
+                isReturned: true,
+                returnedAt: new Date(),
+                status: 'Pending',
+                refundAmount,
+                refundStatus: 'Pending'
+            };
+
+            const allItemsReturned = order.items.every(item => item.returned || item.cancelled);
+            order.orderStatus = allItemsReturned ? 'Return Pending' : 'Partial Return Pending';
+        }
+
+        await order.save();
+
+        res.json({
+            success: true,
+            message: 'Return request submitted successfully'
+        });
+
+    } catch (error) {
+        console.error('Process return error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to process return request'
+        });
+    }
+};
 
 
 
-module.exports = { getOrders, getOrderDetails, cancelOrder, cancelOrder }
+module.exports = { getOrders, getOrderDetails, cancelOrder, processReturn }

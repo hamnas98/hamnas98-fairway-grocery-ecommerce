@@ -27,6 +27,18 @@ const orderItemSchema = new mongoose.Schema({
     },
     cancelledAt: {
         type: Date
+    },
+    returned: {
+        type: Boolean,
+        default: false
+    },
+    returnedAt: Date,
+    returnReason: String,
+    returnDescription: String,
+    returnStatus: {
+        type: String,
+        enum: ['Pending', 'Approved', 'Rejected', 'Completed'],
+        default: 'Pending'
     }
 });
 
@@ -68,7 +80,17 @@ const orderSchema = new mongoose.Schema({
     },
     orderStatus: {
         type: String,
-        enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Partially Cancelled'],
+        enum: [
+            'Pending', 
+            'Processing', 
+            'Shipped', 
+            'Delivered', 
+            'Cancelled', 
+            'Partially Cancelled',
+            'Return Pending',          // Add this
+            'Partial Return Pending',  // Add this
+            'Returned'                 // Add this too for completed returns
+        ],
         default: 'Pending'
     },
     cancelReason: {
@@ -95,6 +117,22 @@ const orderSchema = new mongoose.Schema({
     },
     deliveredAt: {
         type: Date
+    },
+    returnDetails: {
+        isReturned: {
+            type: Boolean,
+            default: false
+        },
+        returnedAt: Date,
+        status: {
+            type: String,
+            enum: ['Pending', 'Partially Returned', 'Fully Returned'],
+        },
+        refundAmount: Number,
+        refundStatus: {
+            type: String,
+            enum: ['Pending', 'Completed', 'Failed']
+        }
     }
 }, { timestamps: true });
 

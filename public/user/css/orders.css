@@ -1136,3 +1136,18 @@
     background: #1976D2;
     color: white;
 }
+.return-options-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.return-options-btn:hover {
+    background: #f57c00;
+}

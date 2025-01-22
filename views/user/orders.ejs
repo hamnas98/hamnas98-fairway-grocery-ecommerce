@@ -45,6 +45,7 @@
 		<%- include('../partials/user/header', { parentCategories: parentCategories }) %>
 		<%- include('../partials/user/viewOrderDetailsModal') %>
         <%- include('../partials/user/cancelModel') %>
+        <%- include('../partials/user/returnModel') %>
 		<!-- Add this modal for cancel items -->
 <!-- Cancel Order Modal -->
 
@@ -162,7 +163,8 @@
 															<% } %>
 														</div>
 													<% } %>
-												</div><% if(
+												</div>
+                                                <% if(
                                                     (order.orderStatus === 'Cancelled' || order.orderStatus === 'Partially Cancelled') && 
                                                     order.paymentMethod === 'razorpay' && 
                                                     order.items.some(item => item.cancelled)
@@ -238,9 +240,6 @@
                                                         </div>
                                                     </div>
                                                 <% } %>
-                                                
-												
-				
 												<div class="order-footer">
 													<div class="order-total">
 														<span>Total:</span>
@@ -270,13 +269,34 @@
                                                                             </a>
                                                                         </li>
                                                                     <% } %>
-                                                                    
                                                                 </ul>
                                                             </div>
 														<% } %>
-													</div>
-												</div>
-											</div>
+                                                        <% if(order.orderStatus === 'Delivered' && 
+                                                        new Date() - new Date(order.deliveredAt) <= 7 * 24 * 60 * 60 * 1000) { %>
+                                                      <div class="dropdown">
+                                                          <button class="return-options-btn" data-bs-toggle="dropdown">
+                                                              <i class="uil uil-exchange"></i> 
+                                                              <span>Return</span>
+                                                          </button>
+                                                          <ul class="dropdown-menu dropdown-menu-end">
+                                                              <li>
+                                                                  <a class="dropdown-item" href="#" onclick="showReturnModal('<%= order._id %>', 'full')">
+                                                                      Return Entire Order
+                                                                  </a>
+                                                              </li>
+                                                              <% if(order.items.length > 1) { %>
+                                                                  <li>
+                                                                      <a class="dropdown-item" href="#" onclick="showReturnModal('<%= order._id %>', 'partial')">
+                                                                          Return Selected Items
+                                                                      </a>
+                                                                  </li>
+                                                              <% } %>
+                                                          </ul>
+                                                      </div>
+                                                  <% } %>
+                                              </div>
+                                                        
 											
 										<% }); %>
 									<% } else { %>
@@ -568,6 +588,131 @@ async function processCancellation() {
 // Event listener for reason select
 document.getElementById('cancelReason').addEventListener('change', function() {
     const otherReasonGroup = document.getElementById('otherReasonGroup');
+    otherReasonGroup.style.display = this.value === 'Other' ? 'block' : 'none';
+});
+
+let selectedItemsForReturn = new Set();
+
+function showReturnModal(orderId, type) {
+    const modal = document.getElementById('returnOrderModal');
+    const itemsSection = modal.querySelector('.return-items-section');
+    
+    document.getElementById('returnOrderId').value = orderId;
+    document.getElementById('returnType').value = type;
+    
+    if (type === 'partial') {
+        // Fetch order details and populate returnable items
+        fetchOrderItems(orderId).then(items => {
+            const itemsList = modal.querySelector('.return-items-list');
+            itemsList.innerHTML = items
+                .filter(item => !item.cancelled && !item.returned) // Only show eligible items
+                .map(item => `
+                    <div class="return-item">
+                        <div class="item-selection">
+                            <input class="custom-checkbox" type="checkbox" 
+                                   value="${item._id}" 
+                                   id="return_item_${item._id}"
+                                   onchange="toggleReturnItem('${item._id}')">
+                            <label class="checkbox-label" for="return_item_${item._id}">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-image">
+                                <img src="${item.product.images[0]}" alt="${item.product.name}">
+                                ${item.quantity > 1 ? `<span class="item-quantity">×${item.quantity}</span>` : ''}
+                            </div>
+                            <div class="item-details">
+                                <h6 class="item-name">${item.product.name}</h6>
+                                <div class="item-meta">
+                                    <p class="item-unit">${item.product.quantity} ${item.product.unit}</p>
+                                    <div class="item-price">
+                                        ${item.product.discountPrice ? `
+                                            <span class="current-price">₹${item.product.discountPrice}</span>
+                                            <span class="original-price">₹${item.product.price}</span>
+                                        ` : `
+                                            <span class="current-price">₹${item.product.price}</span>
+                                        `}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+        });
+        itemsSection.style.display = 'block';
+    } else {
+        itemsSection.style.display = 'none';
+    }
+    
+    selectedItemsForReturn.clear();
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+}
+
+function toggleReturnItem(itemId) {
+    if (selectedItemsForReturn.has(itemId)) {
+        selectedItemsForReturn.delete(itemId);
+    } else {
+        selectedItemsForReturn.add(itemId);
+    }
+}
+
+async function processReturn() {
+    const orderId = document.getElementById('returnOrderId').value;
+    const returnType = document.getElementById('returnType').value;
+    const reasonSelect = document.getElementById('returnReason');
+    const otherReasonText = document.getElementById('otherReturnReason');
+    const description = document.getElementById('returnDescription').value;
+    
+    if (!reasonSelect.value) {
+        showErrorNotification('Please select a reason for return');
+        return;
+    }
+
+    if (returnType === 'partial' && selectedItemsForReturn.size === 0) {
+        showErrorNotification('Please select items to return');
+        return;
+    }
+
+    try {
+        const response = await fetch('/orders/return', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                orderId,
+                returnType,
+                items: Array.from(selectedItemsForReturn),
+                reason: reasonSelect.value === 'Other' ? otherReasonText.value : reasonSelect.value,
+                description
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Return Request Submitted',
+                text: 'Your return request has been submitted successfully',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.reload();
+            });
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        showErrorNotification(error.message || 'Failed to submit return request');
+    }
+}
+
+// Event listener for return reason select
+document.getElementById('returnReason').addEventListener('change', function() {
+    const otherReasonGroup = document.getElementById('otherReturnReasonGroup');
     otherReasonGroup.style.display = this.value === 'Other' ? 'block' : 'none';
 });
 	</script>
