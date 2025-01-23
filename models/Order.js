@@ -128,7 +128,7 @@ const orderSchema = new mongoose.Schema({
         returnedAt: Date,
         status: {
             type: String,
-            enum: ['Pending', 'Processing', 'Completed', 'Rejected'], // Updated enum values
+            enum: ['Pending', 'Processing', 'Completed', 'Rejected'],
             default: 'Pending'
         },
         refundAmount: Number,
@@ -136,11 +136,11 @@ const orderSchema = new mongoose.Schema({
             type: String,
             enum: ['Pending', 'Completed', 'Failed','Rejected']
         },
-        rejectionReason: String // Add this for storing rejection reasons
+        rejectionReason: String 
     }
 }, { timestamps: true });
 
-// Add an index for faster payment-related queries
+
 orderSchema.index({ 'paymentDetails.razorpayOrderId': 1 });
 orderSchema.index({ 'paymentDetails.razorpayPaymentId': 1 });
 
