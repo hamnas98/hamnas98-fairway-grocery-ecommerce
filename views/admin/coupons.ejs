@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description-gambolthemes" content="">
+		<meta name="author-gambolthemes" content="">
+		<title>Fairway Supermarket Admin</title>
+		<link href="css/styles.css" rel="stylesheet">
+		<link href="css/admin-style.css" rel="stylesheet">
+		<link href="css/admin-custom" rel="stylesheet">
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<link  href="/admin/css/coupens.css"  rel="stylesheet">
+		<style>
+			
+			</style>
+		
+		<!-- Vendor Stylesheets -->
+		<link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+		
+	</head>
+
+    <body class="sb-nav-fixed">
+		<%- include('../partials/admin/topnav') %>
+        <div id="layoutSidenav">
+			<%- include('../partials/admin/sidebar') %>
+            <div id="layoutSidenav_content">
+                <main>
+					<div class="container-fluid">
+						<h2 class="mt-30 page-title">Orders</h2>
+						<ol class="breadcrumb mb-30">
+							<li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+							<li class="breadcrumb-item active">Returns</li>
+						</ol>
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h4>Coupons</h4>
+                                                <button class="btn btn-primary" onclick="showCreateCouponModal()">
+                                                    <i class="fas fa-plus"></i> Create Coupon
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Code</th>
+                                                            <th>Type</th>
+                                                            <th>Amount</th>
+                                                            <th>Min Purchase</th>
+                                                            <th>Valid From</th>
+                                                            <th>Valid Until</th>
+                                                            <th>Status</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <% coupons.forEach(coupon => { %>
+                                                        <tr>
+                                                            <td><%= coupon.code %></td>
+                                                            <td><%= coupon.discountType === 'percentage' ? 'Percentage' : 'Fixed' %></td>
+                                                            <td>
+                                                                <%= coupon.discountType === 'percentage' ? `${coupon.discountAmount}%` : `₹${coupon.discountAmount}` %>
+                                                            </td>
+                                                            <td>₹<%= coupon.minimumPurchase %></td>
+                                                            <td><%= new Date(coupon.startDate).toLocaleDateString() %></td>
+                                                            <td><%= new Date(coupon.endDate).toLocaleDateString() %></td>
+                                                            <td>
+                                                                <span class="badge <%= new Date() > new Date(coupon.endDate) ? 'bg-danger' : 'bg-success' %>">
+                                                                    <%= new Date() > new Date(coupon.endDate) ? 'Expired' : 'Active' %>
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-danger" onclick="deleteCoupon('<%= coupon._id %>')">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                        <% }); %>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Create Coupon Modal -->
+                        <div class="modal fade" id="createCouponModal">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Create Coupon</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="createCouponForm">
+                                            <div class="mb-3">
+                                                <label>Coupon Code</label>
+                                                <input type="text" class="form-control" name="code" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label>Description</label>
+                                                <textarea class="form-control" name="description" required></textarea>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label>Discount Type</label>
+                                                        <select class="form-select" name="discountType" required>
+                                                            <option value="percentage">Percentage</option>
+                                                            <option value="fixed">Fixed Amount</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label>Discount Amount</label>
+                                                        <input type="number" class="form-control" name="discountAmount" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label>Minimum Purchase</label>
+                                                        <input type="number" class="form-control" name="minimumPurchase" value="0">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label>Maximum Discount</label>
+                                                        <input type="number" class="form-control" name="maximumDiscount">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label>Start Date</label>
+                                                        <input type="date" class="form-control" name="startDate" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label>End Date</label>
+                                                        <input type="date" class="form-control" name="endDate" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label>Usage Limit (Optional)</label>
+                                                <input type="number" class="form-control" name="usageLimit">
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="button" class="btn btn-primary" onclick="createCoupon()">Create Coupon</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </main>
+            </div>
+		</div>	
+						
+        <script src="js/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="js/scripts.js"></script>   
+        <script>function showCreateCouponModal() {
+            document.getElementById('createCouponForm').reset();
+            const modal = new bootstrap.Modal(document.getElementById('createCouponModal'));
+            modal.show();
+        }
+        
+        async function createCoupon() {
+            const form = document.getElementById('createCouponForm');
+            const formData = new FormData(form);
+            
+            try {
+                const response = await fetch('/admin/coupons/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(Object.fromEntries(formData))
+                });
+        
+                const data = await response.json();
+        
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => window.location.reload());
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'Failed to create coupon'
+                });
+            }
+        }
+        
+        function deleteCoupon(couponId) {
+            Swal.fire({
+                title: 'Delete Coupon?',
+                text: 'This action cannot be undone',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: 'Delete'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/admin/coupons/${couponId}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => window.location.reload());
+                        } else {
+                            throw new Error(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error.message || 'Failed to delete coupon'
+                        });
+                    });
+                }
+            });
+        }</script>
+    </body>
+</html>

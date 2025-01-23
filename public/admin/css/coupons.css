@@ -1,0 +1,93 @@
+/* Coupon Management Styles */
+.table th {
+    font-weight: 500;
+    background: #f8f9fa;
+ }
+ 
+ .badge {
+    font-weight: 500;
+    padding: 6px 12px;
+ }
+ 
+ /* Form Styling */
+ .form-control, .form-select {
+    border-color: #dee2e6;
+    padding: 0.5rem 0.75rem;
+ }
+ 
+ .form-control:focus, .form-select:focus {
+    border-color: #2b2f4c;
+    box-shadow: none;
+ }
+ 
+ /* Modal Styling */
+ .modal-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+ }
+ 
+ .modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 1rem;
+ }
+ 
+ /* Button Styles */
+ .btn-primary {
+    background: #2b2f4c;
+    border-color: #2b2f4c;
+ }
+ 
+ .btn-primary:hover {
+    background: #1e213a;
+    border-color: #1e213a;
+ }
+ 
+ .btn-danger {
+    padding: 0.25rem 0.5rem;
+ }
+ 
+ /* Table Styles */
+ .table-responsive {
+    margin: 0;
+ }
+ 
+ .table td {
+    vertical-align: middle;
+ }
+ 
+ .table td .badge {
+    font-size: 0.875rem;
+ }
+ 
+ /* Form Label Styles */
+ .modal-body label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #2b2f4c;
+ }
+ 
+ /* Action Button Container */
+ .action-buttons {
+    display: flex;
+    gap: 5px;
+ }
+ 
+ /* Status Badge Colors */
+ .badge.bg-success {
+    background: #28a745 !important;
+ }
+ 
+ .badge.bg-danger {
+    background: #dc3545 !important;
+ }
+ 
+ /* Responsive Adjustments */
+ @media (max-width: 768px) {
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .table {
+        min-width: 800px;
+    }
+ }
