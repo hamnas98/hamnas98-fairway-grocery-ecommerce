@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description-gambolthemes" content="">
+		<meta name="author-gambolthemes" content="">
+		<title>Fairway Supermarket Admin</title>
+		<link href="css/styles.css" rel="stylesheet">
+		<link href="css/admin-style.css" rel="stylesheet">
+		<link href="css/admin-custom" rel="stylesheet">
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<link  href="/admin/css/return.css"  rel="stylesheet">
+		<style>
+			
+			</style>
+		
+		<!-- Vendor Stylesheets -->
+		<link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+		
+	</head>
+
+    <body class="sb-nav-fixed">
+		<%- include('../partials/admin/topnav') %>
+        <div id="layoutSidenav">
+			<%- include('../partials/admin/sidebar') %>
+            <div id="layoutSidenav_content">
+                <main>
+					<div class="container-fluid">
+						<h2 class="mt-30 page-title">Orders</h2>
+						<ol class="breadcrumb mb-30">
+							<li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+							<li class="breadcrumb-item active">Returns</li>
+						</ol>
+					
+						<div class="row justify-content-between">
+							<div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h4>Return Requests</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="return-requests-tabs">
+                                                    <ul class="nav nav-tabs" role="tablist">
+                                                        <li class="nav-item">
+                                                            <a class="nav-link active" data-bs-toggle="tab" href="#pending-returns">
+                                                                Pending
+                                                                <% if(pendingCount > 0) { %>
+                                                                    <span class="badge bg-primary"><%= pendingCount %></span>
+                                                                <% } %>
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" data-bs-toggle="tab" href="#processing-returns">Processing</a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" data-bs-toggle="tab" href="#completed-returns">Completed</a>
+                                                        </li>
+                                                    </ul>
+                            
+                                                    <div class="tab-content mt-3">
+                                                        <div id="pending-returns" class="tab-pane fade show active">
+                                                            <% if(pendingReturns.length > 0) { %>
+                                                                <% pendingReturns.forEach(returnOrder => { %>
+                                                                    <div class="return-request-card">
+                                                                        <div class="return-header">
+                                                                            <div class="return-info">
+                                                                                <span class="return-id">Return #<%= returnOrder._id.toString().slice(-6) %></span>
+                                                                                <span class="return-date">
+                                                                                    Requested on <%= new Date(returnOrder.returnDetails.returnedAt).toLocaleDateString() %>
+                                                                                </span>
+                                                                            </div>
+                                                                            <div class="return-status <%= returnOrder.returnDetails.status.toLowerCase() %>">
+                                                                                <%= returnOrder.returnDetails.status %>
+                                                                            </div>
+                                                                        </div>
+                            
+                                                                        <div class="return-items">
+                                                                            <% returnOrder.items.filter(item => item.returned).forEach(item => { %>
+                                                                                <div class="return-item">
+                                                                                    <div class="item-image">
+                                                                                        <img src="<%= item.product.images[0] %>" alt="<%= item.product.name %>">
+                                                                                    </div>
+                                                                                    <div class="item-details">
+                                                                                        <h6><%= item.product.name %></h6>
+                                                                                        <p class="item-meta">
+                                                                                            Quantity: <%= item.quantity %> × 
+                                                                                            ₹<%= item.product.discountPrice || item.product.price %>
+                                                                                        </p>
+                                                                                        <div class="return-reason">
+                                                                                            <strong>Reason:</strong> <%= item.returnReason %>
+                                                                                            <% if(item.returnDescription) { %>
+                                                                                                <p class="description"><%= item.returnDescription %></p>
+                                                                                            <% } %>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            <% }); %>
+                                                                        </div>
+                            
+                                                                        <div class="return-actions">
+                                                                            <button class="btn btn-success" 
+                                                                                    onclick="approveReturn('<%= returnOrder._id %>')">
+                                                                                Approve Return
+                                                                            </button>
+                                                                            <button class="btn btn-danger" 
+                                                                                    onclick="rejectReturn('<%= returnOrder._id %>')">
+                                                                                Reject Return
+                                                                            </button>
+                                                                            <button class="btn btn-info" 
+                                                                                    onclick="viewReturnDetails('<%= returnOrder._id %>')">
+                                                                                View Details
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                <% }); %>
+                                                            <% } else { %>
+                                                                <div class="no-returns">
+                                                                    <i class="fas fa-box-open"></i>
+                                                                    <p>No pending return requests</p>
+                                                                </div>
+                                                            <% } %>
+                                                        </div>
+                            
+                                                        <div id="processing-returns" class="tab-pane fade">
+                                                            <% if(processingReturns.length > 0) { %>
+                                                                <% processingReturns.forEach(returnOrder => { %>
+                                                                    <div class="return-request-card">
+                                                                        <div class="return-header">
+                                                                            <div class="return-info">
+                                                                                <span class="return-id">Return #<%= returnOrder._id.toString().slice(-6) %></span>
+                                                                                <span class="return-date">
+                                                                                    Requested on <%= new Date(returnOrder.returnDetails.returnedAt).toLocaleDateString() %>
+                                                                                </span>
+                                                                            </div>
+                                                                            <div class="return-status processing">
+                                                                                <%= returnOrder.returnDetails.status %>
+                                                                            </div>
+                                                                        </div>
+                                                        
+                                                                        <div class="return-items">
+                                                                            <% returnOrder.items.filter(item => item.returned).forEach(item => { %>
+                                                                                <div class="return-item">
+                                                                                    <div class="item-image">
+                                                                                        <img src="<%= item.product.images[0] %>" alt="<%= item.product.name %>">
+                                                                                    </div>
+                                                                                    <div class="item-details">
+                                                                                        <h6><%= item.product.name %></h6>
+                                                                                        <p class="item-meta">
+                                                                                            Quantity: <%= item.quantity %> × 
+                                                                                            ₹<%= item.product.discountPrice || item.product.price %>
+                                                                                        </p>
+                                                                                        <div class="return-reason">
+                                                                                            <strong>Reason:</strong> <%= item.returnReason %>
+                                                                                            <% if(item.returnDescription) { %>
+                                                                                                <p class="description"><%= item.returnDescription %></p>
+                                                                                            <% } %>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            <% }); %>
+                                                                        </div>
+                                                        
+                                                                        <div class="return-actions">
+                                                                            <button class="btn btn-primary" 
+                                                                                    onclick="completeReturn('<%= returnOrder._id %>')">
+                                                                                Complete Return
+                                                                            </button>
+                                                                            <button class="btn btn-info" 
+                                                                                    onclick="viewReturnDetails('<%= returnOrder._id %>')">
+                                                                                View Details
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                <% }); %>
+                                                            <% } else { %>
+                                                                <div class="no-returns">
+                                                                    <i class="fas fa-box-open"></i>
+                                                                    <p>No returns being processed</p>
+                                                                </div>
+                                                            <% } %>
+                                                        </div>
+                                                        
+                                                        <!-- Completed Returns Tab -->
+                                                        <div id="completed-returns" class="tab-pane fade">
+                                                            <% if(completedReturns.length > 0) { %>
+                                                                <% completedReturns.forEach(returnOrder => { %>
+                                                                    <div class="return-request-card">
+                                                                        <div class="return-header">
+                                                                            <div class="return-info">
+                                                                                <span class="return-id">Return #<%= returnOrder._id.toString().slice(-6) %></span>
+                                                                                <span class="return-date">
+                                                                                    Requested on <%= new Date(returnOrder.returnDetails.returnedAt).toLocaleDateString() %>
+                                                                                </span>
+                                                                            </div>
+                                                                            <div class="return-status <%= returnOrder.returnDetails.status.toLowerCase() %>">
+                                                                                <%= returnOrder.returnDetails.status %>
+                                                                            </div>
+                                                                        </div>
+                                                        
+                                                                        <div class="return-items">
+                                                                            <% returnOrder.items.filter(item => item.returned).forEach(item => { %>
+                                                                                <div class="return-item">
+                                                                                    <div class="item-image">
+                                                                                        <img src="<%= item.product.images[0] %>" alt="<%= item.product.name %>">
+                                                                                    </div>
+                                                                                    <div class="item-details">
+                                                                                        <h6><%= item.product.name %></h6>
+                                                                                        <p class="item-meta">
+                                                                                            Quantity: <%= item.quantity %> × 
+                                                                                            ₹<%= item.product.discountPrice || item.product.price %>
+                                                                                        </p>
+                                                                                        <div class="return-reason">
+                                                                                            <strong>Reason:</strong> <%= item.returnReason %>
+                                                                                            <% if(item.returnDescription) { %>
+                                                                                                <p class="description"><%= item.returnDescription %></p>
+                                                                                            <% } %>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            <% }); %>
+                                                                        </div>
+                                                        
+                                                                        <% if(returnOrder.returnDetails.refundAmount) { %>
+                                                                            <div class="refund-info">
+                                                                                <div class="refund-header">
+                                                                                    <i class="fas fa-wallet"></i>
+                                                                                    <h6>Refund Details</h6>
+                                                                                </div>
+                                                                                <div class="refund-content">
+                                                                                    <div class="refund-amount">
+                                                                                        Amount: ₹<%= returnOrder.returnDetails.refundAmount.toFixed(2) %>
+                                                                                    </div>
+                                                                                    <div class="refund-status">
+                                                                                        Status: <span class="<%= returnOrder.returnDetails.refundStatus.toLowerCase() %>">
+                                                                                            <%= returnOrder.returnDetails.refundStatus %>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <% if(returnOrder.returnDetails.refundStatus === 'Completed') { %>
+                                                                                        <div class="refund-date">
+                                                                                            Processed on: <%= new Date(returnOrder.returnDetails.processedAt).toLocaleDateString() %>
+                                                                                        </div>
+                                                                                    <% } %>
+                                                                                </div>
+                                                                            </div>
+                                                                        <% } %>
+                                                        
+                                                                        <% if(returnOrder.returnDetails.status === 'Rejected' && returnOrder.returnDetails.rejectionReason) { %>
+                                                                            <div class="rejection-info">
+                                                                                <div class="rejection-reason">
+                                                                                    <strong>Rejection Reason:</strong>
+                                                                                    <%= returnOrder.returnDetails.rejectionReason %>
+                                                                                </div>
+                                                                            </div>
+                                                                        <% } %>
+                                                        
+                                                                        <div class="return-actions">
+                                                                            <button class="btn btn-info" 
+                                                                                    onclick="viewReturnDetails('<%= returnOrder._id %>')">
+                                                                                View Details
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                <% }); %>
+                                                            <% } else { %>
+                                                                <div class="no-returns">
+                                                                    <i class="fas fa-box-open"></i>
+                                                                    <p>No completed returns</p>
+                                                                </div>
+                                                            <% } %>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>
+                    </div>
+                </main>
+        </div>
+    </div>
+    <div class="modal fade" id="returnDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Return Request Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="returnDetailsContent">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+        <script src="js/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="js/scripts.js"></script>   
+        <script>function viewReturnDetails(orderId) {
+            fetch(`/admin/returns/${orderId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showReturnDetailsModal(data.order);
+                    } else {
+                        showErrorAlert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showErrorAlert('Failed to load return details');
+                });
+        }
+        
+        function approveReturn(orderId) {
+            Swal.fire({
+                title: 'Approve Return Request?',
+                text: 'This will initiate the return process',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Approve',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/admin/returns/approve', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ orderId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Return Approved',
+                                text: 'Return request has been approved successfully',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            throw new Error(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        showErrorAlert(error.message || 'Failed to approve return');
+                    });
+                }
+            });
+        }
+        
+        function completeReturn(orderId) {
+            Swal.fire({
+                title: 'Complete Return Process?',
+                text: 'This will process the refund and complete the return',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Complete',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/admin/returns/complete', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ orderId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Return Completed',
+                                text: 'Return has been completed and refund processed',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            throw new Error(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        showErrorAlert(error.message || 'Failed to complete return');
+                    });
+                }
+            });
+        }
+        
+        function rejectReturn(orderId) {
+            Swal.fire({
+                title: 'Reject Return Request?',
+                text: 'Please provide a reason for rejection',
+                input: 'textarea',
+                inputPlaceholder: 'Enter rejection reason...',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Reject',
+                cancelButtonText: 'Cancel',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Please enter a reason for rejection';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/admin/returns/reject', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            orderId,
+                            reason: result.value
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Return Rejected',
+                                text: 'Return request has been rejected',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            throw new Error(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        showErrorAlert(error.message || 'Failed to reject return');
+                    });
+                }
+            });
+        }
+
+        function showReturnDetailsModal(order) {
+    const modalContent = document.getElementById('returnDetailsContent');
+    
+    modalContent.innerHTML = `
+        <div class="return-detail-content">
+            <!-- Order Info Section -->
+            <div class="detail-section">
+                <h6>Order Information</h6>
+                <div class="detail-info">
+                    <p><strong>Order ID:</strong> #${order._id.toString().slice(-6)}</p>
+                    <p><strong>Return Requested:</strong> ${new Date(order.returnDetails.returnedAt).toLocaleString()}</p>
+                    <p><strong>Status:</strong> <span class="status-badge ${order.returnDetails.status.toLowerCase()}">${order.returnDetails.status}</span></p>
+                </div>
+            </div>
+
+            <!-- Customer Info Section -->
+            <div class="detail-section">
+                <h6>Customer Information</h6>
+                <div class="detail-info">
+                    <p><strong>Name:</strong> ${order.user.name}</p>
+                    <p><strong>Email:</strong> ${order.user.email}</p>
+                    <p><strong>Phone:</strong> ${order.deliveryAddress.mobile}</p>
+                </div>
+            </div>
+
+            <!-- Returned Items Section -->
+            <div class="detail-section">
+                <h6>Returned Items</h6>
+                <div class="return-items-list">
+                    ${order.items.filter(item => item.returned).map(item => `
+                        <div class="return-item">
+                            <div class="item-image">
+                                <img src="${item.product.images[0]}" alt="${item.product.name}">
+                            </div>
+                            <div class="item-details">
+                                <h6>${item.product.name}</h6>
+                                <p class="item-meta">
+                                    Quantity: ${item.quantity} × 
+                                    ₹${item.product.discountPrice || item.product.price}
+                                </p>
+                                <div class="return-reason">
+                                    <strong>Return Reason:</strong> ${item.returnReason}
+                                    ${item.returnDescription ? `
+                                        <p class="description">${item.returnDescription}</p>
+                                    ` : ''}
+                                </div>
+                                <div class="return-status">
+                                    <strong>Status:</strong>
+                                    <span class="status-badge ${item.returnStatus.toLowerCase()}">
+                                        ${item.returnStatus}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            ${order.returnDetails.refundAmount ? `
+                <!-- Refund Details Section -->
+                <div class="detail-section">
+                    <h6>Refund Information</h6>
+                    <div class="detail-info">
+                        <p><strong>Refund Amount:</strong> ₹${order.returnDetails.refundAmount.toFixed(2)}</p>
+                        <p><strong>Status:</strong> 
+                            <span class="status-badge ${order.returnDetails.refundStatus.toLowerCase()}">
+                                ${order.returnDetails.refundStatus}
+                            </span>
+                        </p>
+                        ${order.returnDetails.processedAt ? `
+                            <p><strong>Processed On:</strong> ${new Date(order.returnDetails.processedAt).toLocaleString()}</p>
+                        ` : ''}
+                    </div>
+                </div>
+            ` : ''}
+
+            ${order.returnDetails.rejectionReason ? `
+                <!-- Rejection Details Section -->
+                <div class="detail-section">
+                    <h6>Rejection Details</h6>
+                    <div class="detail-info">
+                        <p><strong>Reason:</strong> ${order.returnDetails.rejectionReason}</p>
+                    </div>
+                </div>
+            ` : ''}
+        </div>
+    `;
+
+    // Show the modal
+    const returnModal = new bootstrap.Modal(document.getElementById('returnDetailsModal'));
+    returnModal.show();
+}
+        
+        function showErrorAlert(message) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: message
+            });
+        }</script>
+    </body>
+</html>

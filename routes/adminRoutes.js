@@ -11,7 +11,7 @@ const { getAllProducts, getAddProduct, getParentCategory, addProduct, getEditPro
 const { getUsers, toggleUserBlock, deleteUser } = require('../controllers/admin/userController');
 const { getOrders, getOrderDetails, updateOrderStatus } = require('../controllers/admin/orderController');
 const { getInventory, getProductStock, updateStock, getStockHistory} = require('../controllers/admin/inventoryController');
-
+const { getReturns, getReturnDetails , approveReturn, completeReturn, rejectReturn } = require('../controllers/admin/returnController')
 
 
 // admin routes
@@ -50,8 +50,14 @@ router.get('/orders', adminAuth, getOrders);
 router.get('/orders/:id', adminAuth, getOrderDetails);
 router.put('/orders/update-status/:id', adminAuth, updateOrderStatus);
 
-//inventory routes
+//Return routes
+router.get('/returns', adminAuth, getReturns);
+router.get('/returns/:id', adminAuth, getReturnDetails);
+router.post('/returns/approve', adminAuth, approveReturn);
+router.post('/returns/complete', adminAuth, completeReturn);
+router.post('/returns/reject', adminAuth, rejectReturn);
 
+//inventory routes
 router.get('/inventory', adminAuth, getInventory);
 router.get('/inventory/product/:id', adminAuth, getProductStock);
 router.post('/inventory/update-stock', adminAuth, updateStock);

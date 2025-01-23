@@ -87,9 +87,11 @@ const orderSchema = new mongoose.Schema({
             'Delivered', 
             'Cancelled', 
             'Partially Cancelled',
-            'Return Pending',          // Add this
-            'Partial Return Pending',  // Add this
-            'Returned'                 // Add this too for completed returns
+            'Return Pending',
+            'Return Processing',
+            'Return Completed',
+            'Return Rejected',
+            'Partially Returned'
         ],
         default: 'Pending'
     },
@@ -126,13 +128,15 @@ const orderSchema = new mongoose.Schema({
         returnedAt: Date,
         status: {
             type: String,
-            enum: ['Pending', 'Partially Returned', 'Fully Returned'],
+            enum: ['Pending', 'Processing', 'Completed', 'Rejected'], // Updated enum values
+            default: 'Pending'
         },
         refundAmount: Number,
         refundStatus: {
             type: String,
             enum: ['Pending', 'Completed', 'Failed']
-        }
+        },
+        rejectionReason: String // Add this for storing rejection reasons
     }
 }, { timestamps: true });
 

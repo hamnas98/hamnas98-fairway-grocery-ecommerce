@@ -4,7 +4,7 @@ const Category = require('../../models/Category');
 const Product = require('../../models/Product');
 const Wallet = require('../../models/Wallet');
 const {refundToWallet} = require('../../controllers/user/walletController')
-// Get all orders
+
 const getOrders = async (req, res) => {
 
     try {
@@ -262,7 +262,7 @@ const processReturn = async (req, res) => {
             };
 
             const allItemsReturned = order.items.every(item => item.returned || item.cancelled);
-            order.orderStatus = allItemsReturned ? 'Return Pending' : 'Partial Return Pending';
+            order.orderStatus = allItemsReturned ? 'Return Pending' : 'Partially Returned';
         }
 
         await order.save();
