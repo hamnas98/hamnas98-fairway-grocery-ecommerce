@@ -134,7 +134,7 @@ const orderSchema = new mongoose.Schema({
         refundAmount: Number,
         refundStatus: {
             type: String,
-            enum: ['Pending', 'Completed', 'Failed']
+            enum: ['Pending', 'Completed', 'Failed','Rejected']
         },
         rejectionReason: String // Add this for storing rejection reasons
     }

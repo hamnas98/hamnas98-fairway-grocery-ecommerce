@@ -4,36 +4,26 @@ const {refundToWallet} = require('../../controllers/user/walletController')
 
 const getReturns = async (req, res) => {
     try {
-        const pendingReturns = await Order.find({
-            'returnDetails.isReturned': true,
-            'returnDetails.status': 'Pending'
+        const allReturns = await Order.find({
+            'returnDetails.isReturned': true
         })
-        .populate('user')
+        .populate('user', 'name email')
         .populate('items.product')
         .sort({ 'returnDetails.returnedAt': -1 });
 
-        const processingReturns = await Order.find({
-            'returnDetails.isReturned': true,
-            'returnDetails.status': 'Processing'
-        })
-        .populate('user')
-        .populate('items.product')
-        .sort({ 'returnDetails.returnedAt': -1 });
-
-        const completedReturns = await Order.find({
-            'returnDetails.isReturned': true,
-            'returnDetails.status': { $in: ['Completed', 'Rejected'] }
-        })
-        .populate('user')
-        .populate('items.product')
-        .sort({ 'returnDetails.returnedAt': -1 });
+        // Calculate stats
+        const totalReturns = allReturns.length;
+        const pendingReturns = allReturns.filter(order => order.returnDetails.status === 'Pending');
+        const processingReturns = allReturns.filter(order => order.returnDetails.status === 'Processing');
+        const completedReturns = allReturns.filter(order => order.returnDetails.status === 'Completed');
 
         res.render('adminReturns', {
-            pendingReturns,
-            processingReturns,
-            completedReturns,
+            returns: allReturns,
             pendingCount: pendingReturns.length,
-            path: '/admin/orders'
+            processingCount: processingReturns.length,
+            completedCount: completedReturns.length,
+            totalReturns,
+            path: '/admin/returns'
         });
 
     } catch (error) {
@@ -173,6 +163,7 @@ const rejectReturn = async (req, res) => {
 
         // Update return status
         order.returnDetails.status = 'Rejected';
+        order.returnDetails.refundStatus = 'Rejected';
         order.returnDetails.rejectionReason = reason;
         order.orderStatus = 'Return Rejected';
 

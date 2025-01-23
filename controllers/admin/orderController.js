@@ -76,6 +76,23 @@ const updateOrderStatus = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Order not found' });
         }
 
+        // Check if order has active return request or is in return process
+        const returnStatuses = ['Return Pending', 'Return Processing', 'Return Completed', 'Return Rejected', 'Partially Returned'];
+        if (order.returnDetails?.isReturned || returnStatuses.includes(order.orderStatus)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Cannot update status: Order has active return request'
+            });
+        }
+
+        // Prevent delivered orders from being updated unless returning to previous status
+        if (order.orderStatus === 'Delivered' && !['Shipped', 'Processing'].includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Cannot update status of delivered order'
+            });
+        }
+
         order.orderStatus = status;
 
         if (status === 'Cancelled') {
@@ -83,9 +100,9 @@ const updateOrderStatus = async (req, res) => {
             order.cancelledAt = new Date();
         } else if (status === 'Processing') {
             order.processingAt = new Date();
-        }else if (status === 'Shipped') {
+        } else if (status === 'Shipped') {
             order.shippedAt = new Date();
-        }else if (status === 'Delivered') {
+        } else if (status === 'Delivered') {
             order.deliveredAt = new Date();
         }
 

@@ -1,83 +1,218 @@
-.return-detail-content {
+/* Stats Cards */
+.stats-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     padding: 20px;
-}
-
-.detail-section {
+    height: 100%;
+ }
+ 
+ .stats-card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+ }
+ 
+ .stats-info h5 {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+ }
+ 
+ .stats-info h3 {
+    color: #2b2f4c;
+    font-size: 1.8rem;
+    margin: 0;
+ }
+ 
+ .stats-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(43, 47, 76, 0.1);
+ }
+ 
+ .stats-icon i {
+    font-size: 1.5rem;
+    color: #2b2f4c;
+ }
+ 
+ .stats-card.pending .stats-icon {
+    background: rgba(255, 152, 0, 0.1);
+ }
+ 
+ .stats-card.pending .stats-icon i {
+    color: #ff9800;
+ }
+ 
+ .stats-card.processing .stats-icon {
+    background: rgba(33, 150, 243, 0.1);
+ }
+ 
+ .stats-card.processing .stats-icon i {
+    color: #2196f3;
+ }
+ 
+ .stats-card.completed .stats-icon {
+    background: rgba(76, 175, 80, 0.1);
+ }
+ 
+ .stats-card.completed .stats-icon i {
+    color: #4caf50;
+ }
+ 
+ /* Table Styles */
+ .table {
+    margin-bottom: 0;
+ }
+ 
+ .table th {
+    border-bottom-width: 1px;
+    font-weight: 500;
+    padding: 1rem;
+ }
+ 
+ .table td {
+    padding: 1rem;
+    vertical-align: middle;
+ }
+ 
+ .status-badge {
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 500;
+ }
+ 
+ .status-badge.pending {
+    background: #fff3e0;
+    color: #e65100;
+ }
+ 
+ .status-badge.processing {
+    background: #e3f2fd;
+    color: #1976d2;
+ }
+ 
+ .status-badge.completed {
+    background: #e8f5e9;
+    color: #2e7d32;
+ }
+ 
+ .status-badge.rejected {
+    background: #ffebee;
+    color: #c62828;
+ }
+ 
+ .action-buttons {
+    display: flex;
+    gap: 5px;
+ }
+ 
+ .action-buttons .btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+ }
+ 
+ /* Return Details Modal */
+ .return-detail-content {
+    padding: 20px;
+ }
+ 
+ .detail-section {
     margin-bottom: 25px;
-}
-
-.detail-section h6 {
-    color: #333;
+ }
+ 
+ .detail-section:last-child {
+    margin-bottom: 0;
+ }
+ 
+ .detail-section h6 {
+    color: #2b2f4c;
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
     margin-bottom: 15px;
-}
-
-.detail-info p {
-    margin-bottom: 8px;
-}
-
-.status-badge {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-
-.status-badge.pending {
-    background: #fff3e0;
-    color: #e65100;
-}
-
-.status-badge.processing {
-    background: #e3f2fd;
-    color: #1976d2;
-}
-
-.status-badge.completed {
-    background: #e8f5e9;
-    color: #2e7d32;
-}
-
-.status-badge.rejected {
-    background: #ffebee;
-    color: #c62828;
-}
-
-.return-item {
-    border: 1px solid #eee;
-    border-radius: 6px;
-    padding: 15px;
-    margin-bottom: 10px;
+ }
+ 
+ .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+ }
+ 
+ .return-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+ }
+ 
+ .return-item {
     display: flex;
     gap: 15px;
-}
-
-.return-item .item-image {
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+ }
+ 
+ .item-image {
     width: 80px;
     height: 80px;
-}
-
-.return-item .item-image img {
+ }
+ 
+ .item-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 4px;
-}
-
-.return-item .item-details {
+ }
+ 
+ .item-content {
     flex: 1;
-}
-
-.return-reason {
-    margin-top: 10px;
-    background: #f5f5f5;
-    padding: 8px;
-    border-radius: 4px;
+ }
+ 
+ .item-content h6 {
+    border: none;
+    padding: 0;
+    margin: 0 0 5px;
+ }
+ 
+ .item-meta {
+    display: flex;
+    gap: 15px;
+    color: #666;
     font-size: 0.9rem;
-}
-
-.return-reason .description {
+ }
+ 
+ .return-reason {
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+ }
+ 
+ .return-reason .description {
     margin-top: 5px;
     color: #666;
-}
+ }
+ 
+ /* Filters */
+ .return-filters {
+    display: flex;
+    gap: 10px;
+ }
+ 
+ .form-select, .form-control {
+    border-color: #ddd;
+ }
+ 
+ .form-select:focus, .form-control:focus {
+    border-color: #2b2f4c;
+    box-shadow: none;
+ }

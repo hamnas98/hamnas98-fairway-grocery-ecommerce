@@ -153,7 +153,15 @@
                                                                                     onclick="viewOrder('<%= order._id %>')">
                                                                                 <i class="fas fa-eye"></i>
                                                                             </button>
-                                                                            <% if(order.orderStatus !== 'Delivered' && order.orderStatus !== 'Cancelled') { %>
+                                                                            <% if(
+                                                                                order.orderStatus !== 'Delivered' && 
+                                                                                order.orderStatus !== 'Cancelled' && 
+                                                                                !order.returnDetails?.isReturned && 
+                                                                                order.orderStatus !== 'Return Pending' && 
+                                                                                order.orderStatus !== 'Return Processing' && 
+                                                                                order.orderStatus !== 'Return Completed' && 
+                                                                                order.orderStatus !== 'Return Rejected'
+                                                                            ) { %>
                                                                                 <button class="btn btn-sm btn-success"
                                                                                         onclick="updateStatus('<%= order._id %>')">
                                                                                     <i class="fas fa-truck"></i>
