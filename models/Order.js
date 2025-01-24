@@ -78,6 +78,14 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    coupon: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Coupon'
+    },
+    couponDiscount: {
+        type: Number,
+        default: 0
+    },
     orderStatus: {
         type: String,
         enum: [

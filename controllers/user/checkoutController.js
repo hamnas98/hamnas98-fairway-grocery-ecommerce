@@ -3,7 +3,7 @@ const Address = require('../../models/Address');
 const Category = require('../../models/Category');
 const Order = require('../../models/Order');
 const Product = require('../../models/Product');
-
+const Coupon = require('../../models/Coupon')
 
 
 const getCheckoutPage = async (req, res) => {
@@ -32,10 +32,17 @@ const getCheckoutPage = async (req, res) => {
             isDeleted: false 
         }).sort({ isDefault: -1 });
 
+        const activeCoupons = await Coupon.find({
+            isActive: true,
+            startDate: { $lte: new Date() },
+            endDate: { $gte: new Date() }
+        });
+
         res.render('checkout', {
             parentCategories,
             cart,
             addresses,
+            activeCoupons,
             user:req.session.user,
             pageTitle: 'Checkout'
         });
@@ -126,4 +133,57 @@ const placeOrder = async (req, res) => {
     }
 };
 
-module.exports = { getCheckoutPage, placeOrder }
+const applyCoupon = async (req, res) => {
+    try {
+        const { code } = req.body;
+        const cart = await Cart.findOne({ user: req.session.user.id });
+
+        const coupon = await Coupon.findOne({
+            code: code.toUpperCase(),
+            isActive: true,
+            startDate: { $lte: new Date() },
+            endDate: { $gte: new Date() }
+        });
+
+        if (!coupon) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid or expired coupon'
+            });
+        }
+
+        // Validate minimum purchase against discounted total
+        if (cart.discountTotal < coupon.minimumPurchase) {
+            return res.status(400).json({
+                success: false,
+                message: `Minimum purchase of ₹${coupon.minimumPurchase} required`
+            });
+        }
+
+        // Calculate discount based on discounted total
+        let discount = 0;
+        if (coupon.discountType === 'percentage') {
+            discount = (cart.discountTotal * coupon.discountAmount) / 100;
+            if (coupon.maximumDiscount) {
+                discount = Math.min(discount, coupon.maximumDiscount);
+            }
+        } else {
+            discount = Math.min(coupon.discountAmount, cart.discountTotal);
+        }
+
+        res.json({
+            success: true,
+            discount,
+            finalAmount: cart.discountTotal - discount,
+            message: 'Coupon applied successfully'
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to apply coupon'
+        });
+    }
+};
+
+module.exports = { getCheckoutPage, placeOrder, applyCoupon }

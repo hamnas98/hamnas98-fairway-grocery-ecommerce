@@ -13,11 +13,11 @@ const { getProductDetails, getNewProducts, getBestvalueProducts } = require('../
 const { getDashboard, updateProfile, resetDashPassword } = require('../controllers/user/dashboardConroller');
 const { getAllAddresses, addAddress, getAddress, updateAddress, deleteAddress, setDefaultAddress } = require('../controllers/user/addressController'); 
 const { getCart, addToCart, updateCartQuantity, cartCount, removeFromCart, clearCart, verifyCart  } = require('../controllers/user/cartController');
-const { getCheckoutPage, placeOrder} = require('../controllers/user/checkoutController');
+const { getCheckoutPage, placeOrder, applyCoupon} = require('../controllers/user/checkoutController');
 const { getOrders, getOrderDetails, cancelOrder, processReturn } = require('../controllers/user/orderController');
 const { quickSearch, getSearchPage, getSearchHistory, saveSearchHistory, deleteSearchHistory } = require("../controllers/user/searchController")
 const { getWishlist, toggleWishlist, removeFromWishlist } = require("../controllers/user/wishlistController")
-const { createRazorpayOrder, verifyPayment, cancelPayment } = require("../controllers/user/razorpayController");
+const { createRazorpayOrder, verifyPayment, cancelPayment, } = require("../controllers/user/razorpayController");
 const { getWallet } = require('../controllers/user/walletController')
 
 
@@ -93,6 +93,7 @@ router.delete('/wishlist/remove/:productId', userAuth, removeFromWishlist);
 router.get('/checkout', userAuth, getCheckoutPage);
 router.post('/place-order', userAuth, placeOrder);
 router.post('/cancel-payment', userAuth, cancelPayment);
+router.post('/apply-coupon', userAuth, applyCoupon);
 
 //razorPay Routes
 router.post('/create-razorpay-order', userAuth, createRazorpayOrder);

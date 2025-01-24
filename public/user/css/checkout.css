@@ -503,3 +503,173 @@
         margin: 10px 0 0;
     }
 }
+.coupon-section {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.coupon-section input {
+    text-transform: uppercase;
+    font-family: monospace;
+}
+
+.apply-coupon-btn {
+    padding: 8px 20px;
+    background: #2b2f4c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    min-width: 100px;
+}
+
+.apply-coupon-btn:hover {
+    background: #1e213a;
+}
+
+.apply-coupon-btn:disabled {
+    background: #ccc;
+}
+
+#couponMessage .alert {
+    margin: 10px 0 0;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.alert-success {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.alert-danger {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+#couponDiscount {
+    color: #2e7d32;
+}
+/* Coupon Section Styles */
+.coupon-section {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+ }
+ 
+ .apply-coupon-btn, .view-coupons-btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    min-width: 100px;
+    transition: all 0.3s;
+ }
+ 
+ .apply-coupon-btn {
+    background: #2b2f4c;
+    color: white;
+ }
+ 
+ .view-coupons-btn {
+    background: #f1f1f1;
+    color: #2b2f4c;
+ }
+ 
+ .apply-coupon-btn:hover {
+    background: #1e213a;
+ }
+ 
+ .view-coupons-btn:hover {
+    background: #e5e5e5;
+ }
+ 
+ #couponInput {
+    text-transform: uppercase;
+    font-family: monospace;
+    font-size: 14px;
+ }
+ 
+ /* Coupons Modal Styles */
+ .coupons-list {
+    max-height: 400px;
+    overflow-y: auto;
+ }
+ 
+ .coupon-item {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+ }
+ 
+ .coupon-item:hover {
+    background: #f8f9fa;
+    border-color: #ddd;
+ }
+ 
+ .coupon-code {
+    background: #2b2f4c;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 14px;
+    font-weight: 600;
+    min-width: 120px;
+    text-align: center;
+    align-self: center;
+ }
+ 
+ .coupon-details {
+    flex: 1;
+ }
+ 
+ .coupon-details h6 {
+    margin: 0 0 5px;
+    color: #333;
+ }
+ 
+ .coupon-details p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+ }
+ 
+ .coupon-details small {
+    color: #999;
+    font-size: 12px;
+ }
+ 
+ /* Price Details Updates */
+ #couponDiscount {
+    color: #2e7d32;
+    display: none;
+ }
+ 
+ .no-coupons {
+    text-align: center;
+    padding: 30px;
+    color: #666;
+ }
+ 
+ /* Responsive */
+ @media (max-width: 576px) {
+    .coupon-item {
+        flex-direction: column;
+    }
+    
+    .coupon-code {
+        align-self: flex-start;
+    }
+ }
