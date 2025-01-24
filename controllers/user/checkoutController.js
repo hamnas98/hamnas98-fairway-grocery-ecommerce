@@ -63,6 +63,7 @@ const placeOrder = async (req, res) => {
         if (couponCode) {
             coupon = await Coupon.findOne({ code: couponCode });
         }
+        
 
         // Validate address
         const address = await Address.findOne({
@@ -104,6 +105,9 @@ const placeOrder = async (req, res) => {
                 ? (cart.discountTotal * coupon.discountAmount / 100)
                 : coupon.discountAmount;
             finalAmount = cart.discountTotal - couponDiscount;
+        }
+        if (coupon) {
+            await Coupon.findByIdAndUpdate(coupon._id, { $inc: { usedCount: 1 } });
         }
 
         // Create order
@@ -167,7 +171,28 @@ const applyCoupon = async (req, res) => {
             });
         }
 
-        // Validate minimum purchase against discounted total
+        // Check usage limit
+        if (coupon.usageLimit) {
+            const usageCount = await Order.countDocuments({
+                'coupon': coupon._id,
+                'user': req.session.user.id
+            });
+
+            if (usageCount >= coupon.usageLimit) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'You have already used this coupon'
+                });
+            }
+
+            if (coupon.usedCount >= coupon.usageLimit) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Coupon usage limit has been reached'
+                });
+            }
+        }
+
         if (cart.discountTotal < coupon.minimumPurchase) {
             return res.status(400).json({
                 success: false,
@@ -175,7 +200,6 @@ const applyCoupon = async (req, res) => {
             });
         }
 
-        // Calculate discount based on discounted total
         let discount = 0;
         if (coupon.discountType === 'percentage') {
             discount = (cart.discountTotal * coupon.discountAmount) / 100;

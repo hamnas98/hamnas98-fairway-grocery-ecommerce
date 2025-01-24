@@ -1,6 +1,6 @@
 const Wallet = require('../../models/Wallet');
 const Order = require('../../models/Order');
-const Category = require('../../models/Category')
+const Category = require('../../models/Category');
 
 const getWallet = async (req, res) => {
     try {
@@ -87,6 +87,7 @@ const refundToWallet = async (userId, orderId, amount) => {
         return false;
     }
 };
+
 
 
 module.exports = { getWallet, refundToWallet }

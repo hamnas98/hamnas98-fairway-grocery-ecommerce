@@ -92,113 +92,200 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Create Coupon Modal -->
-                        <div class="modal fade" id="createCouponModal">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Create Coupon</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form id="createCouponForm">
-                                            <div class="mb-3">
-                                                <label>Coupon Code</label>
-                                                <input type="text" class="form-control" name="code" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label>Description</label>
-                                                <textarea class="form-control" name="description" required></textarea>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="mb-3">
-                                                        <label>Discount Type</label>
-                                                        <select class="form-select" name="discountType" required>
-                                                            <option value="percentage">Percentage</option>
-                                                            <option value="fixed">Fixed Amount</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-3">
-                                                        <label>Discount Amount</label>
-                                                        <input type="number" class="form-control" name="discountAmount" required>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="mb-3">
-                                                        <label>Minimum Purchase</label>
-                                                        <input type="number" class="form-control" name="minimumPurchase" value="0">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-3">
-                                                        <label>Maximum Discount</label>
-                                                        <input type="number" class="form-control" name="maximumDiscount">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="mb-3">
-                                                        <label>Start Date</label>
-                                                        <input type="date" class="form-control" name="startDate" required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-3">
-                                                        <label>End Date</label>
-                                                        <input type="date" class="form-control" name="endDate" required>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label>Usage Limit (Optional)</label>
-                                                <input type="number" class="form-control" name="usageLimit">
-                                            </div>
-                                        </form>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                        <button type="button" class="btn btn-primary" onclick="createCoupon()">Create Coupon</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
                     </div>
                 </main>
             </div>
-		</div>	
+		</div>
+        	<!--coupen create modal  -->
+        <div class="modal fade" id="createCouponModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create Coupon</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="createCouponForm">
+                            <div class="mb-3">
+                                <label>Coupon Code</label>
+                                <input type="text" class="form-control" name="code" required>
+                            </div>
+                            <div class="mb-3">
+                                <label>Description</label>
+                                <textarea class="form-control" name="description" required></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label>Discount Type</label>
+                                        <select class="form-select" name="discountType" required>
+                                            <option value="percentage">Percentage</option>
+                                            <option value="fixed">Fixed Amount</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label>Discount Amount</label>
+                                        <input type="number" class="form-control" name="discountAmount" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label>Minimum Purchase</label>
+                                        <input type="number" class="form-control" name="minimumPurchase" value="0">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label>Maximum Discount</label>
+                                        <input type="number" class="form-control" name="maximumDiscount">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label>Start Date</label>
+                                        <input type="date" class="form-control" name="startDate" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label>End Date</label>
+                                        <input type="date" class="form-control" name="endDate" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label>Usage Limit (Optional)</label>
+                                <input type="number" class="form-control" name="usageLimit">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="createCoupon()">Create Coupon</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 						
         <script src="js/jquery.min.js"></script>
         <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="js/scripts.js"></script>   
-        <script>function showCreateCouponModal() {
+        <script>function showSuccessNotification(message) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        
+            Toast.fire({
+                icon: 'success',
+                title: message
+            });
+        }
+        
+        function showErrorNotification(message) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        
+            Toast.fire({
+                icon: 'error',
+                title: message
+            });
+        }
+        
+        function showCreateCouponModal() {
             document.getElementById('createCouponForm').reset();
             const modal = new bootstrap.Modal(document.getElementById('createCouponModal'));
             modal.show();
-        }
-        
-        async function createCoupon() {
+         }
+         
+         async function createCoupon() {
             const form = document.getElementById('createCouponForm');
-            const formData = new FormData(form);
-            
+            const formData = Object.fromEntries(new FormData(form));
+         
+            // Required field validation
+            const requiredFields = ['code', 'description', 'discountAmount', 'startDate', 'endDate'];
+            for (const field of requiredFields) {
+                if (!formData[field]?.trim()) {
+                    showErrorNotification(`${field.charAt(0).toUpperCase() + field.slice(1)} is required`);
+                    return;
+                }
+            }
+         
+            // Validate coupon code format
+            if (!/^[A-Z0-9]{3,15}$/.test(formData.code.toUpperCase())) {
+                showErrorNotification('Coupon code must be 3-15 alphanumeric characters');
+                return;
+            }
+         
+            // Validate description
+            if (formData.description.length < 10) {
+                showErrorNotification('Description must be at least 10 characters');
+                return;
+            }
+         
+            // Validate discount amount
+            const discountAmount = parseFloat(formData.discountAmount);
+            if (formData.discountType === 'percentage') {
+                if (discountAmount <= 0 || discountAmount > 100) {
+                    showErrorNotification('Percentage discount must be between 1-100');
+                    return;
+                }
+            } else if (discountAmount <= 0) {
+                showErrorNotification('Fixed discount amount must be greater than 0');
+                return;
+            }
+         
+            // Validate minimum purchase
+            if (parseFloat(formData.minimumPurchase) < 0) {
+                showErrorNotification('Minimum purchase cannot be negative');
+                return;
+            }
+         
+            // Validate dates
+            const startDate = new Date(formData.startDate);
+            const endDate = new Date(formData.endDate);
+            const today = new Date();
+            today.setHours(0,0,0,0);
+         
+            if (startDate < today) {
+                showErrorNotification('Start date cannot be in the past');
+                return;
+            }
+         
+            if (endDate <= startDate) {
+                showErrorNotification('End date must be after start date');
+                return;
+            }
+         
+            // Validate usage limit if provided
+            if (formData.usageLimit && (!Number.isInteger(Number(formData.usageLimit)) || Number(formData.usageLimit) <= 0)) {
+                showErrorNotification('Usage limit must be a positive integer');
+                return;
+            }
+         
             try {
                 const response = await fetch('/admin/coupons/create', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(Object.fromEntries(formData))
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
                 });
-        
+         
                 const data = await response.json();
-        
+         
                 if (data.success) {
                     Swal.fire({
                         icon: 'success',
@@ -213,13 +300,13 @@
             } catch (error) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
+                    title: 'Error', 
                     text: error.message || 'Failed to create coupon'
                 });
             }
-        }
-        
-        function deleteCoupon(couponId) {
+         }
+         
+         function deleteCoupon(couponId) {
             Swal.fire({
                 title: 'Delete Coupon?',
                 text: 'This action cannot be undone',
@@ -255,6 +342,6 @@
                     });
                 }
             });
-        }</script>
+         }</script>
     </body>
 </html>

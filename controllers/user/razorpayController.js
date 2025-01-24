@@ -121,6 +121,9 @@ const createRazorpayOrder = async (req, res) => {
                 : coupon.discountAmount;
             finalAmount = cart.discountTotal - couponDiscount;
         }
+        if (coupon) {
+            await Coupon.findByIdAndUpdate(coupon._id, { $inc: { usedCount: 1 } });
+        }
  
         // Create order after payment verification
         const order = new Order({

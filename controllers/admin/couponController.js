@@ -28,16 +28,40 @@ const createCoupon = async (req, res) => {
             usageLimit
         } = req.body;
 
+        // Server-side validation
+        if (!code || !/^[A-Z0-9]{3,15}$/.test(code.toUpperCase())) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid coupon code format'
+            });
+        }
+
+        if (discountType === 'percentage' && (discountAmount <= 0 || discountAmount > 100)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid percentage discount'
+            });
+        }
+
+        const existingCoupon = await Coupon.findOne({ code: code.toUpperCase() });
+        if (existingCoupon) {
+            return res.status(400).json({
+                success: false,
+                message: 'Coupon code already exists'
+            });
+        }
+
         await Coupon.create({
             code: code.toUpperCase(),
             description,
             discountType,
             discountAmount,
-            minimumPurchase,
-            maximumDiscount,
+            minimumPurchase: minimumPurchase || 0,
+            maximumDiscount: maximumDiscount || null,
             startDate: new Date(startDate),
             endDate: new Date(endDate),
-            usageLimit: usageLimit || null
+            usageLimit: usageLimit || null,
+            isActive: true
         });
 
         res.json({
@@ -48,7 +72,7 @@ const createCoupon = async (req, res) => {
         console.error('Create coupon error:', error);
         res.status(500).json({
             success: false,
-            message: error.code === 11000 ? 'Coupon code already exists' : 'Failed to create coupon'
+            message: 'Failed to create coupon'
         });
     }
 };
