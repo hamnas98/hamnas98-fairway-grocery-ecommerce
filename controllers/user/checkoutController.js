@@ -57,7 +57,12 @@ const getCheckoutPage = async (req, res) => {
 const placeOrder = async (req, res) => {
     try {
         console.log(req.body)
-        const { addressId, paymentMethod } = req.body;
+        const { addressId, paymentMethod, couponCode } = req.body;
+
+        let coupon = null;
+        if (couponCode) {
+            coupon = await Coupon.findOne({ code: couponCode });
+        }
 
         // Validate address
         const address = await Address.findOne({
@@ -93,6 +98,13 @@ const placeOrder = async (req, res) => {
                 });
             }
         }
+        let finalAmount = cart.discountTotal;
+        if (coupon) {
+            const couponDiscount = coupon.discountType === 'percentage' 
+                ? (cart.discountTotal * coupon.discountAmount / 100)
+                : coupon.discountAmount;
+            finalAmount = cart.discountTotal - couponDiscount;
+        }
 
         // Create order
         const order = new Order({
@@ -101,9 +113,12 @@ const placeOrder = async (req, res) => {
             deliveryAddress: address,
             paymentMethod,
             total: cart.total,
-            discountTotal: cart.discountTotal,
+            discountTotal: finalAmount,
             orderStatus: paymentMethod === 'cod' ? 'Pending' : 'Processing',
+            coupon: coupon?._id,
+            couponDiscount: coupon ? (cart.discountTotal - finalAmount) : 0,
             processingAt:new Date()
+           
         });
 
         await order.save();

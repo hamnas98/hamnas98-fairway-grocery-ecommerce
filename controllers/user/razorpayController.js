@@ -3,37 +3,27 @@ const Order = require('../../models/Order');
 const Cart = require('../../models/Cart');
 const Address = require('../../models/Address');
 const Product = require('../../models/Product');
+const Coupon = require('../../models/Coupon');
 const crypto = require('crypto');
 
 const createRazorpayOrder = async (req, res) => {
     try {
-        const { addressId } = req.body;
-
-        // Validate address
-        const address = await Address.findOne({
-            _id: addressId,
-            user: req.session.user.id,
-            isDeleted: false
-        });
-
+        const { addressId, couponCode } = req.body;
+ 
+        const [address, cart, coupon] = await Promise.all([
+            Address.findOne({ _id: addressId, user: req.session.user.id, isDeleted: false }),
+            Cart.findOne({ user: req.session.user.id }).populate('items.product'),
+            couponCode ? Coupon.findOne({ code: couponCode }) : null
+        ]);
+ 
         if (!address) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid delivery address'
-            });
+            return res.status(400).json({ success: false, message: 'Invalid delivery address' });
         }
-
-        // Get cart with populated products
-        const cart = await Cart.findOne({ user: req.session.user.id })
-            .populate('items.product');
-
+ 
         if (!cart || cart.items.length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Your cart is empty'
-            });
+            return res.status(400).json({ success: false, message: 'Your cart is empty' });
         }
-
+ 
         // Validate stock
         for (const item of cart.items) {
             if (!item.product || item.quantity > item.product.stock) {
@@ -43,23 +33,33 @@ const createRazorpayOrder = async (req, res) => {
                 });
             }
         }
-
+ 
+        // Calculate final amount with coupon discount
+        let finalAmount = cart.discountTotal;
+        if (coupon) {
+            const couponDiscount = coupon.discountType === 'percentage' 
+                ? (cart.discountTotal * coupon.discountAmount / 100)
+                : coupon.discountAmount;
+            finalAmount = cart.discountTotal - couponDiscount;
+        }
+ 
         // Create Razorpay order
         const razorpayOrder = await razorpay.orders.create({
-            amount: Math.round(cart.discountTotal * 100),
+            amount: Math.round(finalAmount * 100),
             currency: 'INR',
             receipt: `order_${Date.now()}`
         });
-
-        // Create order in pending state
+ 
+        // Store payment intent
         req.session.paymentIntent = {
             razorpayOrderId: razorpayOrder.id,
             addressId,
             cartId: cart._id,
-            amount: cart.discountTotal,
+            amount: finalAmount,
+            couponCode,
             createdAt: new Date()
         };
-
+ 
         res.json({
             success: true,
             razorpayKey: process.env.RAZORPAY_KEY_ID,
@@ -72,7 +72,7 @@ const createRazorpayOrder = async (req, res) => {
                 phone: address.mobile
             }
         });
-
+ 
     } catch (error) {
         console.error('Create Razorpay order error:', error);
         res.status(500).json({
@@ -80,52 +80,48 @@ const createRazorpayOrder = async (req, res) => {
             message: 'Failed to initialize payment'
         });
     }
-};
+ };
 
-const verifyPayment = async (req, res) => {
+ const verifyPayment = async (req, res) => {
     try {
-        const {
-            razorpay_payment_id,
-            razorpay_order_id,
-            razorpay_signature
-        } = req.body;
-
-        // Verify the payment intent exists in session
-        if (!req.session.paymentIntent || 
-            req.session.paymentIntent.razorpayOrderId !== razorpay_order_id) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid payment session'
-            });
+        const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
+ 
+        if (!req.session.paymentIntent || req.session.paymentIntent.razorpayOrderId !== razorpay_order_id) {
+            return res.status(400).json({ success: false, message: 'Invalid payment session' });
         }
-
+ 
         // Verify signature
         const body = razorpay_order_id + "|" + razorpay_payment_id;
         const expectedSignature = crypto
             .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
             .update(body.toString())
             .digest("hex");
-
+ 
         if (expectedSignature !== razorpay_signature) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid payment signature'
-            });
+            return res.status(400).json({ success: false, message: 'Invalid payment signature' });
         }
-
-        // Get cart and address
-        const [cart, address] = await Promise.all([
+ 
+        // Get cart, address and coupon
+        const [cart, address, coupon] = await Promise.all([
             Cart.findById(req.session.paymentIntent.cartId).populate('items.product'),
-            Address.findById(req.session.paymentIntent.addressId)
+            Address.findById(req.session.paymentIntent.addressId),
+            req.session.paymentIntent.couponCode ? 
+                Coupon.findOne({ code: req.session.paymentIntent.couponCode }) : null
         ]);
-
+ 
         if (!cart || !address) {
-            return res.status(404).json({
-                success: false,
-                message: 'Cart or address not found'
-            });
+            return res.status(404).json({ success: false, message: 'Cart or address not found' });
         }
-
+ 
+        // Calculate final amount with coupon
+        let finalAmount = cart.discountTotal;
+        if (coupon) {
+            const couponDiscount = coupon.discountType === 'percentage' 
+                ? (cart.discountTotal * coupon.discountAmount / 100)
+                : coupon.discountAmount;
+            finalAmount = cart.discountTotal - couponDiscount;
+        }
+ 
         // Create order after payment verification
         const order = new Order({
             user: req.session.user.id,
@@ -133,7 +129,9 @@ const verifyPayment = async (req, res) => {
             deliveryAddress: address,
             paymentMethod: 'razorpay',
             total: cart.total,
-            discountTotal: cart.discountTotal,
+            discountTotal: finalAmount,
+            coupon: coupon?._id,
+            couponDiscount: coupon ? (cart.discountTotal - finalAmount) : 0,
             orderStatus: 'Processing',
             processingAt: new Date(),
             paymentDetails: {
@@ -144,9 +142,9 @@ const verifyPayment = async (req, res) => {
                 paidAt: new Date()
             }
         });
-
+ 
         await order.save();
-
+ 
         // Update stock and clear cart
         await Promise.all([
             ...cart.items.map(item => 
@@ -156,15 +154,15 @@ const verifyPayment = async (req, res) => {
             ),
             Cart.findByIdAndDelete(cart._id)
         ]);
-
-        // Clear payment intent from session
+ 
+        // Clear payment intent
         delete req.session.paymentIntent;
-
+ 
         res.json({
             success: true,
             message: 'Payment verified successfully'
         });
-
+ 
     } catch (error) {
         console.error('Verify payment error:', error);
         res.status(500).json({
@@ -172,7 +170,7 @@ const verifyPayment = async (req, res) => {
             message: 'Failed to verify payment'
         });
     }
-};
+ };
 
 const cancelPayment = async (req, res) => {
     try {
