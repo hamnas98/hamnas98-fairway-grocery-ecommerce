@@ -12,7 +12,8 @@ const { getUsers, toggleUserBlock, deleteUser } = require('../controllers/admin/
 const { getOrders, getOrderDetails, updateOrderStatus } = require('../controllers/admin/orderController');
 const { getInventory, getProductStock, updateStock, getStockHistory} = require('../controllers/admin/inventoryController');
 const { getReturns, getReturnDetails , approveReturn, completeReturn, rejectReturn } = require('../controllers/admin/returnController');
-const { getCoupons, createCoupon, deleteCoupon  } = require('../controllers/admin/couponController')
+const { getCoupons, createCoupon, deleteCoupon  } = require('../controllers/admin/couponController');
+const { getSalesReport } = require('../controllers/admin/reportController')
 
 
 // admin routes
@@ -68,6 +69,9 @@ router.get('/inventory/history/:id', adminAuth, getStockHistory);
 router.get('/coupons', adminAuth, getCoupons);
 router.post('/coupons/create', adminAuth, createCoupon);
 router.delete('/coupons/:id', adminAuth, deleteCoupon);
+
+// sales report Routes
+router.get('/sales-report', adminAuth, getSalesReport);
 
 
 module.exports = router;

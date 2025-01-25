@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description-gambolthemes" content="">
+		<meta name="author-gambolthemes" content="">
+		<title>Fairway Supermarket Admin</title>
+		<link href="css/styles.css" rel="stylesheet">
+		<link href="css/admin-style.css" rel="stylesheet">
+		<link href="css/admin-custom" rel="stylesheet">
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<link  href="/admin/css/report.css"  rel="stylesheet">
+		<style>
+			
+			</style>
+		
+		<!-- Vendor Stylesheets -->
+		<link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+		
+	</head>
+
+    <body class="sb-nav-fixed">
+		<%- include('../partials/admin/topnav') %>
+        <div id="layoutSidenav">
+			<%- include('../partials/admin/sidebar') %>
+            <div id="layoutSidenav_content">
+                <main>
+					<div class="container-fluid">
+						<h2 class="mt-30 page-title">Orders</h2>
+						<ol class="breadcrumb mb-30">
+							<li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+							<li class="breadcrumb-item active">Sales Report</li>
+						</ol>
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="report-container">
+                                        <div class="report-header">
+                                            <div class="header-content">
+                                                <div class="title-section">
+                                                    <h2>Sales Report</h2>
+                                                    <p class="text-muted">
+                                                        <%= new Date(startDate).toLocaleDateString() %> - 
+                                                        <%= new Date(endDate).toLocaleDateString() %>
+                                                    </p>
+                                                </div>
+                                                <div class="action-buttons">
+                                                    <button class="download-btn excel" onclick="downloadReport('excel')">
+                                                        <i class="fas fa-file-excel"></i>
+                                                        <span>Export Excel</span>
+                                                    </button>
+                                                    <button class="download-btn pdf" onclick="downloadReport('pdf')">
+                                                        <i class="fas fa-file-pdf"></i>
+                                                        <span>Export PDF</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                         
+                                            <!-- Filter Section -->
+                                            <div class="filter-section">
+                                                <form id="reportForm" class="filter-form">
+                                                    <div class="form-group">
+                                                        <label>Date Range</label>
+                                                        <select class="form-control" id="dateRange" onchange="toggleCustomDates()">
+                                                            <option value="day">Today</option>
+                                                            <option value="week">Last 7 Days</option>
+                                                            <option value="month">Last 30 Days</option>
+                                                            <option value="custom">Custom Range</option>
+                                                        </select>
+                                                    </div>
+                                                    
+                                                    <div class="form-group custom-dates">
+                                                        <label>Start Date</label>
+                                                        <input type="date" class="form-control" id="startDate">
+                                                    </div>
+                                                    
+                                                    <div class="form-group custom-dates">
+                                                        <label>End Date</label>
+                                                        <input type="date" class="form-control" id="endDate">
+                                                    </div>
+                                                    
+                                                    <button type="submit" class="generate-btn">
+                                                        <i class="fas fa-sync-alt"></i>
+                                                        Generate Report
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                         
+                                        <!-- Summary Cards -->
+                                        <div class="summary-section">
+                                            <div class="summary-card total-orders">
+                                                <div class="card-icon">
+                                                    <i class="fas fa-shopping-cart"></i>
+                                                </div>
+                                                <div class="card-content">
+                                                    <h3><%= report.totalOrders %></h3>
+                                                    <p>Total Orders</p>
+                                                    <div class="trend up">
+                                                        <i class="fas fa-arrow-up"></i>
+                                                        <span>12.5%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                         
+                                            <div class="summary-card total-sales">
+                                                <div class="card-icon">
+                                                    <i class="fas fa-rupee-sign"></i>
+                                                </div>
+                                                <div class="card-content">
+                                                    <h3>₹<%= report.totalAmount.toFixed(2) %></h3>
+                                                    <p>Total Sales</p>
+                                                    <div class="trend up">
+                                                        <i class="fas fa-arrow-up"></i>
+                                                        <span>8.2%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                         
+                                            <div class="summary-card total-discount">
+                                                <div class="card-icon">
+                                                    <i class="fas fa-tags"></i>
+                                                </div>
+                                                <div class="card-content">
+                                                    <h3>₹<%= (report.discountAmount + report.couponDiscount).toFixed(2) %></h3>
+                                                    <p>Total Discount</p>
+                                                    <div class="trend down">
+                                                        <i class="fas fa-arrow-down"></i>
+                                                        <span>3.1%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                         
+                                            <div class="summary-card net-sales">
+                                                <div class="card-icon">
+                                                    <i class="fas fa-hand-holding-usd"></i>
+                                                </div>
+                                                <div class="card-content">
+                                                    <h3>₹<%= report.netAmount.toFixed(2) %></h3>
+                                                    <p>Net Sales</p>
+                                                    <div class="trend up">
+                                                        <i class="fas fa-arrow-up"></i>
+                                                        <span>15.7%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                         
+                                        <!-- Orders Table -->
+                                        <div class="table-section">
+                                            <div class="table-container">
+                                                <table class="sales-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Order ID</th>
+                                                            <th>Date</th>
+                                                            <th>Items</th>
+                                                            <th>Amount</th>
+                                                            <th>Discount</th>
+                                                            <th>Coupon</th>
+                                                            <th>Net Amount</th>
+                                                            <th>Status</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <% report.orders.forEach(order => { %>
+                                                            <tr>
+                                                                <td>
+                                                                    <span class="order-id">#<%= order._id.toString().slice(-6) %></span>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="date-info">
+                                                                        <span class="date"><%= new Date(order.createdAt).toLocaleDateString() %></span>
+                                                                        <span class="time"><%= new Date(order.createdAt).toLocaleTimeString() %></span>
+                                                                    </div>
+                                                                </td>
+                                                                <td><span class="items-count"><%= order.items.length %></span></td>
+                                                                <td>
+                                                                    <span class="amount">₹<%= order.total.toFixed(2) %></span>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="discount">₹<%= (order.total - order.discountTotal).toFixed(2) %></span>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="coupon">₹<%= (order.couponDiscount || 0).toFixed(2) %></span>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="net-amount">₹<%= order.discountTotal.toFixed(2) %></span>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="status-badge <%= order.orderStatus.toLowerCase() %>">
+                                                                        <%= order.orderStatus %>
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                        <% }); %>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                         </div> 
+					</div>
+                </main>
+            </div>
+        </div>				
+                        
+
+        <script src="js/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="js/scripts.js"></script>   
+        <script>
+            function toggleCustomDates() {
+               const range = document.getElementById('dateRange').value;
+               const customDates = document.querySelectorAll('.custom-dates');
+               customDates.forEach(el => {
+                   el.style.display = range === 'custom' ? 'block' : 'none';
+               });
+            }
+            
+            function downloadReport(format) {
+               const range = document.getElementById('dateRange').value;
+               let url = `/admin/sales-report?download=${format}&range=${range}`;
+               
+               if (range === 'custom') {
+                   const startDate = document.getElementById('startDate').value;
+                   const endDate = document.getElementById('endDate').value;
+                   url += `&startDate=${startDate}&endDate=${endDate}`;
+               }
+               
+               window.location.href = url;
+            }
+            
+            document.getElementById('reportForm').addEventListener('submit', function(e) {
+               e.preventDefault();
+               const range = document.getElementById('dateRange').value;
+               let url = `/admin/sales-report?range=${range}`;
+               
+               if (range === 'custom') {
+                   const startDate = document.getElementById('startDate').value;
+                   const endDate = document.getElementById('endDate').value;
+                   
+                   if (!startDate || !endDate) {
+                       alert('Please select both start and end dates');
+                       return;
+                   }
+                   
+                   url += `&startDate=${startDate}&endDate=${endDate}`;
+               }
+               
+               window.location.href = url;
+            });
+            </script>
+    </body>
+</html>
