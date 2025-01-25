@@ -1,133 +1,228 @@
 const Order = require('../../models/Order');
+const ExcelJS = require('exceljs');
 const PDFDocument = require('pdfkit');
-const excel = require('exceljs');
 
 const getSalesReport = async (req, res) => {
     try {
-        const { range, startDate, endDate } = req.query;
+        const { startDate, endDate, range } = getDateRange(req.query);
         
-        let dateQuery = {};
-        const now = new Date();
-
-        switch(range) {
-            case 'day':
-                dateQuery = {
-                    createdAt: {
-                        $gte: new Date(now.setHours(0,0,0,0)),
-                        $lt: new Date(now.setHours(23,59,59,999))
-                    }
-                };
-                break;
-            case 'week':
-                const weekStart = new Date(now.setDate(now.getDate() - 7));
-                dateQuery = {
-                    createdAt: { $gte: weekStart, $lt: new Date() }
-                };
-                break;
-            case 'month':
-                const monthStart = new Date(now.setMonth(now.getMonth() - 1));
-                dateQuery = {
-                    createdAt: { $gte: monthStart, $lt: new Date() }
-                };
-                break;
-            case 'custom':
-                dateQuery = {
-                    createdAt: {
-                        $gte: new Date(startDate),
-                        $lt: new Date(endDate)
-                    }
-                };
-                break;
-        }
-
         const orders = await Order.find({
-            ...dateQuery,
-            orderStatus: { $nin: ['Cancelled', 'Return Completed'] }
-        }).populate('items.product coupon');
+            createdAt: { $gte: startDate, $lte: endDate },
+            orderStatus: { $nin: ['Cancelled'] }
+        }).populate('items.product');
 
-        const report = generateReport(orders);
-
-        if (req.query.download === 'pdf') {
-            return generatePDF(res, report);
-        }
-        if (req.query.download === 'excel') {
-            return generateExcel(res, report);
-        }
+        const report = calculateReport(orders);
 
         res.render('sales-report', {
             report,
-            startDate: dateQuery.createdAt?.$gte,
-            endDate: dateQuery.createdAt?.$lt,
+            startDate,
+            endDate,
             path:'admin/sales-report'
         });
-
     } catch (error) {
         console.error('Sales report error:', error);
-        res.status(500).json({ success: false, message: 'Failed to generate report' });
+        res.redirect('/admin/dashboard');
     }
 };
 
-function generateReport(orders) {
+const getDateRange = (query) => {
+    let endDate = new Date();
+    let startDate = new Date();
+    const range = query.range || 'day';
+
+    switch (range) {
+        case 'week':
+            startDate.setDate(endDate.getDate() - 7);
+            break;
+        case 'month':
+            startDate.setDate(endDate.getDate() - 30);
+            break;
+        case 'custom':
+            startDate = new Date(query.startDate);
+            endDate = new Date(query.endDate);
+            endDate.setHours(23, 59, 59, 999);
+            break;
+        default: // day
+            startDate.setHours(0, 0, 0, 0);
+            endDate.setHours(23, 59, 59, 999);
+    }
+
+    return { startDate, endDate, range };
+};
+
+const calculateReport = (orders) => {
+    let totalAmount = 0;
+    let discountAmount = 0;
+    let couponDiscount = 0;
+    let netAmount = 0;
+
+    orders.forEach(order => {
+        totalAmount += order.total;
+        discountAmount += (order.total - order.discountTotal);
+        couponDiscount += order.couponDiscount || 0;
+        netAmount += order.discountTotal;
+    });
+
     return {
+        orders,
         totalOrders: orders.length,
-        totalAmount: orders.reduce((sum, order) => sum + order.total, 0),
-        discountAmount: orders.reduce((sum, order) => 
-            sum + (order.total - order.discountTotal), 0),
-        couponDiscount: orders.reduce((sum, order) => 
-            sum + (order.couponDiscount || 0), 0),
-        netAmount: orders.reduce((sum, order) => sum + order.discountTotal, 0),
-        orders: orders
+        totalAmount,
+        discountAmount,
+        couponDiscount,
+        netAmount
     };
-}
-function generatePDF(res, report) {
+};
+
+const downloadReport = async (req, res) => {
+    try {
+        const { startDate, endDate } = getDateRange(req.query);
+        const orders = await Order.find({
+            createdAt: { $gte: startDate, $lte: endDate },
+            orderStatus: { $nin: ['Cancelled'] }
+        }).populate('items.product');
+
+        const report = calculateReport(orders);
+        const format = req.query.format;
+
+        if (format === 'excel') {
+            await generateExcel(res, report, startDate, endDate);
+        } else {
+            await generatePDF(res, report, startDate, endDate);
+        }
+    } catch (error) {
+        console.error('Download report error:', error);
+        res.status(500).send('Failed to generate report');
+    }
+};
+
+async function generateExcel(res, report, startDate, endDate) {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Sales Report');
+ 
+    // Headers
+    worksheet.addRow(['Sales Report']);
+    worksheet.addRow([`${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`]);
+    worksheet.addRow([]);
+ 
+    // Summary
+    worksheet.addRow(['Summary']);
+    worksheet.addRow(['Total Orders', report.totalOrders]);
+    worksheet.addRow(['Total Amount', report.totalAmount.toFixed(2)]);
+    worksheet.addRow(['Discount Amount', report.discountAmount.toFixed(2)]);
+    worksheet.addRow(['Coupon Discount', report.couponDiscount.toFixed(2)]);
+    worksheet.addRow(['Net Amount', report.netAmount.toFixed(2)]);
+    worksheet.addRow([]);
+ 
+    // Orders table
+    worksheet.addRow([
+        'Order ID',
+        'Date',
+        'Items',
+        'Amount',
+        'Discount',
+        'Coupon',
+        'Net Amount',
+        'Status'
+    ]);
+ 
+    report.orders.forEach(order => {
+        worksheet.addRow([
+            order._id.toString().slice(-6),
+            new Date(order.createdAt).toLocaleString(),
+            order.items.length,
+            order.total.toFixed(2),
+            (order.total - order.discountTotal).toFixed(2),
+            (order.couponDiscount || 0).toFixed(2),
+            order.discountTotal.toFixed(2),
+            order.orderStatus
+        ]);
+    });
+ 
+    res.setHeader(
+        'Content-Type',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader(
+        'Content-Disposition',
+        `attachment; filename=sales-report-${startDate.toISOString().split('T')[0]}.xlsx`
+    );
+ 
+    await workbook.xlsx.write(res);
+ }
+ 
+ async function generatePDF(res, report, startDate, endDate) {
     const doc = new PDFDocument();
     
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=sales-report.pdf');
-    
+    res.setHeader(
+        'Content-Disposition', 
+        `attachment; filename=sales-report-${startDate.toISOString().split('T')[0]}.pdf`
+    );
+ 
     doc.pipe(res);
-    
-    // Add content to PDF
+ 
+    // Header
     doc.fontSize(20).text('Sales Report', { align: 'center' });
+    doc.fontSize(12).text(
+        `${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`,
+        { align: 'center' }
+    );
     doc.moveDown();
-    doc.fontSize(12).text(`Total Orders: ${report.totalOrders}`);
+ 
+    // Summary
+    doc.fontSize(16).text('Summary');
+    doc.fontSize(12);
+    doc.text(`Total Orders: ${report.totalOrders}`);
     doc.text(`Total Amount: ₹${report.totalAmount.toFixed(2)}`);
     doc.text(`Discount Amount: ₹${report.discountAmount.toFixed(2)}`);
     doc.text(`Coupon Discount: ₹${report.couponDiscount.toFixed(2)}`);
     doc.text(`Net Amount: ₹${report.netAmount.toFixed(2)}`);
-    
-    doc.end();
-}
-
-function generateExcel(res, report) {
-    const workbook = new excel.Workbook();
-    const worksheet = workbook.addWorksheet('Sales Report');
-    
-    worksheet.columns = [
-        { header: 'Order ID', key: 'orderId' },
-        { header: 'Date', key: 'date' },
-        { header: 'Amount', key: 'amount' },
-        { header: 'Discount', key: 'discount' },
-        { header: 'Coupon', key: 'coupon' },
-        { header: 'Net Amount', key: 'netAmount' }
+    doc.moveDown();
+ 
+    // Orders table
+    const tableTop = doc.y;
+    const tableHeaders = [
+        'Order ID', 'Date', 'Items', 'Amount', 
+        'Discount', 'Coupon', 'Net Amount', 'Status'
     ];
-    
-    report.orders.forEach(order => {
-        worksheet.addRow({
-            orderId: order._id,
-            date: order.createdAt.toLocaleDateString(),
-            amount: order.total,
-            discount: order.total - order.discountTotal,
-            coupon: order.couponDiscount || 0,
-            netAmount: order.discountTotal
-        });
+ 
+    let currentY = tableTop;
+    doc.font('Helvetica-Bold');
+ 
+    tableHeaders.forEach((header, i) => {
+        doc.text(header, 50 + (i * 70), currentY, { width: 60 });
     });
-    
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', 'attachment; filename=sales-report.xlsx');
-    
-    return workbook.xlsx.write(res);
-}
+ 
+    doc.font('Helvetica');
+    currentY += 20;
+ 
+    report.orders.forEach(order => {
+        if (currentY > 700) {
+            doc.addPage();
+            currentY = 50;
+        }
+ 
+        const row = [
+            '#' + order._id.toString().slice(-6),
+            new Date(order.createdAt).toLocaleDateString(),
+            order.items.length,
+            '₹' + order.total.toFixed(2),
+            '₹' + (order.total - order.discountTotal).toFixed(2),
+            '₹' + (order.couponDiscount || 0).toFixed(2),
+            '₹' + order.discountTotal.toFixed(2),
+            order.orderStatus
+        ];
+ 
+        row.forEach((text, i) => {
+            doc.text(text.toString(), 50 + (i * 70), currentY, { width: 60 });
+        });
+ 
+        currentY += 20;
+    });
+ 
+    doc.end();
+ }
+
+module.exports = { getSalesReport, downloadReport };
 
 
-module.exports = { getSalesReport }

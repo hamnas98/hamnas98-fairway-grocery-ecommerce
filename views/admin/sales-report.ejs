@@ -205,6 +205,7 @@
                                 </div>
                             </div>
                          </div> 
+
 					</div>
                 </main>
             </div>
@@ -215,46 +216,45 @@
         <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="js/scripts.js"></script>   
         <script>
-            function toggleCustomDates() {
-               const range = document.getElementById('dateRange').value;
-               const customDates = document.querySelectorAll('.custom-dates');
-               customDates.forEach(el => {
-                   el.style.display = range === 'custom' ? 'block' : 'none';
-               });
-            }
-            
-            function downloadReport(format) {
-               const range = document.getElementById('dateRange').value;
-               let url = `/admin/sales-report?download=${format}&range=${range}`;
-               
-               if (range === 'custom') {
-                   const startDate = document.getElementById('startDate').value;
-                   const endDate = document.getElementById('endDate').value;
-                   url += `&startDate=${startDate}&endDate=${endDate}`;
-               }
-               
-               window.location.href = url;
-            }
-            
-            document.getElementById('reportForm').addEventListener('submit', function(e) {
-               e.preventDefault();
-               const range = document.getElementById('dateRange').value;
-               let url = `/admin/sales-report?range=${range}`;
-               
-               if (range === 'custom') {
-                   const startDate = document.getElementById('startDate').value;
-                   const endDate = document.getElementById('endDate').value;
-                   
-                   if (!startDate || !endDate) {
-                       alert('Please select both start and end dates');
-                       return;
-                   }
-                   
-                   url += `&startDate=${startDate}&endDate=${endDate}`;
-               }
-               
-               window.location.href = url;
-            });
+      function toggleCustomDates() {
+    const dateRange = document.getElementById('dateRange');
+    const customDates = document.querySelectorAll('.custom-dates');
+    
+    customDates.forEach(div => {
+        div.style.display = dateRange.value === 'custom' ? 'block' : 'none';
+    });
+}
+
+document.getElementById('reportForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    generateReport();
+});
+
+async function generateReport() {
+    const dateRange = document.getElementById('dateRange').value;
+    let params = `range=${dateRange}`;
+
+    if (dateRange === 'custom') {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        params += `&startDate=${startDate}&endDate=${endDate}`;
+    }
+
+    window.location.href = `/admin/sales-report?${params}`;
+}
+
+function downloadReport(format) {
+    const currentUrl = new URL(window.location.href);
+    const params = currentUrl.searchParams;
+    params.append('format', format);
+    
+    window.location.href = `/admin/sales-report/download?${params.toString()}`;
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    toggleCustomDates();
+});
             </script>
     </body>
 </html>
