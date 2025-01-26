@@ -67,7 +67,352 @@
                                 <div class="order-list-container">
                                     <% if(orders && orders.length > 0) { %>
                                         <% orders.forEach(order => { %>
-                                           
+                                            <div class="order-card">
+                                                <div class="order-header">
+                                                    <div class="order-info">
+                                                        <span class="order-id">#<%= order._id.toString().slice(-6) %></span>
+                                                        <span class="order-date"><%= new Date(order.createdAt).toLocaleDateString() %></span>
+                                                    </div>
+                                                    <div class="order-status <%= order.orderStatus.toLowerCase() %>">
+                                                        <%= order.orderStatus %>
+                                                    </div>
+                                                </div>
+                                                <div class="order-items-section">
+                                                    <h6>Order Items</h6>
+                                                    <div class="order-items">
+                                                        <% order.items.forEach(item => { %>
+                                                            <div class="order-item <%= item.cancelled ? 'cancelled' : '' %>">
+                                                                <div class="item-image">
+                                                                    <img src="<%= item.product.images[0] %>" alt="<%= item.product.name %>">
+                                                                    <% if(item.cancelled) { %>
+                                                                        <div class="cancelled-overlay">Cancelled</div>
+                                                                    <% } %>
+                                                                    <% if (item.returned) { %>
+                                                                        <div class="returned-overlay">Returned</div>
+                                                                    <% } %>
+                                                                </div>
+                                                                <div class="item-details">
+                                                                    <h5><%= item.product.name %></h5>
+                                                                    <p class="item-qty"><%= item.product.quantity + item.product.unit %></p>
+                                                                    <p class="item-price">
+                                                                        <%= item.quantity %> × 
+                                                                        <% if(item.product.discountPrice) { %>
+                                                                            <span class="original-price">₹<%= item.product.price %></span>
+                                                                            <span class="discount-price">₹<%= item.product.discountPrice %></span>
+                                                                        <% } else { %>
+                                                                            ₹<%= item.product.price %>
+                                                                        <% } %>
+                                                                    </p>
+                                                                    <% if(item.cancelled) { %>
+                                                                        <p class="cancel-reason">
+                                                                            <span>Cancel Reason:</span> <%= item.cancelReason %>
+                                                                            <br>
+                                                                            <small>Cancelled on <%= new Date(item.cancelledAt).toLocaleDateString() %></small>
+                                                                        </p>
+                                                                    <% } %>
+                                                                </div>
+                                                                <div class="item-total">
+                                                                    ₹<%= ((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2) %>
+                                                                </div>
+                                                            </div>
+                                                        <% }); %>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="order-status-tracker">
+                                                    <div class="status-flow">
+                                                        <div class="status-step <%= order.orderStatus === 'Pending' || order.orderStatus === 'Processing' || order.orderStatus === 'Shipped' || order.orderStatus === 'Delivered' ? 'completed' : '' %>">
+                                                            <div class="status-icon">
+                                                                <i class="uil uil-shopping-cart-alt"></i>
+                                                            </div>
+                                                            <div class="status-label">Order Placed</div>
+                                                            <div class="status-time"><%= new Date(order.createdAt).toLocaleDateString() %></div>
+                                                        </div>
+                                                
+                                                        <div class="status-step <%= order.orderStatus === 'Processing' || order.orderStatus === 'Shipped' || order.orderStatus === 'Delivered' ? 'completed' : order.orderStatus === 'Cancelled' ? 'cancelled' : '' %>">
+                                                            <div class="status-icon">
+                                                                <i class="uil uil-process"></i>
+                                                            </div>
+                                                            <div class="status-label">Processing</div>
+                                                            <div class="status-time"><%= order.processingAt ? new Date(order.processingAt).toLocaleDateString() : '--' %></div>
+                                                        </div>
+                                                
+                                                        <div class="status-step <%= order.orderStatus === 'Shipped' || order.orderStatus === 'Delivered' ? 'completed' : order.orderStatus === 'Cancelled' ? 'cancelled' : '' %>">
+                                                            <div class="status-icon">
+                                                                <i class="uil uil-truck"></i>
+                                                            </div>
+                                                            <div class="status-label">Shipped</div>
+                                                            <div class="status-time"><%= order.shippedAt ? new Date(order.shippedAt).toLocaleDateString() : '--' %></div>
+                                                        </div>
+                                                
+                                                        <div class="status-step <%= order.orderStatus === 'Delivered' ? 'completed' : order.orderStatus === 'Cancelled' ? 'cancelled' : '' %>">
+                                                            <div class="status-icon">
+                                                                <i class="uil uil-check-circle"></i>
+                                                            </div>
+                                                            <div class="status-label">Delivered</div>
+                                                            <div class="status-time"><%= order.deliveredAt ? new Date(order.deliveredAt).toLocaleDateString() : '--' %></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+         
+                                                <% if(order.orderStatus === 'Cancelled') { %>
+                                                    <div class="cancellation-info">
+                                                        <div class="cancel-header">
+                                                            <i class="uil uil-times-circle"></i>
+                                                            <span>Order Cancelled</span>
+                                                        </div>
+                                                        <% if(order.cancelReason) { %>
+                                                            <div class="cancel-reason">
+                                                                <span>Reason:</span> <%= order.cancelReason %>
+                                                            </div>
+                                                        <% } %>
+                                                        
+                                                        <% if(order.paymentMethod === 'razorpay') { %>
+                                                            <div class="refund-details">
+                                                                <div class="refund-header">
+                                                                    <i class="uil uil-wallet"></i>
+                                                                    <h6>Refund Information</h6>
+                                                                </div>
+                                                                <div class="refund-content">
+                                                                    <div class="refund-info">
+                                                                        <div class="refund-amount">
+                                                                            <span>Refund Amount:</span>
+                                                                            <strong>₹<%= order.discountTotal.toFixed(2) %></strong>
+                                                                        </div>
+                                                                        <% if(order.refundDetails && order.refundDetails.status) { %>
+                                                                            <div class="refund-status">
+                                                                                <span>Status:</span>
+                                                                                <span class="status-badge <%= order.refundDetails.status.toLowerCase() %>">
+                                                                                    <%= order.refundDetails.status %>
+                                                                                </span>
+                                                                            </div>
+                                                                            <% if(order.refundDetails.processedAt) { %>
+                                                                                <div class="refund-date">
+                                                                                    <span>Processed on:</span>
+                                                                                    <span><%= new Date(order.refundDetails.processedAt).toLocaleDateString() %></span>
+                                                                                </div>
+                                                                            <% } %>
+                                                                            <% if(order.refundDetails.status === 'Completed') { %>
+                                                                                <div class="refund-note">
+                                                                                    <i class="uil uil-info-circle"></i>
+                                                                                    Refund has been credited to your wallet
+                                                                                </div>
+                                                                            <% } %>
+                                                                        <% } else { %>
+                                                                            <div class="refund-processing">
+                                                                                <i class="uil uil-sync"></i>
+                                                                                <span>Refund is being processed</span>
+                                                                            </div>
+                                                                        <% } %>
+                                                                    </div>
+                                                                    <a href="/dashboard/wallet" class="check-wallet-btn">
+                                                                        <i class="uil uil-wallet"></i>
+                                                                        Check Wallet
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        <% } %>
+                                                    </div>
+                                                <% } %>
+                                                
+
+         
+                                                <% if(order.returnDetails && order.returnDetails.isReturned) { %>
+                                                    <div class="return-info">
+                                                        <div class="return-header">
+                                                            <i class="uil uil-exchange"></i>
+                                                            <span>Return <%= order.returnDetails.status %></span>
+                                                        </div>
+                                                        <% if(order.returnDetails.status === 'Rejected' && order.returnDetails.rejectionReason) { %>
+                                                            <div class="return-rejection">
+                                                                <span>Rejection Reason:</span> <%= order.returnDetails.rejectionReason %>
+                                                            </div>
+                                                        <% } %>
+                                                        
+                                                        <div class="returned-items-summary">
+                                                            <h6>Returned Items</h6>
+                                                            <% order.items.filter(item => item.returned).forEach(item => { %>
+                                                                <div class="returned-item">
+                                                                    <span class="item-name"><%= item.product.name %></span>
+                                                                    <div class="return-details">
+                                                                        <span class="return-reason">
+                                                                            Reason: <%= item.returnReason %>
+                                                                        </span>
+                                                                        <% if(item.returnStatus) { %>
+                                                                            <span class="status-badge <%= item.returnStatus.toLowerCase() %>">
+                                                                                <%= order.returnDetails.status %>
+                                                                            </span>
+                                                                        <% } %>
+                                                                    </div>
+                                                                </div>
+                                                            <% }); %>
+                                                        </div>
+         
+                                                        <% if(order.returnDetails.refundAmount && order.paymentMethod === 'razorpay') { %>
+                                                            <div class="refund-details">
+                                                                <div class="refund-header">
+                                                                    <i class="uil uil-wallet"></i>
+                                                                    <h6>Return Refund Information</h6>
+                                                                </div>
+                                                                <div class="refund-content">
+                                                                    <div class="refund-info">
+                                                                        <div class="refund-amount">
+                                                                            <span>Refund Amount:</span>
+                                                                            <strong>₹<%= order.returnDetails.refundAmount.toFixed(2) %></strong>
+                                                                        </div>
+                                                                        <div class="refund-status">
+                                                                            <span>Status:</span>
+                                                                            <span class="status-badge <%= order.returnDetails.refundStatus.toLowerCase() %>">
+                                                                                <%= order.returnDetails.refundStatus %>
+                                                                            </span>
+                                                                        </div>
+                                                                        <% if(order.returnDetails.refundStatus === 'Completed') { %>
+                                                                            <div class="refund-note">
+                                                                                <i class="uil uil-info-circle"></i>
+                                                                                Refund has been credited to your wallet
+                                                                            </div>
+                                                                        <% } %>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        <% } %>
+                                                    </div>
+                                                <% } %>
+         
+                                                <% if(
+                                                    (order.orderStatus === 'Cancelled' || order.orderStatus === 'Partially Cancelled') && 
+                                                    order.paymentMethod === 'razorpay' && 
+                                                    order.items.some(item => item.cancelled)
+                                                ) { %>
+                                                    <div class="refund-details">
+                                                        <div class="refund-header">
+                                                            <i class="uil uil-wallet"></i>
+                                                            <h6>Refund Information</h6>
+                                                        </div>
+                                                        <div class="refund-content">
+                                                            <div class="refund-info">
+                                                                <% if(order.refundDetails && order.refundDetails.amount) { %>
+                                                                    <div class="refund-amount">
+                                                                        <span>Refund Amount:</span>
+                                                                        <strong>₹<%= order.refundDetails.amount.toFixed(2) %></strong>
+                                                                        <% if(order.orderStatus === 'Partially Cancelled') { %>
+                                                                            <small class="partial-refund-note">
+                                                                                (Refund for cancelled items)
+                                                                            </small>
+                                                                        <% } %>
+                                                                    </div>
+                                                                    <div class="refund-status">
+                                                                        <span>Status:</span>
+                                                                        <span class="status-badge <%= order.refundDetails.status.toLowerCase() %>">
+                                                                            <%= order.refundDetails.status %>
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="refund-date">
+                                                                        <span>Processed on:</span>
+                                                                        <span><%= new Date(order.refundDetails.processedAt).toLocaleDateString() %></span>
+                                                                    </div>
+                                                                    <div class="refund-note">
+                                                                        <i class="uil uil-info-circle"></i>
+                                                                        <% if(order.orderStatus === 'Partially Cancelled') { %>
+                                                                            Refund for cancelled items has been credited to your wallet
+                                                                        <% } else { %>
+                                                                            Refund has been credited to your wallet
+                                                                        <% } %>
+                                                                    </div>
+                                                                <% } else { %>
+                                                                    <div class="refund-processing">
+                                                                        <i class="uil uil-sync"></i>
+                                                                        <span>
+                                                                            <% if(order.orderStatus === 'Partially Cancelled') { %>
+                                                                                Refund for cancelled items is being processed
+                                                                            <% } else { %>
+                                                                                Refund is being processed
+                                                                            <% } %>
+                                                                        </span>
+                                                                    </div>
+                                                                <% } %>
+                                                    
+                                                                <% if(order.orderStatus === 'Partially Cancelled') { %>
+                                                                    <div class="cancelled-items-summary">
+                                                                        <h6>Cancelled Items</h6>
+                                                                        <div class="cancelled-items-list">
+                                                                            <% order.items.filter(item => item.cancelled).forEach(item => { %>
+                                                                                <div class="cancelled-item">
+                                                                                    <span class="item-name"><%= item.product.name %></span>
+                                                                                    <span class="item-refund">
+                                                                                        ₹<%= ((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2) %>
+                                                                                    </span>
+                                                                                </div>
+                                                                            <% }); %>
+                                                                        </div>
+                                                                    </div>
+                                                                <% } %>
+                                                            </div>
+                                                            <a href="/dashboard/wallet" class="check-wallet-btn">
+                                                                <i class="uil uil-wallet"></i>
+                                                                Check Wallet
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                <% } %>
+         
+                                                <div class="order-footer">
+                                                    <div class="order-total">
+                                                        <span>Total:</span>
+                                                        <span class="total-amount">₹<%= order.discountTotal.toFixed(2) %></span>
+                                                    </div>
+                                                    <div class="order-actions">
+                                                        <button class="view-details-btn" onclick="viewOrderDetails('<%= order._id %>')">
+                                                            View Details
+                                                        </button>
+                                                        <% if(order.orderStatus === 'Pending' || order.orderStatus === 'Processing') { %>
+                                                            <div class="dropdown">
+                                                                <button class="cancel-options-btn" data-bs-toggle="dropdown">
+                                                                    <i class="uil uil-times"></i> 
+                                                                    <span>Cancel Order</span>
+                                                                </button>
+                                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                                    <li>
+                                                                        <a class="dropdown-item" href="#" onclick="showCancelModal('<%= order._id %>', 'full')">
+                                                                            Cancel Entire Order
+                                                                        </a>
+                                                                    </li>
+                                                                    <% if(order.items.length > 1) { %>
+                                                                        <li>
+                                                                            <a class="dropdown-item" href="#" onclick="showCancelModal('<%= order._id %>', 'partial')">
+                                                                                Cancel Selected Items
+                                                                            </a>
+                                                                        </li>
+                                                                    <% } %>
+                                                                </ul>
+                                                            </div>
+                                                        <% } %>
+                                                        <% if(order.orderStatus === 'Delivered' && 
+                                                        new Date() - new Date(order.deliveredAt) <= 7 * 24 * 60 * 60 * 1000) { %>
+                                                            <div class="dropdown">
+                                                                <button class="return-options-btn" data-bs-toggle="dropdown">
+                                                                    <i class="uil uil-exchange"></i> 
+                                                                    <span>Return</span>
+                                                                </button>
+                                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                                    <li>
+                                                                        <a class="dropdown-item" href="#" onclick="showReturnModal('<%= order._id %>', 'full')">
+                                                                            Return Entire Order
+                                                                        </a>
+                                                                    </li>
+                                                                    <% if(order.items.length > 1) { %>
+                                                                        <li>
+                                                                            <a class="dropdown-item" href="#" onclick="showReturnModal('<%= order._id %>', 'partial')">
+                                                                                Return Selected Items
+                                                                            </a>
+                                                                        </li>
+                                                                    <% } %>
+                                                                </ul>
+                                                            </div>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         <% }); %>
                                     <% } else { %>
                                         <div class="no-orders">
@@ -83,6 +428,9 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
                 </div>
             </div>
         </div>

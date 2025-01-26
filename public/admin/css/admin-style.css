@@ -110,7 +110,7 @@
 }
 
 .breadcrumb-item.active {
-    color: #f55d2c !important;
+    color: #2b2f4c !important;
 }
 
 .breadcrumb-item {
@@ -357,7 +357,7 @@ input[type=checkbox], input[type=radio] {
 .ucp-table thead tr th {
     color: #2b2f4c;
     font-size: 14px;
-    background-color: #ffecec;
+    background-color: #dddee6;
 	font-weight: 500;
 }
 
@@ -374,7 +374,7 @@ input[type=checkbox], input[type=radio] {
 
 .badge-status {
     color: #fff;
-    background-color: #f55d2c;
+    background-color: #2b2f4c;
 }
 
 .badge-item {
@@ -392,15 +392,15 @@ input[type=checkbox], input[type=radio] {
 
 .hover-btn:hover {
 	text-decoration: none !important;
-	background: #f55d2c;
+	background: #3d4266; ;
 	color: #fff !important;
 	transition: all .2s ease-in-out;
 	-webkit-transition: all 0.2s ease-in-out;
     -o-transition: all 0.2s ease-in-out;
     -ms-transition: all 0.2s ease-in-out;
     -webkit-transition: all 0.2s ease-in-out;
-	background-image: -webkit-linear-gradient(left, rgba(230, 92, 91, 0.9), rgba(245, 93, 44, 0.9));
-    background-image: linear-gradient(to right, rgba(230, 92, 91, 0.9), rgba(245, 93, 44, 0.9));
+	background-image: -webkit-linear-gradient(left, rgba(82, 87, 128, 0.9), rgba(108, 113, 166, 0.9));
+    background-image: linear-gradient(to right, rgba(82, 87, 128, 0.9), rgba(108, 113, 166, 0.9));
 }
 
 .action-btns {
@@ -561,7 +561,7 @@ input[type=checkbox], input[type=radio] {
     color: #fff;
     text-align: center;
     white-space: nowrap;
-    background-color: #f55d2c;
+    background-color: #2b2f4c;
     border: 0;
     border-radius: 3px;
 }
@@ -578,7 +578,7 @@ input[type=checkbox], input[type=radio] {
     font-size: 14px;
     font-weight: 500;
     color: #fff;
-    background: #f55d2c;
+    background: #2b2f4c;
     padding: 10px 20px;
     display: inline-block;
     height: 40px;
@@ -796,7 +796,7 @@ div#editor {
 }
 
 .save-btn {
-    background: #f55d2c;
+    background: #2b2f4c;
     border: 0;
     color: #fff;
     font-size: 14px;
@@ -905,7 +905,7 @@ input.custom-file-input {
     padding: 0.3rem 1.6rem !important;
     color: #fff !important;
     content: "Browse" !important;
-    background-color: #f55d2c !important;
+    background-color: #2b2f4c !important;
     border-radius: 0 3px 3px 0 !important;
     font-size: 13px;
 }
@@ -1540,17 +1540,19 @@ input.custom-file-input {
     font-weight: 600;
     padding: 5px 15px;
     border-radius: 3px;
+    
 }
 
 .bg-sign {
-	background: #f55d2c;
+	background: #2b2f4c;
 	transition: all .2s ease-in-out;
 	-webkit-transition: all 0.2s ease-in-out;
     -o-transition: all 0.2s ease-in-out;
     -ms-transition: all 0.2s ease-in-out;
     -webkit-transition: all 0.2s ease-in-out;
-	background-image: -webkit-linear-gradient(left, rgba(230, 92, 91, 0.9), rgba(245, 93, 44, 0.9));
-    background-image: linear-gradient(to right, rgba(230, 92, 91, 0.9), rgba(245, 93, 44, 0.9))
+    background-image: -webkit-linear-gradient(left, rgba(43, 47, 76, 0.9), rgba(65, 71, 115, 0.9));
+    background-image: linear-gradient(to right, rgba(43, 47, 76, 0.9), rgba(65, 71, 115, 0.9));
+
 }
 
 .card-sign-header {
@@ -1565,7 +1567,7 @@ input.custom-file-input {
 
 .btn-sign {
     color: #fff !important;
-    background-color: #f55d2c !important;
+    background-color: #2b2f4c !important;
     border-color:0 !important;
 	width: 100% !important;
 }
