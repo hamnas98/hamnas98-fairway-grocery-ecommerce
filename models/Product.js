@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 const productSchema = new mongoose.Schema({
     name: { type: String, required: true },
     price: { type: Number, required: true },
-    listed: { type: Boolean, default: true }, // Indicates if the product is listed
+    listed: { type: Boolean, default: true },
     discountPrice: { type: Number, default: null }, 
-    discountPercentage: { type: Number, default: 0 }, // Percentage discount
+    discountPercentage: { type: Number, default: 0 }, 
     stock: { type: Number, required: true, default: 0 }, // Quantity of product available
     reviews: [
         {

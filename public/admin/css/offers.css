@@ -1,0 +1,129 @@
+.tab-content {
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+ }
+ 
+ .nav-tabs .nav-link {
+    color: #495057;
+    border: 1px solid transparent;
+ }
+ 
+ .nav-tabs .nav-link.active {
+    color: #2b2f4c;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+ }
+ 
+ .nav-tabs .nav-link:hover {
+    border-color: #e9ecef #e9ecef #dee2e6;
+ }
+ 
+ .badge {
+    padding: 6px 12px;
+    font-weight: 500;
+    border-radius: 50px;
+ }
+ 
+ .badge.bg-success {
+    background-color: #28a745 !important;
+    color: #fff;
+ }
+ 
+ .badge.bg-danger {
+    background-color: #dc3545 !important;
+    color: #fff;
+ }
+ 
+ .table {
+    margin-bottom: 0;
+ }
+ 
+ .table th {
+    font-weight: 500;
+    border-bottom: 2px solid #dee2e6;
+ }
+ 
+ .table td {
+    vertical-align: middle;
+    padding: 12px;
+ }
+ 
+ .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 4px;
+ }
+ 
+ .modal-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 1rem;
+ }
+ 
+ .modal-title {
+    font-weight: 500;
+    margin: 0;
+ }
+ 
+ .modal-body {
+    padding: 1.5rem;
+ }
+ 
+ .modal-footer {
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    padding: 1rem;
+ }
+ 
+ .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+ }
+ 
+ .form-select:focus,
+ .form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+ }
+ 
+ .table-responsive {
+    margin: 1rem 0;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+ }
+ 
+ .btn-danger {
+    background: #dc3545;
+    border: none;
+ }
+ 
+ .btn-danger:hover {
+    background: #c82333;
+ }
+ 
+ .action-buttons {
+    display: flex;
+    gap: 5px;
+ }
+ 
+ .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.875rem;
+ }
+ 
+ .status-badge i {
+    font-size: 1rem;
+ }
+ 
+ .offer-table tr:hover {
+    background-color: #f8f9fa;
+ }
+ 
+ .date-picker {
+    min-height: calc(1.5em + 0.75rem + 2px);
+ }

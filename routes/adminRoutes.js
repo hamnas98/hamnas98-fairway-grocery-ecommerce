@@ -13,7 +13,8 @@ const { getOrders, getOrderDetails, updateOrderStatus } = require('../controller
 const { getInventory, getProductStock, updateStock, getStockHistory} = require('../controllers/admin/inventoryController');
 const { getReturns, getReturnDetails , approveReturn, completeReturn, rejectReturn } = require('../controllers/admin/returnController');
 const { getCoupons, createCoupon, deleteCoupon  } = require('../controllers/admin/couponController');
-const { getSalesReport, downloadReport } = require('../controllers/admin/reportController')
+const { getSalesReport, downloadReport } = require('../controllers/admin/reportController');
+const { getOffers, createProductOffer, createCategoryOffer, deleteProductOffer, deleteCategoryOffer } = require('../controllers/admin/offerController')
 
 
 // admin routes
@@ -73,6 +74,13 @@ router.delete('/coupons/:id', adminAuth, deleteCoupon);
 // sales report Routes
 router.get('/sales-report', adminAuth, getSalesReport);
 router.get('/sales-report/download', adminAuth, downloadReport);
+
+// offer routes
+router.get('/offers', adminAuth, getOffers);
+router.post('/offers/product', adminAuth, createProductOffer);
+router.post('/offers/category', adminAuth, createCategoryOffer);
+router.delete('/offers/product/:id', adminAuth, deleteProductOffer);
+router.delete('/offers/category/:id', adminAuth, deleteCategoryOffer);
 
 
 module.exports = router;
