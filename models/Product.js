@@ -5,7 +5,9 @@ const productSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     listed: { type: Boolean, default: true },
     discountPrice: { type: Number, default: null }, 
-    discountPercentage: { type: Number, default: 0 }, 
+    discountPercentage: { type: Number, default: 0 },
+    productDiscountPrice:{ type: Number, default: null} ,
+    productDiscountPercentage:{ type: Number, default: 0} ,
     stock: { type: Number, required: true, default: 0 }, // Quantity of product available
     reviews: [
         {

@@ -28,6 +28,12 @@ const getOffers = async (req, res) => {
  const createProductOffer = async (req, res) => {
     try {
         const { productId, discountType, discountAmount, startDate, endDate } = req.body;
+        if(!startDate|| !endDate){
+            return res.status(400).json({
+                success: false,
+                message: 'Please enter start date and end date'
+            });     
+        }
 
         // Check for existing active offer
         const existingOffer = await ProductOffer.findOne({
@@ -89,6 +95,8 @@ async function updateProductDiscountPrice(productId) {
     
     // Original discount price if exists
     if (product.discountPercentage > 0) {
+        product.productDiscountPrice = product.discountPrice;
+        product.productDiscountPercentage = product.discountPercentage;
         prices.push(product.price * (1 - product.discountPercentage / 100));
     }
  
@@ -123,7 +131,12 @@ async function updateProductDiscountPrice(productId) {
 const createCategoryOffer = async (req, res) => {
     try {
         const { categoryId, discountType, discountAmount, startDate, endDate } = req.body;
-
+        if(!startDate|| !endDate){
+            return res.status(400).json({
+                success: false,
+                message: 'Please enter start date and end date'
+            });     
+        }
         const existingOffer = await CategoryOffer.findOne({
             category: categoryId,
             isActive: true,
@@ -221,52 +234,60 @@ const deleteProductOffer = async (req, res) => {
         const offer = await ProductOffer.findById(id);
         
         if (!offer) {
-            return res.status(404).json({
-                success: false,
-                message: 'Offer not found'
-            });
+            return res.status(404).json({ success: false, message: 'Offer not found' });
         }
- 
+
+        const product = await Product.findById(offer.product);
         await offer.deleteOne();
-        await updateProductDiscountPrice(offer.product);
- 
-        res.json({
-            success: true,
-            message: 'Offer deleted successfully'
-        });
+
+        // Restore original product discount if exists
+        if (product.productDiscountPrice !== null) {
+            product.discountPrice = product.productDiscountPrice;
+            product.discountPercentage = product.productDiscountPercentage;
+            product.productDiscountPrice = null;
+            product.productDiscountPercentage = 0;
+        } else {
+            // Check for other active offers
+            await updateProductDiscountPrice(product._id);
+        }
+
+        await product.save();
+        res.json({ success: true, message: 'Offer deleted successfully' });
     } catch (error) {
-        res.status(500).json({
-            success: false, 
-            message: 'Failed to delete offer'
-        });
+        res.status(500).json({ success: false, message: 'Failed to delete offer' });
     }
- };
- 
- const deleteCategoryOffer = async (req, res) => {
+};
+
+const deleteCategoryOffer = async (req, res) => {
     try {
         const { id } = req.params;
         const offer = await CategoryOffer.findById(id);
         
         if (!offer) {
-            return res.status(404).json({
-                success: false,
-                message: 'Offer not found'
-            });
+            return res.status(404).json({ success: false, message: 'Offer not found' });
         }
- 
+
+        const products = await Product.find({ category: offer.category });
         await offer.deleteOne();
-        await updateCategoryProductsPrices(offer.category);
- 
-        res.json({
-            success: true,
-            message: 'Offer deleted successfully' 
-        });
+
+        // Restore original discounts for each product
+        for (const product of products) {
+            if (product.productDiscountPrice !== null) {
+                product.discountPrice = product.productDiscountPrice;
+                product.discountPercentage = product.productDiscountPercentage;
+                product.productDiscountPrice = null;
+                product.productDiscountPercentage = 0;
+            } else {
+                // Check for other active offers
+                await updateProductDiscountPrice(product._id);
+            }
+            await product.save();
+        }
+
+        res.json({ success: true, message: 'Offer deleted successfully' });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Failed to delete offer'
-        });
+        res.status(500).json({ success: false, message: 'Failed to delete offer' });
     }
- };
+};
 
 module.exports = { getOffers, createProductOffer, createCategoryOffer, deleteProductOffer , deleteCategoryOffer}

@@ -281,24 +281,55 @@
         <script src="js/jquery.min.js"></script>
         <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="js/scripts.js"></script>   
-        <script>function showProductOfferModal() {
-            document.getElementById('productOfferForm').reset();
+        <script>document.addEventListener('DOMContentLoaded', function() {
+            // Set initial date validations
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                input.setAttribute('min', today);
+            });
+         
+            // Handle discount type changes
+            document.querySelectorAll('select[name="discountType"]').forEach(select => {
+                select.addEventListener('change', function() {
+                    const form = this.closest('form');
+                    const discountInput = form.querySelector('input[name="discountAmount"]');
+                    const hintElement = discountInput.nextElementSibling;
+         
+                    if (this.value === 'percentage') {
+                        discountInput.setAttribute('max', '100');
+                        hintElement.textContent = 'Enter percentage between 1-100';
+                    } else {
+                        discountInput.removeAttribute('max');
+                        hintElement.textContent = 'Enter amount in rupees';
+                    }
+                });
+            });
+         });
+         
+         function showProductOfferModal() {
+            resetForm('productOfferForm');
             const modal = new bootstrap.Modal(document.getElementById('productOfferModal'));
             modal.show();
          }
          
          function showCategoryOfferModal() {
-            document.getElementById('categoryOfferForm').reset();
+            resetForm('categoryOfferForm');
             const modal = new bootstrap.Modal(document.getElementById('categoryOfferModal'));
             modal.show();
          }
          
+         function resetForm(formId) {
+            const form = document.getElementById(formId);
+            form.reset();
+            form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+         }
+         
          async function createProductOffer() {
             const form = document.getElementById('productOfferForm');
+            if (!validateForm(form)) return;
+         
             const formData = new FormData(form);
             const formValues = Object.fromEntries(formData);
-         
-            if (!validateOfferForm(formValues)) return;
          
             try {
                 const response = await fetch('/admin/offers/product', {
@@ -310,31 +341,23 @@
                 const data = await response.json();
          
                 if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: data.message,
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => window.location.reload());
+                    showSuccessAlert('Offer created successfully').then(() => {
+                        window.location.reload();
+                    });
                 } else {
                     throw new Error(data.message);
                 }
             } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: error.message || 'Failed to create offer'
-                });
+                showErrorAlert(error.message || 'Failed to create offer');
             }
          }
          
          async function createCategoryOffer() {
             const form = document.getElementById('categoryOfferForm');
+            if (!validateForm(form)) return;
+         
             const formData = new FormData(form);
             const formValues = Object.fromEntries(formData);
-         
-            if (!validateOfferForm(formValues)) return;
          
             try {
                 const response = await fetch('/admin/offers/category', {
@@ -346,48 +369,86 @@
                 const data = await response.json();
          
                 if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: data.message,
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => window.location.reload());
+                    showSuccessAlert('Offer created successfully').then(() => {
+                        window.location.reload();
+                    });
                 } else {
                     throw new Error(data.message);
                 }
             } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: error.message || 'Failed to create offer'
-                });
+                showErrorAlert(error.message || 'Failed to create offer');
             }
          }
          
-         function validateOfferForm(values) {
-            if (!values.discountAmount || values.discountAmount <= 0) {
-                showErrorNotification('Discount amount must be greater than 0');
+         function validateForm(form) {
+            let isValid = true;
+            form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+         
+            // Validate selection fields
+            const selectFields = form.querySelectorAll('select[required]');
+            selectFields.forEach(field => {
+                if (!field.value) {
+                    field.classList.add('is-invalid');
+                    showErrorAlert(`Please select a ${field.name.replace('Id', '')}`);
+                    isValid = false;
+                }
+            });
+         
+            // Validate discount amount
+            const discountType = form.querySelector('[name="discountType"]').value;
+            const discountAmount = form.querySelector('[name="discountAmount"]');
+            if (!validateDiscountAmount(discountType, discountAmount.value)) {
+                discountAmount.classList.add('is-invalid');
+                isValid = false;
+            }
+         
+            // Validate dates
+            const startDate = form.querySelector('[name="startDate"]');
+            const endDate = form.querySelector('[name="endDate"]');
+            if (!validateDates(startDate.value, endDate.value)) {
+                startDate.classList.add('is-invalid');
+                endDate.classList.add('is-invalid');
+                isValid = false;
+            }
+         
+            return isValid;
+         }
+         
+         function validateDiscountAmount(type, amount) {
+            amount = parseFloat(amount);
+            
+            if (!amount || amount <= 0) {
+                showErrorAlert('Discount amount must be greater than 0');
                 return false;
             }
          
-            if (values.discountType === 'percentage' && values.discountAmount > 100) {
-                showErrorNotification('Percentage discount cannot exceed 100%');
-                return false;
+            if (type === 'percentage') {
+                if (amount > 100) {
+                    showErrorAlert('Percentage discount cannot exceed 100%');
+                    return false;
+                }
+                if (amount < 1) {
+                    showErrorAlert('Percentage discount must be at least 1%');
+                    return false;
+                }
             }
          
-            const startDate = new Date(values.startDate);
-            const endDate = new Date(values.endDate);
+            return true;
+         }
+         
+         function validateDates(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
             const today = new Date();
-            today.setHours(0,0,0,0);
+            today.setHours(0, 0, 0, 0);
          
-            if (startDate < today) {
-                showErrorNotification('Start date cannot be in the past');
+            if (start < today) {
+                showErrorAlert('Start date cannot be in the past');
                 return false;
             }
          
-            if (endDate <= startDate) {
-                showErrorNotification('End date must be after start date');
+            if (end <= start) {
+                showErrorAlert('End date must be after start date');
                 return false;
             }
          
@@ -395,17 +456,18 @@
          }
          
          async function deleteOffer(offerId, type) {
-            try {
-                const result = await Swal.fire({
-                    title: 'Delete Offer?',
-                    text: 'This action cannot be undone',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#dc3545',
-                    confirmButtonText: 'Delete'
-                });
+            const result = await Swal.fire({
+                title: 'Delete Offer?',
+                text: 'This action cannot be undone',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel'
+            });
          
-                if (result.isConfirmed) {
+            if (result.isConfirmed) {
+                try {
                     const response = await fetch(`/admin/offers/${type}/${offerId}`, {
                         method: 'DELETE'
                     });
@@ -413,24 +475,34 @@
                     const data = await response.json();
          
                     if (data.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Deleted!',
-                            text: data.message,
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => window.location.reload());
+                        showSuccessAlert('Offer deleted successfully').then(() => {
+                            window.location.reload();
+                        });
                     } else {
                         throw new Error(data.message);
                     }
+                } catch (error) {
+                    showErrorAlert(error.message || 'Failed to delete offer');
                 }
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: error.message || 'Failed to delete offer'
-                });
             }
+         }
+         
+         function showSuccessAlert(message) {
+            return Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: message,
+                showConfirmButton: false,
+                timer: 1500
+            });
+         }
+         
+         function showErrorAlert(message) {
+            return Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: message
+            });
          }</script>
     </body>
 </html>
