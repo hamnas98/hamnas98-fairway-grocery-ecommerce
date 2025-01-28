@@ -40,7 +40,7 @@ const getDashboard = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     try {
-        const { name, email, phone } = req.body;
+        const { name,  phone } = req.body;
         const userId = req.session.user.id;
         console.log(req.session.user.id,'userID ')
         // Find user
@@ -53,21 +53,6 @@ const updateProfile = async (req, res) => {
             });
         }
 
-        // Check if email already exists
-        if (email !== user.email) {
-            const emailExists = await User.findOne({ 
-                email, 
-                _id: { $ne: userId } 
-            });
-            if (emailExists) {
-                return res.json({
-                    success: false,
-                    message: 'Email already exists'
-                });
-            }
-        }
-
-            // Check if email already exists
             if (phone !== user.phone) {
                 const phoneExists = await User.findOne({ 
                     phone, 
@@ -84,7 +69,7 @@ const updateProfile = async (req, res) => {
 
         // Update user details
         user.name = name;
-        user.email = email;
+
         user.phone = phone;
 
         await user.save();

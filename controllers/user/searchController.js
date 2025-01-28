@@ -114,6 +114,7 @@ const getSearchPage = async (req, res) => {
 
         // Get all categories for filter
         const allCategories = await Category.find({ 
+            parent: { $ne: null },
             isDeleted: false, 
             listed: true 
         }).select('name');

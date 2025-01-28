@@ -369,16 +369,32 @@
                 const data = await response.json();
          
                 if (data.success) {
-                    showSuccessAlert('Offer created successfully').then(() => {
+                    let message = data.message;
+            
+                 // If there are invalid products, show them in a separate alert
+                     if (data.invalidProducts && data.invalidProducts.length > 0) {
+                        const invalidProductsList = data.invalidProducts
+                            .map(p => `${p.name} (₹${p.price})`)
+                            .join('\n');
+                
+                            await Swal.fire({
+                            icon: 'warning',
+                            title: 'Offer Created with Exceptions',
+                            html: `${message}<br><br>Products where offer couldn't be applied:<br><pre>${invalidProductsList}</pre>`,
+                            confirmButtonText: 'OK'
+                            });
+                    } else {
+                        await showSuccessAlert('Offer created successfully');
+                    }
+            
                         window.location.reload();
-                    });
                 } else {
                     throw new Error(data.message);
                 }
-            } catch (error) {
+             } catch (error) {
                 showErrorAlert(error.message || 'Failed to create offer');
-            }
-         }
+             }
+        }
          
          function validateForm(form) {
             let isValid = true;
@@ -413,28 +429,33 @@
          
             return isValid;
          }
-         
-         function validateDiscountAmount(type, amount) {
-            amount = parseFloat(amount);
-            
-            if (!amount || amount <= 0) {
-                showErrorAlert('Discount amount must be greater than 0');
-                return false;
-            }
-         
-            if (type === 'percentage') {
-                if (amount > 100) {
-                    showErrorAlert('Percentage discount cannot exceed 100%');
-                    return false;
-                }
-                if (amount < 1) {
-                    showErrorAlert('Percentage discount must be at least 1%');
-                    return false;
-                }
-            }
-         
-            return true;
-         }
+         function validateDiscountAmount(type, amount, price = null) {
+    amount = parseFloat(amount);
+    
+    if (!amount || amount <= 0) {
+        showErrorAlert('Discount amount must be greater than 0');
+        return false;
+    }
+
+    if (type === 'percentage') {
+        if (amount > 100) {
+            showErrorAlert('Percentage discount cannot exceed 100%');
+            return false;
+        }
+        if (amount < 1) {
+            showErrorAlert('Percentage discount must be at least 1%');
+            return false;
+        }
+    } else if (price !== null) {
+
+        if (amount >= price) {
+            showErrorAlert('Discount amount cannot be greater than or equal to product price');
+            return false;
+        }
+    }
+
+    return true;
+}
          
          function validateDates(startDate, endDate) {
             const start = new Date(startDate);

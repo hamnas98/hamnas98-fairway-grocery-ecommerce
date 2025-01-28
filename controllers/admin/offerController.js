@@ -25,9 +25,37 @@ const getOffers = async (req, res) => {
         res.redirect('/admin/dashboard');
     }
  };
+
+
+ function validateDiscountAmount(price, discountType, discountAmount) {
+    if (discountType === 'percentage') {
+        const discountedPrice = price * (1 - discountAmount / 100);
+        return discountedPrice > 0;
+    } else {
+        // For flat amount
+        return price - discountAmount > 0;
+    }
+}
+
  const createProductOffer = async (req, res) => {
     try {
         const { productId, discountType, discountAmount, startDate, endDate } = req.body;
+
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+        
+        if (!validateDiscountAmount(product.price, discountType, discountAmount)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Discount amount cannot result in negative or zero price'
+            });
+        }
+
         if(!startDate|| !endDate){
             return res.status(400).json({
                 success: false,
@@ -116,7 +144,9 @@ async function updateProductDiscountPrice(productId) {
         prices.push(catOfferPrice);
     }
  
-    // Set discount price to lowest (best) offer
+       prices = prices.filter(price => price > 0);
+
+    // Set discount price to lowest (best) valid offer
     if (prices.length > 0) {
         product.discountPrice = Math.min(...prices);
         product.discountPercentage = ((product.price - product.discountPrice) / product.price) * 100;
@@ -124,19 +154,31 @@ async function updateProductDiscountPrice(productId) {
         product.discountPrice = null;
         product.discountPercentage = 0;
     }
+
+
  
     await product.save();
  }
 
-const createCategoryOffer = async (req, res) => {
+ const createCategoryOffer = async (req, res) => {
     try {
         const { categoryId, discountType, discountAmount, startDate, endDate } = req.body;
-        if(!startDate|| !endDate){
+
+        if (!startDate || !endDate) {
             return res.status(400).json({
                 success: false,
                 message: 'Please enter start date and end date'
             });     
         }
+
+        const products = await Product.find({ category: categoryId });
+        
+        // Check which products would get negative or zero price
+        const invalidProducts = products.filter(product => 
+            !validateDiscountAmount(product.price, discountType, discountAmount)
+        );
+
+        // Check for existing active offer
         const existingOffer = await CategoryOffer.findOne({
             category: categoryId,
             isActive: true,
@@ -159,11 +201,22 @@ const createCategoryOffer = async (req, res) => {
         });
 
         // Update all products in category
-        await updateCategoryProductsPrices(categoryId);
+        const updateResult = await updateCategoryProductsPrices(categoryId);
+
+        // Prepare response message
+        let message = 'Category offer created successfully';
+        if (invalidProducts.length > 0) {
+            message += `. Offer not applied to ${invalidProducts.length} products due to price restrictions`;
+        }
 
         res.json({
             success: true,
-            message: 'Category offer created successfully'
+            message: message,
+            invalidProducts: invalidProducts.length > 0 ? invalidProducts.map(p => ({
+                name: p.name,
+                price: p.price,
+                reason: 'Price would become negative or zero'
+            })) : []
         });
 
     } catch (error) {
@@ -176,56 +229,82 @@ const createCategoryOffer = async (req, res) => {
 };
 
 async function updateCategoryProductsPrices(categoryId) {
-   const products = await Product.find({ category: categoryId });
-   const categoryOffer = await CategoryOffer.findOne({
-       category: categoryId,
-       isActive: true,
-       startDate: { $lte: new Date() },
-       endDate: { $gt: new Date() }
-   });
+    const products = await Product.find({ category: categoryId });
+    const categoryOffer = await CategoryOffer.findOne({
+        category: categoryId,
+        isActive: true,
+        startDate: { $lte: new Date() },
+        endDate: { $gt: new Date() }
+    });
 
-   for (const product of products) {
-       let prices = [];
+    const results = {
+        updatedProducts: 0,
+        skippedProducts: 0,
+        skippedDetails: []
+    };
 
-       // Original product discount
-       if (product.discountPercentage > 0) {
-           prices.push(product.price * (1 - product.discountPercentage / 100));
-       }
+    for (const product of products) {
+        let prices = [];
+        let skipReason = null;
 
-       // Product-specific offer
-       const productOffer = await ProductOffer.findOne({
-           product: product._id,
-           isActive: true,
-           startDate: { $lte: new Date() },
-           endDate: { $gt: new Date() }
-       });
+        // Original product discount
+        if (product.discountPercentage > 0) {
+            const originalDiscountPrice = product.price * (1 - product.discountPercentage / 100);
+            if (originalDiscountPrice > 0) {
+                prices.push(originalDiscountPrice);
+            }
+        }
 
-       if (productOffer) {
-           const prodOfferPrice = productOffer.discountType === 'percentage' ?
-               product.price * (1 - productOffer.discountAmount / 100) :
-               product.price - productOffer.discountAmount;
-           prices.push(prodOfferPrice);
-       }
+        // Product-specific offer
+        const productOffer = await ProductOffer.findOne({
+            product: product._id,
+            isActive: true,
+            startDate: { $lte: new Date() },
+            endDate: { $gt: new Date() }
+        });
 
-       // Category offer
-       if (categoryOffer) {
-           const catOfferPrice = categoryOffer.discountType === 'percentage' ?
-               product.price * (1 - categoryOffer.discountAmount / 100) :
-               product.price - categoryOffer.discountAmount;
-           prices.push(catOfferPrice);
-       }
+        if (productOffer) {
+            const prodOfferPrice = productOffer.discountType === 'percentage' ?
+                product.price * (1 - productOffer.discountAmount / 100) :
+                product.price - productOffer.discountAmount;
+            if (prodOfferPrice > 0) {
+                prices.push(prodOfferPrice);
+            }
+        }
 
-       // Apply best discount
-       if (prices.length > 0) {
-           product.discountPrice = Math.min(...prices);
-           product.discountPercentage = ((product.price - product.discountPrice) / product.price) * 100;
-       } else {
-           product.discountPrice = null; 
-           product.discountPercentage = 0;
-       }
+        // Category offer
+        if (categoryOffer) {
+            const catOfferPrice = categoryOffer.discountType === 'percentage' ?
+                product.price * (1 - categoryOffer.discountAmount / 100) :
+                product.price - categoryOffer.discountAmount;
+            
+            if (catOfferPrice <= 0) {
+                skipReason = 'Category offer would make price zero or negative';
+            } else {
+                prices.push(catOfferPrice);
+            }
+        }
 
-       await product.save();
-   }
+        if (prices.length > 0) {
+            product.discountPrice = Math.min(...prices);
+            product.discountPercentage = ((product.price - product.discountPrice) / product.price) * 100;
+            results.updatedProducts++;
+            await product.save();
+        } else {
+            product.discountPrice = null;
+            product.discountPercentage = 0;
+            results.skippedProducts++;
+            results.skippedDetails.push({
+                productId: product._id,
+                name: product.name,
+                price: product.price,
+                reason: skipReason || 'No valid discount price available'
+            });
+            await product.save();
+        }
+    }
+
+    return results;
 }
 
 const deleteProductOffer = async (req, res) => {
