@@ -4,31 +4,51 @@ const Category = require('../../models/Category');
 
 const getCart = async (req, res) => {
     try {
-      // Get all parent categories for the header
-         const parentCategories = await Category.find({ 
-            parent: null,
-            isDeleted: false,
+        // Fetch all parent categories for the header
+        const parentCategories = await Category.find({ 
+            parent: null, 
+            isDeleted: false, 
             listed: true 
         });
+
+        // Fetch the user's cart
         const cart = await Cart.findOne({ user: req.session.user.id })
             .populate('items.product');
 
+        // Recalculate totals dynamically based on the latest product data
+        if (cart) {
+            cart.total = cart.items.reduce((sum, item) => {
+
+                const price = item.product.price;
+                return sum + (price * item.quantity);
+            }, 0);
+
+            cart.discountTotal = cart.items.reduce((sum, item) => {
+  
+                const price = item.product.discountPrice || item.product.price;
+                return sum + (price * item.quantity);
+            }, 0);
+
+
+            await cart.save();
+        }
+
+        // Render the cart page
         res.render('cart', {
             parentCategories,
             cart,
             user: req.session.user
         });
-
     } catch (error) {
         console.error('Get cart error:', error);
         req.flash('error', 'Failed to load cart');
         res.redirect('/error');
     }
 };
+
 const addToCart = async (req, res) => {
     try {
         const { productId, quantity } = req.body;
-        console.log(req.body,req.session.user,'add')
 
         if(!req.session.user){
                 return res.status(404).json({
@@ -115,7 +135,7 @@ const updateCartQuantity = async (req, res) => {
             });
     }
         const { productId, quantity } = req.body;
-        console.log('up')
+
         
          // Find cart
         const cart = await Cart.findOne({ user: req.session.user.id });
@@ -170,7 +190,6 @@ const cartCount =  async (req, res) => {
     try {
         const cart = await Cart.findOne({ user: req.session.user.id });
         const count = cart ? cart.items.length : 0;
-        console.log(count)
         res.json({
             success: true,
             count: count

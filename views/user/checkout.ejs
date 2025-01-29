@@ -129,7 +129,31 @@
 									<% } %>
 								</div>
 							</div>
-			
+							<div class="checkout-step mb-4">
+								<div class="step-header">
+									<div class="step-title">
+										<i class="uil uil-wallet"></i>
+										<h4>Wallet Balance</h4>
+									</div>
+								</div>
+								<div class="step-body">
+									<div class="wallet-section">
+										<div class="wallet-balance">
+											<span>Available Balance:</span>
+											<strong>₹<%= wallet ? wallet.balance.toFixed(2) : '0.00' %></strong>
+										</div>
+										<input type="hidden" id="walletBalance" value="<%= wallet ? wallet.balance : 0 %>">
+										<div class="wallet-action">
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="useWallet">
+												<label class="form-check-label" for="useWallet">
+													Use wallet balance for this order
+												</label>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 							<!-- Payment Method Section -->
 							<div class="checkout-step">
 								<div class="step-header">
@@ -180,6 +204,7 @@
 								</div>
 							</div>
 						</div>
+
 						
 		
 						<!-- Right Section - Order Summary -->
@@ -244,6 +269,10 @@
 											<span class="free">FREE</span>
 										</div>
 										<input type="hidden" id="cartTotal" data-value="<%= cart.total %>" data-discount-total="<%= cart.discountTotal %>">
+										<div id="walletDiscount" class="price-item" style="display: none;">
+											<span>Wallet Amount</span>
+											<span>-₹<span id="walletAmount">0</span></span>
+										</div>
 										<div class="total">
 											<span>Total</span>
 											<span>₹<span id="finalAmount"><%= cart.discountTotal.toFixed(2) %></span></span>

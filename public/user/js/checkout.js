@@ -1,4 +1,6 @@
 let appliedCoupon = null;
+let useWallet = false;
+let walletAmountToUse = 0;
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -12,6 +14,11 @@ document.addEventListener('DOMContentLoaded', function() {
    });
 
    document.getElementById('showCouponsBtn').addEventListener('click', showAvailableCoupons);
+
+   const walletCheckbox = document.getElementById('useWallet');
+    if (walletCheckbox) {
+        walletCheckbox.addEventListener('change', handleWalletChange);
+    }
 });
 
 function showAvailableCoupons() {
@@ -84,44 +91,104 @@ function removeCoupon() {
    showSuccessNotification('Coupon removed');
 }
 
+function handleWalletChange(event) {
+    useWallet = event.target.checked;
+    const finalAmountSpan = document.getElementById('finalAmount');
+    const walletDiscountDiv = document.getElementById('walletDiscount');
+    const walletAmountSpan = document.getElementById('walletAmount');
+    const walletBalance = parseFloat(document.getElementById('walletBalance').value);
+    const currentTotal = parseFloat(finalAmountSpan.textContent);
+
+    if (useWallet) {
+        if (walletBalance >= currentTotal) {
+            walletAmountToUse = currentTotal;
+            finalAmountSpan.textContent = '0.00';
+        } else {
+            walletAmountToUse = walletBalance;
+            finalAmountSpan.textContent = (currentTotal - walletBalance).toFixed(2);
+        }
+        walletDiscountDiv.style.display = 'flex';
+        walletAmountSpan.textContent = walletAmountToUse.toFixed(2);
+        
+        // Hide regular payment options if wallet covers full amount
+        const paymentMethodsDiv = document.querySelector('.payment-methods');
+        if (walletAmountToUse >= currentTotal) {
+            paymentMethodsDiv.style.display = 'none';
+        } else {
+            paymentMethodsDiv.style.display = 'block';
+        }
+    } else {
+        walletAmountToUse = 0;
+        walletDiscountDiv.style.display = 'none';
+        finalAmountSpan.textContent = currentTotal.toFixed(2);
+        document.querySelector('.payment-methods').style.display = 'block';
+    }
+}
+
 async function placeOrder() {
-   if (isProcessing) return;
+    if (isProcessing) return;
 
-   const selectedAddress = document.querySelector('input[name="deliveryAddress"]:checked');
-   const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+    const selectedAddress = document.querySelector('input[name="deliveryAddress"]:checked');
+    const finalAmount = parseFloat(document.getElementById('finalAmount').textContent);
+    
+    if (!selectedAddress) {
+        showErrorNotification('Please select a delivery address');
+        return;
+    }
 
-   if (!selectedAddress) {
-       showErrorNotification('Please select a delivery address');
-       return;
-   }
+    // Check payment method only if wallet doesn't cover full amount
+    const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+    if (finalAmount > 0 && !selectedPayment) {
+        showErrorNotification('Please select a payment method');
+        return;
+    }
+   
 
-   if (!selectedPayment) {
-       showErrorNotification('Please select a payment method');
-       return;
-   }
+    try {
+        isProcessing = true;
+        const orderBtn = document.querySelector('.place-order-btn');
+        const originalText = orderBtn.innerHTML;
+        orderBtn.innerHTML = '<i class="uil uil-spinner-alt"></i> Processing...';
+        orderBtn.disabled = true;
 
-   try {
-       isProcessing = true;
-       const orderBtn = document.querySelector('.place-order-btn');
-       const originalText = orderBtn.innerHTML;
-       orderBtn.innerHTML = '<i class="uil uil-spinner-alt"></i> Processing...';
-       orderBtn.disabled = true;
+        const orderData = {
+            addressId: selectedAddress.value,
+            paymentMethod: finalAmount === 0 ? 'wallet' : selectedPayment.value,
+            couponCode: appliedCoupon?.code,
+            useWallet,
+            walletAmount: walletAmountToUse
+        };
 
-       const orderData = {
-           addressId: selectedAddress.value,
-           paymentMethod: selectedPayment.value,
-           couponCode: appliedCoupon?.code
-       };
-
-       if (selectedPayment.value === 'cod') {
-           await handleCODPayment(orderData, orderBtn, originalText);
-       } else {
-           await handleRazorpayPayment(orderData, orderBtn, originalText);
-       }
+        if (finalAmount === 0) {
+            await handleWalletOnlyPayment(orderData, orderBtn, originalText);
+        } else if (selectedPayment.value === 'cod') {
+            await handleCODPayment(orderData, orderBtn, originalText);
+        } else {
+            await handleRazorpayPayment(orderData, orderBtn, originalText);
+        }
    } catch (error) {
        showErrorNotification(error.message);
        resetOrderButton(orderBtn, originalText);
    }
+}
+
+async function handleWalletOnlyPayment(orderData, orderBtn, originalText) {
+    try {
+        const response = await fetch('/place-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            showOrderSuccess();
+        } else {
+            throw new Error(data.message || 'Failed to place order');
+        }
+    } catch (error) {
+        throw error;
+    }
 }
 
 async function handleCODPayment(orderData, orderBtn, originalText) {

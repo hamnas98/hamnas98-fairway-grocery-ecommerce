@@ -4,16 +4,18 @@ const Cart = require('../../models/Cart');
 const Address = require('../../models/Address');
 const Product = require('../../models/Product');
 const Coupon = require('../../models/Coupon');
+const Wallet = require('../../models/Wallet');
 const crypto = require('crypto');
 
 const createRazorpayOrder = async (req, res) => {
     try {
-        const { addressId, couponCode } = req.body;
+        const { addressId, couponCode, useWallet, walletAmount  } = req.body;
  
-        const [address, cart, coupon] = await Promise.all([
+        const [address, cart, coupon, wallet] = await Promise.all([
             Address.findOne({ _id: addressId, user: req.session.user.id, isDeleted: false }),
             Cart.findOne({ user: req.session.user.id }).populate('items.product'),
-            couponCode ? Coupon.findOne({ code: couponCode }) : null
+            couponCode ? Coupon.findOne({ code: couponCode }) : null,
+            useWallet ? Wallet.findOne({ user: req.session.user.id }) : null
         ]);
  
         if (!address) {
@@ -42,6 +44,30 @@ const createRazorpayOrder = async (req, res) => {
                 : coupon.discountAmount;
             finalAmount = cart.discountTotal - couponDiscount;
         }
+        // Handle wallet payment
+        let walletPaymentAmount = 0;
+        if (useWallet && wallet && walletAmount > 0) {
+            if (wallet.balance < walletAmount) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Insufficient wallet balance'
+                });
+            }
+            walletPaymentAmount = Math.min(walletAmount, finalAmount);
+            finalAmount -= walletPaymentAmount;
+
+            // Create pending wallet transaction
+            const walletTransaction = {
+                type: 'debit',
+                amount: walletPaymentAmount,
+                description: 'Partial payment for order',
+                status: 'Pending'
+            };
+            
+            wallet.balance -= walletPaymentAmount;
+            wallet.transactions.push(walletTransaction);
+            await wallet.save();
+        }
  
         // Create Razorpay order
         const razorpayOrder = await razorpay.orders.create({
@@ -56,6 +82,7 @@ const createRazorpayOrder = async (req, res) => {
             addressId,
             cartId: cart._id,
             amount: finalAmount,
+            walletAmount: walletPaymentAmount,
             couponCode,
             createdAt: new Date()
         };
@@ -102,11 +129,13 @@ const createRazorpayOrder = async (req, res) => {
         }
  
         // Get cart, address and coupon
-        const [cart, address, coupon] = await Promise.all([
+        const [cart, address, coupon, wallet] = await Promise.all([
             Cart.findById(req.session.paymentIntent.cartId).populate('items.product'),
             Address.findById(req.session.paymentIntent.addressId),
             req.session.paymentIntent.couponCode ? 
-                Coupon.findOne({ code: req.session.paymentIntent.couponCode }) : null
+                Coupon.findOne({ code: req.session.paymentIntent.couponCode }) : null,
+            req.session.paymentIntent.useWallet ?
+                Wallet.findOne({ user: req.session.user.id }) : null
         ]);
  
         if (!cart || !address) {
@@ -128,7 +157,7 @@ const createRazorpayOrder = async (req, res) => {
             user: req.session.user.id,
             items: cart.items,
             deliveryAddress: address,
-            paymentMethod: 'razorpay',
+            paymentMethod: req.session.paymentIntent.walletAmount > 0 ? 'wallet_razorpay' : 'razorpay',
             total: cart.total,
             discountTotal: finalAmount,
             coupon: coupon?._id,
@@ -145,6 +174,20 @@ const createRazorpayOrder = async (req, res) => {
         });
  
         await order.save();
+
+             // Update wallet transaction status if wallet was used
+             if (wallet && req.session.paymentIntent.walletAmount > 0) {
+                const pendingTransaction = wallet.transactions.find(t => 
+                    t.status === 'Pending' && 
+                    t.amount === req.session.paymentIntent.walletAmount
+                );
+                
+                if (pendingTransaction) {
+                    pendingTransaction.status = 'Completed';
+                    pendingTransaction.orderId = order._id;
+                    await wallet.save();
+                }
+            }
  
         // Update stock and clear cart
         await Promise.all([
@@ -175,6 +218,24 @@ const createRazorpayOrder = async (req, res) => {
 
 const cancelPayment = async (req, res) => {
     try {
+
+         // Refund wallet amount if it was used
+         if (req.session.paymentIntent?.useWallet && req.session.paymentIntent.walletAmount > 0) {
+            const wallet = await Wallet.findOne({ user: req.session.user.id });
+            if (wallet) {
+                // Find the pending transaction and mark it as failed
+                const pendingTransaction = wallet.transactions.find(t => 
+                    t.status === 'Pending' && 
+                    t.amount === req.session.paymentIntent.walletAmount
+                );
+                
+                if (pendingTransaction) {
+                    pendingTransaction.status = 'Failed';
+                    wallet.balance += req.session.paymentIntent.walletAmount;
+                    await wallet.save();
+                }
+            }
+        }
         // Clear payment intent from session
         if (req.session.paymentIntent) {
             delete req.session.paymentIntent;

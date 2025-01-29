@@ -29,7 +29,7 @@ const getDashboard = async (req, res) => {
             user:req.session.user 
         });
 
-        console.log(req.session.user,'db')
+  
 
     } catch (error) {
         console.error('DashBoard error:', error);
@@ -42,7 +42,6 @@ const updateProfile = async (req, res) => {
     try {
         const { name,  phone } = req.body;
         const userId = req.session.user.id;
-        console.log(req.session.user.id,'userID ')
         // Find user
         const user = await User.findById(userId);
         
@@ -125,7 +124,7 @@ const resetDashPassword = async (req, res) => {
                 message: 'Current password is not be same with previous One'
             });
         }
-        console.log(newPassword,user.password ,'np,up')
+
 
         // Update password
         user.password = newPassword;

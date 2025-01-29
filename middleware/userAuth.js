@@ -19,7 +19,7 @@ const userAuth = async (req, res, next) => {
             req.flash('error', 'Please login to continue');
             return res.redirect('/');
         }
-        console.log('auth',req.session.user ,req.session.user.id)
+    
         const user = await User.findById(req.session.user.id);
 
         if (!user) {

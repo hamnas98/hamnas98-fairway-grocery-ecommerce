@@ -37,17 +37,6 @@ const cartSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-// Calculate totals before saving
-cartSchema.pre('save', async function(next) {
-    this.total = this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    this.discountTotal = this.items.reduce((sum, item) => {
-        const itemTotal = item.discountPrice ? 
-            item.discountPrice * item.quantity : 
-            item.price * item.quantity;
-        return sum + itemTotal;
-    }, 0);
-    next();
-});
+
 
 module.exports = mongoose.model('Cart', cartSchema);
-// need to remove cal

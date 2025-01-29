@@ -5,7 +5,7 @@ const Category = require('../../models/Category');
 const getWishlist = async (req, res) => {
     try {
 
-        console.log('whislist')
+
         const parentCategories = await Category.find({ 
             parent: null,
             isDeleted: false,
@@ -31,14 +31,14 @@ const getWishlist = async (req, res) => {
 const toggleWishlist = async (req, res) => {
     try {
         const { productId } = req.body;
-        console.log('Toggle request for product:', productId);
+ 
 
-        if (!req.session.user) {
-            return res.status(401).json({
+        if(!req.session.user){
+            return res.status(404).json({
                 success: false,
-                message: 'Please login to manage wishlist'
+                message: 'Plaese Login to Add products to Cart'
             });
-        }
+    }
 
         let wishlist = await Wishlist.findOne({ user: req.session.user.id });
         
@@ -70,7 +70,7 @@ const toggleWishlist = async (req, res) => {
 
         await wishlist.save();
 
-        console.log('Sending response:', { success: true, message, inWishlist });
+
 
         res.json({
             success: true,

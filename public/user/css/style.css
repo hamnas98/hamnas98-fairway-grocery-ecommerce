@@ -567,8 +567,8 @@ i.icon1 {
 }
 
 .option_links .icon_wishlist {
-    background: rgba(246,151,51,0.2);
-    color: #f69733;
+    background: rgba(61, 66, 102, 0.2);
+    color: #3d4266;
     height: 35px;
     width: 35px;
     display: inline-block;
@@ -616,7 +616,7 @@ i.icon1 {
     position: absolute;
     top: 0px;
     right: 8px;
-    background: #f69733;
+    background: #3d4266;
     color: #fff;
     width: 16px;
     height: 16px;
@@ -2184,14 +2184,14 @@ i.icon1 {
 }
 
 span.like-icon {
-	color: #f69733;
+	color: #3d4266;
     font-size: 18px;
     position: absolute;
     z-index: 101;
     right: 0;
     top: 0;
     cursor: pointer;
-    background-color: rgba(246,151,51,0.2);
+    background-color: rgba(61, 66, 102, 0.2);
     display: block;
     height: 35px;
     width: 35px;
@@ -2228,7 +2228,7 @@ span.like-icon {
 }
 
 .like-icon:hover, .like-icon.liked {
-	background-color:#f69733;
+	background-color:#3d4266;
 	color:#fff;
 }
 

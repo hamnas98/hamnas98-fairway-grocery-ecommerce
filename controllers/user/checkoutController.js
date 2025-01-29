@@ -4,7 +4,7 @@ const Category = require('../../models/Category');
 const Order = require('../../models/Order');
 const Product = require('../../models/Product');
 const Coupon = require('../../models/Coupon')
-
+const Wallet = require('../../models/Wallet');
 
 const getCheckoutPage = async (req, res) => {
     try {
@@ -25,6 +25,23 @@ const getCheckoutPage = async (req, res) => {
         if (!cart || cart.items.length === 0) {
             return res.redirect('/cart');
         }
+                // Recalculate totals dynamically based on the latest product data
+        if (cart) {
+            cart.total = cart.items.reduce((sum, item) => {
+
+                const price = item.product.price;
+                return sum + (price * item.quantity);
+            }, 0);
+
+            cart.discountTotal = cart.items.reduce((sum, item) => {
+  
+                const price = item.product.discountPrice || item.product.price;
+                return sum + (price * item.quantity);
+            }, 0);
+
+
+            await cart.save();
+        }
 
         // Get user's addresses
         const addresses = await Address.find({ 
@@ -37,6 +54,8 @@ const getCheckoutPage = async (req, res) => {
             startDate: { $lte: new Date() },
             endDate: { $gte: new Date() }
         });
+        
+        const wallet = await Wallet.findOne({ user: req.session.user.id });
 
         res.render('checkout', {
             parentCategories,
@@ -44,6 +63,7 @@ const getCheckoutPage = async (req, res) => {
             addresses,
             activeCoupons,
             user:req.session.user,
+            wallet,
             pageTitle: 'Checkout'
         });
 
@@ -56,15 +76,13 @@ const getCheckoutPage = async (req, res) => {
 
 const placeOrder = async (req, res) => {
     try {
-        console.log(req.body)
-        const { addressId, paymentMethod, couponCode } = req.body;
+        const { addressId, paymentMethod, couponCode, useWallet, walletAmount } = req.body;
 
         let coupon = null;
         if (couponCode) {
             coupon = await Coupon.findOne({ code: couponCode });
         }
         
-
         // Validate address
         const address = await Address.findOne({
             _id: addressId,
@@ -110,22 +128,67 @@ const placeOrder = async (req, res) => {
             await Coupon.findByIdAndUpdate(coupon._id, { $inc: { usedCount: 1 } });
         }
 
+        let wallet = null;
+        let remainingAmount = finalAmount;
+        let walletTransaction = null;
+
+        if (useWallet && walletAmount > 0) {
+            wallet = await Wallet.findOne({ user: req.session.user.id });
+            
+            if (!wallet || wallet.balance < walletAmount) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Insufficient wallet balance'
+                });
+            }
+            remainingAmount = finalAmount - walletAmount;
+
+            // Create wallet transaction
+            walletTransaction = {
+                type: 'debit',
+                amount: walletAmount,
+                description: `Payment for order`,
+                status: 'Pending'
+            };
+
+            wallet.balance -= walletAmount;
+            wallet.transactions.push(walletTransaction);
+            await wallet.save();
+        }
+
+        // Determine payment method based on wallet and remaining amount
+        let finalPaymentMethod;
+        if (remainingAmount === 0) {
+            finalPaymentMethod = 'wallet';
+        } else if (useWallet && walletAmount > 0) {
+            finalPaymentMethod = paymentMethod === 'cod' ? 'wallet_cod' : 'wallet_razorpay';
+        } else {
+            finalPaymentMethod = paymentMethod;
+        }
+
         // Create order
         const order = new Order({
             user: req.session.user.id,
             items: cart.items,
             deliveryAddress: address,
-            paymentMethod,
+            paymentMethod: finalPaymentMethod,
             total: cart.total,
             discountTotal: finalAmount,
-            orderStatus: paymentMethod === 'cod' ? 'Pending' : 'Processing',
+            orderStatus: finalPaymentMethod === 'cod' || finalPaymentMethod === 'wallet_cod' ? 'Pending' : 'Processing',
             coupon: coupon?._id,
             couponDiscount: coupon ? (cart.discountTotal - finalAmount) : 0,
-            processingAt:new Date()
-           
+            walletAmount: walletAmount || 0,
+            processingAt: remainingAmount === 0 ? new Date() : null
         });
 
         await order.save();
+
+        if (wallet && walletTransaction) {
+            const transactionIndex = wallet.transactions.length - 1;
+            wallet.transactions[transactionIndex].orderId = order._id;
+            wallet.transactions[transactionIndex].status = remainingAmount === 0 ? 'Completed' : 'Pending';
+            await wallet.save();
+        }
 
         // Update product stock
         for (const item of cart.items) {
@@ -137,12 +200,21 @@ const placeOrder = async (req, res) => {
         // Clear cart
         await Cart.findByIdAndDelete(cart._id);
 
-        res.json({
-            success: true,
-            message: 'Order placed successfully',
-            orderId: order._id
-        });
+        // Handle response based on payment method
+        if (remainingAmount === 0 || finalPaymentMethod === 'cod' || finalPaymentMethod === 'wallet_cod') {
+            return res.json({
+                success: true,
+                message: 'Order placed successfully',
+                orderId: order._id
+            });
+        }
 
+        return res.json({
+            success: true,
+            message: 'Order created',
+            orderId: order._id,
+            remainingAmount: remainingAmount
+        });
     } catch (error) {
         console.error('Place order error:', error);
         res.status(500).json({
@@ -225,4 +297,4 @@ const applyCoupon = async (req, res) => {
     }
 };
 
-module.exports = { getCheckoutPage, placeOrder, applyCoupon }
+module.exports = { getCheckoutPage, placeOrder, applyCoupon };

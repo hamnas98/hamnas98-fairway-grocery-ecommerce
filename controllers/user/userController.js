@@ -58,7 +58,7 @@ const getHome = async (req, res) => {
         })
         .sort({ createdAt: -1 })
         .limit(10);
-        console.log(req.session.user)
+
         res.render('home', {
             parentCategories,
             fruitsVegProducts,
@@ -85,7 +85,7 @@ const getHome = async (req, res) => {
 const signup = async (req, res) => {
     try {
         const { name, email, phone, password } = req.body;
-        // console.log(phone)
+
 
         // Check if user exists
         const existingUser = await User.findOne({
@@ -110,9 +110,7 @@ const signup = async (req, res) => {
             expiresAt: Date.now() + 10 * 60 * 1000 // 10 minutes
         };
         const emailSent = await sendOTP(email,otp);
-        // console.log('Signup OTP:', otp);
-        // console.log(req.session.userData)
-
+ 
         res.json({
             success: true,
             message: 'OTP sent successfully'
@@ -130,7 +128,7 @@ const resendOTP = async (req, res) => {
     try {
         const otp = generateOTP();
         const {type,email} = req.body;
-        console.log(type,email) //
+
 
         if (type === 'signup' && req.session.userData) {
             req.session.userData.otp = otp;
@@ -150,8 +148,7 @@ const resendOTP = async (req, res) => {
 
         const emailSent = await sendOTP(email,otp);
  
-        console.log(req.session.userData)
-        console.log('Resent OTP:', otp);
+
 
         res.json({
             success: true,
@@ -169,8 +166,7 @@ const resendOTP = async (req, res) => {
 const verifySignupOTP = async (req, res) => {
     try {
         const { otp } = req.body;
-        // const userData = req.session.userData;
-        // console.log(otp,userData.otp)
+    
 
         if (!userData || userData.expiresAt < Date.now()) {
             return res.json({
@@ -221,7 +217,7 @@ const login = async (req, res) => {
         // console.log(email,password)
 
         const user = await User.findOne({ email });
-        console.log(user,'LS')
+
         if (!user) {
             return res.json({
                 success: false,
@@ -234,7 +230,7 @@ const login = async (req, res) => {
                 message: 'Please Login with Google'
             });
         }
-        console.log(user)
+
 
         if (user.isBlocked) {
             return res.json({
@@ -244,7 +240,7 @@ const login = async (req, res) => {
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
-        console.log(isMatch)
+
         if (!isMatch) {
             return res.json({
                 success: false,
@@ -262,7 +258,7 @@ const login = async (req, res) => {
 
         const emailSent = await sendOTP(email,otp);
         // console.log(req.session.userData)
-        console.log('Login OTP:', otp);
+
 
         res.json({
             success: true,
@@ -281,7 +277,6 @@ const verifyLoginOTP = async (req, res) => {
     try {
         const { otp } = req.body;
         const userData = req.session.userData;
-        console.log(otp,userData.otp)
 
         if (!userData || userData.expiresAt < Date.now()) {
             return res.json({
@@ -402,7 +397,7 @@ const resetPassword = async (req, res) => {
     try {
         const { password } = req.body;
         const { email } = req.session.userData;
-        console.log(password,email,req.session.userData)
+    
 
         const user = await User.findOne({ email });
         user.password = password;
@@ -449,7 +444,7 @@ const googleCallback = async (req, res) => {
             name: user.name
         };
 
-        console.log(req.session.user,'gs')
+
 
  
         res.redirect('/');

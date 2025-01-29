@@ -15,7 +15,6 @@ const getAllAddresses = async (req, res) => {
             user: req.session.user.id,
             isDeleted: false
         }).sort({ isDefault: -1, createdAt: -1 });
-        console.log(req.session.user,'add')
         res.render('addresses', {
             parentCategories,
             addresses,
@@ -90,7 +89,6 @@ const getAddress = async (req, res) => {
             user: req.session.user.id,
             isDeleted: false
         });
-        console.log(req.params.id,req.session.user.id,'update',address)
 
         if (!address) {
             return res.status(404).json({

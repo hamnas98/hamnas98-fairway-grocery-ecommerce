@@ -149,7 +149,7 @@ async function updateProductDiscountPrice(productId) {
     // Set discount price to lowest (best) valid offer
     if (prices.length > 0) {
         product.discountPrice = Math.min(...prices);
-        product.discountPercentage = ((product.price - product.discountPrice) / product.price) * 100;
+        product.discountPercentage = Math.ceil(((product.price - product.discountPrice) / product.price) * 100);
     } else {
         product.discountPrice = null;
         product.discountPercentage = 0;
@@ -287,7 +287,7 @@ async function updateCategoryProductsPrices(categoryId) {
 
         if (prices.length > 0) {
             product.discountPrice = Math.min(...prices);
-            product.discountPercentage = ((product.price - product.discountPrice) / product.price) * 100;
+            product.discountPercentage = Math.ceil(((product.price - product.discountPrice) / product.price) * 100);
             results.updatedProducts++;
             await product.save();
         } else {
@@ -358,7 +358,7 @@ const deleteCategoryOffer = async (req, res) => {
                 product.productDiscountPercentage = 0;
             } else {
                 // Check for other active offers
-                await updateProductDiscountPrice(product._id);
+                await updateCategoryProductsPrices(product._id);
             }
             await product.save();
         }

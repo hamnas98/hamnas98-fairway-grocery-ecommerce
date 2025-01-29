@@ -39,10 +39,13 @@ const getWallet = async (req, res) => {
 
 const refundToWallet = async (userId, orderId, amount) => {
     try {
+        console.log('Refund to wallet initiated:', { userId, orderId, amount });
+        
         let wallet = await Wallet.findOne({ user: userId });
         const order = await Order.findById(orderId);
         
         if (!wallet) {
+            console.log('Creating new wallet for user');
             wallet = new Wallet({
                 user: userId,
                 balance: 0,
@@ -50,16 +53,21 @@ const refundToWallet = async (userId, orderId, amount) => {
             });
         }
 
+        const description = order.orderStatus === 'Partially Cancelled' ? 
+            `Partial refund for order #${orderId}` :
+            `Refund for order #${orderId}`;
+
         // Add refund transaction
-        wallet.transactions.push({
+        const transaction = {
             type: 'credit',
             amount: amount,
-            description: order.orderStatus === 'Partially Cancelled' ? 
-                `Partial refund for order #${orderId}` :
-                `Refund for order #${orderId}`,
+            description,
             orderId: orderId,
             status: 'Completed'
-        });
+        };
+
+        console.log('Creating wallet transaction:', transaction);
+        wallet.transactions.push(transaction);
 
         // Get the ID of the newly added transaction
         const transactionId = wallet.transactions[wallet.transactions.length - 1]._id;
@@ -72,8 +80,13 @@ const refundToWallet = async (userId, orderId, amount) => {
             walletTransactionId: transactionId
         };
 
+        console.log('Current wallet balance:', wallet.balance);
+        console.log('Adding refund amount:', amount);
+        
         // Update wallet balance
         wallet.balance += amount;
+
+        console.log('New wallet balance:', wallet.balance);
 
         // Save both wallet and order
         await Promise.all([
@@ -81,6 +94,7 @@ const refundToWallet = async (userId, orderId, amount) => {
             order.save()
         ]);
 
+        console.log('Refund processed successfully');
         return true;
     } catch (error) {
         console.error('Refund to wallet error:', error);
@@ -91,3 +105,4 @@ const refundToWallet = async (userId, orderId, amount) => {
 
 
 module.exports = { getWallet, refundToWallet }
+

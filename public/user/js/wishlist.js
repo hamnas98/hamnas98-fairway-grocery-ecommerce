@@ -50,6 +50,7 @@ function toggleWishlistItem(element, productId) {
     })
     .then(response => response.json())
     .then(data => {
+        console.log('Wishlist response:', data);
         if (data.success) {
             if (data.inWishlist) {
                 element.className = 'like-icon liked';

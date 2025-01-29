@@ -56,7 +56,7 @@ const orderSchema = new mongoose.Schema({
     },
     paymentMethod: {
         type: String,
-        enum: ['cod', 'razorpay'],
+        enum: ['cod', 'razorpay','wallet','wallet_razorpay','wallet_cod'],
         required: true
     },
     paymentDetails: {
@@ -77,6 +77,10 @@ const orderSchema = new mongoose.Schema({
     discountTotal: {
         type: Number,
         required: true
+    },
+    walletAmount: {
+        type: Number,
+        default: 0
     },
     coupon: {
         type: mongoose.Schema.Types.ObjectId,
@@ -109,15 +113,24 @@ const orderSchema = new mongoose.Schema({
     cancelledAt: {
         type: Date
     },
-    refundDetails: {
-        amount: Number,
-        processedAt: Date,
+    returnDetails: {
+        isReturned: {
+            type: Boolean,
+            default: false
+        },
+        returnedAt: Date,
         status: {
             type: String,
-            enum: ['Pending', 'Completed', 'Failed'],
+            enum: ['Pending', 'Processing', 'Completed', 'Rejected'],
             default: 'Pending'
         },
-        walletTransactionId: mongoose.Schema.Types.ObjectId
+        refundAmount: Number,
+        walletRefundAmount: Number,  // Add this field
+        refundStatus: {
+            type: String,
+            enum: ['Pending', 'Completed', 'Failed','Rejected']
+        },
+        rejectionReason: String 
     },
     processingAt: {
         type: Date
