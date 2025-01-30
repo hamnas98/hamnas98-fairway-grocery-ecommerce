@@ -1,25 +1,70 @@
 let appliedCoupon = null;
 let useWallet = false;
 let walletAmountToUse = 0;
-
+let originalTotal = 0;
 
 document.addEventListener('DOMContentLoaded', function() {
-   document.querySelectorAll('input[name="deliveryAddress"]').forEach(radio => {
-       radio.addEventListener('change', function() {
-           document.querySelectorAll('.address-card').forEach(card => {
-               card.classList.remove('selected');
-           });
-           this.closest('.address-card').classList.add('selected');
-       });
-   });
+    // Existing event listeners
+    document.querySelectorAll('input[name="deliveryAddress"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.querySelectorAll('.address-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            this.closest('.address-card').classList.add('selected');
+        });
 
-   document.getElementById('showCouponsBtn').addEventListener('click', showAvailableCoupons);
+           // Store original amount on page load
+    const finalAmountSpan = document.getElementById('finalAmount');
+    if (finalAmountSpan) {
+        originalAmount = parseFloat(finalAmountSpan.textContent);
+    }
+    });
 
-   const walletCheckbox = document.getElementById('useWallet');
+    document.getElementById('showCouponsBtn').addEventListener('click', showAvailableCoupons);
+
+    const walletCheckbox = document.getElementById('useWallet');
     if (walletCheckbox) {
         walletCheckbox.addEventListener('change', handleWalletChange);
     }
+
+    // Store original total and discount total on page load
+    const cartTotalInput = document.getElementById('cartTotal');
+    if (cartTotalInput) {
+        originalTotal = parseFloat(cartTotalInput.getAttribute('data-discount-total'));
+    }
 });
+
+function updateTotalAmount() {
+    const finalAmountSpan = document.getElementById('finalAmount');
+    let currentTotal = originalAmount;
+
+    // Apply coupon discount if exists
+    if (appliedCoupon) {
+        currentTotal -= appliedCoupon.discount;
+    }
+
+    // Apply wallet amount if checked
+    if (useWallet) {
+        const walletBalance = parseFloat(document.getElementById('walletBalance').value);
+        if (walletBalance >= currentTotal) {
+            walletAmountToUse = currentTotal;
+            currentTotal = 0;
+        } else {
+            walletAmountToUse = walletBalance;
+            currentTotal -= walletBalance;
+        }
+        document.getElementById('walletAmount').textContent = walletAmountToUse.toFixed(2);
+    }
+
+    finalAmountSpan.textContent = currentTotal.toFixed(2);
+
+    // Update payment methods visibility
+    const paymentMethodsDiv = document.querySelector('.payment-methods');
+    if (paymentMethodsDiv) {
+        paymentMethodsDiv.style.display = currentTotal === 0 ? 'none' : 'block';
+    }
+}
+
 
 function showAvailableCoupons() {
    const couponsModal = new bootstrap.Modal(document.getElementById('availableCouponsModal'));
@@ -33,96 +78,77 @@ function selectCoupon(code) {
 }
 
 async function applyCoupon() {
-   const code = document.getElementById('couponInput').value.trim().toUpperCase();
-   if (!code) {
-       showErrorNotification('Please enter a coupon code');
-       return;
-   }
+    const code = document.getElementById('couponInput').value.trim().toUpperCase();
+    if (!code) {
+        showErrorNotification('Please enter a coupon code');
+        return;
+    }
    
-   try {
-       const currentTotal = document.getElementById('finalAmount').textContent;
-       const response = await fetch('/apply-coupon', {
-           method: 'POST',
-           headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify({ 
-               code,
-               cartTotal: parseFloat(currentTotal)
-           })
-       });
+    try {
+        const response = await fetch('/apply-coupon', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                code,
+                cartTotal: originalAmount
+            })
+        });
 
-       const data = await response.json();
+        const data = await response.json();
 
-       if (data.success) {
-           appliedCoupon = {
-               code,
-               discount: data.discount
-           };
+        if (data.success) {
+            appliedCoupon = {
+                code,
+                discount: data.discount
+            };
            
-           document.getElementById('couponDiscount').style.display = 'flex';
-           document.getElementById('couponDiscountAmount').textContent = data.discount.toFixed(2);
-           document.getElementById('finalAmount').textContent = data.finalAmount.toFixed(2);
+            document.getElementById('couponDiscount').style.display = 'flex';
+            document.getElementById('couponDiscountAmount').textContent = data.discount.toFixed(2);
+            
+            updateTotalAmount();
+            
+            showSuccessNotification('Coupon applied! You saved ₹' + data.discount.toFixed(2));
            
-           showSuccessNotification('Coupon applied! You saved ₹' + data.discount.toFixed(2));
-           
-           const applyBtn = document.querySelector('.apply-coupon-btn');
-           document.getElementById('couponInput').disabled = true;
-           applyBtn.textContent = 'Remove';
-           applyBtn.onclick = removeCoupon;
-       } else {
-           throw new Error(data.message);
-       }
-   } catch (error) {
-       showErrorNotification(error.message || 'Failed to apply coupon');
-   }
+            const applyBtn = document.querySelector('.apply-coupon-btn');
+            document.getElementById('couponInput').disabled = true;
+            applyBtn.textContent = 'Remove';
+            applyBtn.onclick = removeCoupon;
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        showErrorNotification(error.message || 'Failed to apply coupon');
+    }
 }
 
 function removeCoupon() {
-   appliedCoupon = null;
+    appliedCoupon = null;
    
-   document.getElementById('couponInput').value = '';
-   document.getElementById('couponInput').disabled = false;
-   document.getElementById('couponDiscount').style.display = 'none';
-   document.getElementById('finalAmount').textContent = cart.discountTotal.toFixed(2);
+    document.getElementById('couponInput').value = '';
+    document.getElementById('couponInput').disabled = false;
+    document.getElementById('couponDiscount').style.display = 'none';
+    
+    updateTotalAmount();
    
-   const applyBtn = document.querySelector('.apply-coupon-btn');
-   applyBtn.textContent = 'Apply';
-   applyBtn.onclick = applyCoupon;
+    const applyBtn = document.querySelector('.apply-coupon-btn');
+    applyBtn.textContent = 'Apply';
+    applyBtn.onclick = applyCoupon;
    
-   showSuccessNotification('Coupon removed');
+    showSuccessNotification('Coupon removed');
 }
 
 function handleWalletChange(event) {
     useWallet = event.target.checked;
-    const finalAmountSpan = document.getElementById('finalAmount');
     const walletDiscountDiv = document.getElementById('walletDiscount');
-    const walletAmountSpan = document.getElementById('walletAmount');
-    const walletBalance = parseFloat(document.getElementById('walletBalance').value);
-    const currentTotal = parseFloat(finalAmountSpan.textContent);
 
     if (useWallet) {
-        if (walletBalance >= currentTotal) {
-            walletAmountToUse = currentTotal;
-            finalAmountSpan.textContent = '0.00';
-        } else {
-            walletAmountToUse = walletBalance;
-            finalAmountSpan.textContent = (currentTotal - walletBalance).toFixed(2);
-        }
         walletDiscountDiv.style.display = 'flex';
-        walletAmountSpan.textContent = walletAmountToUse.toFixed(2);
-        
-        // Hide regular payment options if wallet covers full amount
-        const paymentMethodsDiv = document.querySelector('.payment-methods');
-        if (walletAmountToUse >= currentTotal) {
-            paymentMethodsDiv.style.display = 'none';
-        } else {
-            paymentMethodsDiv.style.display = 'block';
-        }
     } else {
         walletAmountToUse = 0;
         walletDiscountDiv.style.display = 'none';
-        finalAmountSpan.textContent = currentTotal.toFixed(2);
-        document.querySelector('.payment-methods').style.display = 'block';
     }
+
+    updateTotalAmount();
 }
 
 async function placeOrder() {
