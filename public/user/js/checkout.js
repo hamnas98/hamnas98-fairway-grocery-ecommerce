@@ -18,6 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (finalAmountSpan) {
         originalAmount = parseFloat(finalAmountSpan.textContent);
     }
+    // Initial check for COD availability
+    handlePaymentMethodDisplay();
     });
 
     document.getElementById('showCouponsBtn').addEventListener('click', showAvailableCoupons);
@@ -33,6 +35,32 @@ document.addEventListener('DOMContentLoaded', function() {
         originalTotal = parseFloat(cartTotalInput.getAttribute('data-discount-total'));
     }
 });
+
+function handlePaymentMethodDisplay() {
+    const finalAmount = parseFloat(document.getElementById('finalAmount').textContent);
+    const codInput = document.getElementById('cod');
+    const codLabel = document.querySelector('label[for="cod"]');
+    const codStatusTag = codLabel.querySelector('.status-tag');
+
+    if (finalAmount > 500) {
+        codInput.disabled = true;
+        codInput.checked = false;
+        codStatusTag.textContent = 'Not Available';
+        codStatusTag.classList.add('unavailable');
+        if (codInput.checked) {
+            document.getElementById('razorpay').checked = true;
+        }
+        
+        // Add tooltip or message explaining why COD is not available
+        codLabel.setAttribute('title', 'COD is not available for orders above ₹500');
+    } else {
+        codInput.disabled = false;
+        codStatusTag.textContent = 'Available';
+        codStatusTag.classList.remove('unavailable');
+        codLabel.removeAttribute('title');
+    }
+}
+
 
 function updateTotalAmount() {
     const finalAmountSpan = document.getElementById('finalAmount');
@@ -58,11 +86,14 @@ function updateTotalAmount() {
 
     finalAmountSpan.textContent = currentTotal.toFixed(2);
 
-    // Update payment methods visibility
-    const paymentMethodsDiv = document.querySelector('.payment-methods');
-    if (paymentMethodsDiv) {
-        paymentMethodsDiv.style.display = currentTotal === 0 ? 'none' : 'block';
-    }
+  // Update payment methods visibility and COD availability
+  const paymentMethodsDiv = document.querySelector('.payment-methods');
+  if (paymentMethodsDiv) {
+      paymentMethodsDiv.style.display = currentTotal === 0 ? 'none' : 'block';
+      if (currentTotal > 0) {
+          handlePaymentMethodDisplay();
+      }
+  }
 }
 
 
@@ -161,13 +192,18 @@ async function placeOrder() {
         showErrorNotification('Please select a delivery address');
         return;
     }
-
+ 
     // Check payment method only if wallet doesn't cover full amount
     const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
     if (finalAmount > 0 && !selectedPayment) {
         showErrorNotification('Please select a payment method');
         return;
     }
+    // Add COD amount validation
+ if (selectedPayment?.value === 'cod' && finalAmount > 500) {
+    showErrorNotification('COD is not available for orders above ₹500');
+    return;
+}
    
 
     try {

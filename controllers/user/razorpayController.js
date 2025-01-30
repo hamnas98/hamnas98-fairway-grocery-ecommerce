@@ -60,7 +60,7 @@ const createRazorpayOrder = async (req, res) => {
             const walletTransaction = {
                 type: 'debit',
                 amount: walletPaymentAmount,
-                description: 'Partial payment for order',
+                description: 'Partial payment for order #${orderId}',
                 status: 'Pending'
             };
             

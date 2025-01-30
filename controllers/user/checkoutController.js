@@ -128,6 +128,13 @@ const placeOrder = async (req, res) => {
             await Coupon.findByIdAndUpdate(coupon._id, { $inc: { usedCount: 1 } });
         }
 
+        if ((paymentMethod === 'cod' || paymentMethod === 'wallet_cod') && finalAmount > 500) {
+            return res.status(400).json({
+                success: false,
+                message: 'Cash on Delivery is not available for orders above ₹500'
+            });
+        }
+
         let wallet = null;
         let remainingAmount = finalAmount;
         let walletTransaction = null;
@@ -147,7 +154,7 @@ const placeOrder = async (req, res) => {
             walletTransaction = {
                 type: 'debit',
                 amount: walletAmount,
-                description: `Payment for order`,
+                description: `Payment for order #${orderId}`,
                 status: 'Pending'
             };
 
