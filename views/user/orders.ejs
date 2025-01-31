@@ -68,10 +68,38 @@
                                     <% if(orders && orders.length > 0) { %>
                                         <% orders.forEach(order => { %>
                                             <div class="order-card">
+                                                
                                                 <div class="order-header">
                                                     <div class="order-info">
                                                         <span class="order-id">#<%= order._id.toString().slice(-6) %></span>
                                                         <span class="order-date"><%= new Date(order.createdAt).toLocaleDateString() %></span>
+                                                        <div class="payment-info">
+                                                            <% let paymentLabel = ''; %>
+                                                            <% let paymentStatus = ''; %>
+                                                            <% switch(order.paymentMethod) {
+                                                                case 'cod': 
+                                                                    paymentLabel = 'Cash on Delivery';
+                                                                    break;
+                                                                case 'razorpay': 
+                                                                    paymentLabel = 'Online Payment';
+                                                                    paymentStatus = order.paymentDetails.status === 'paid' ? 'Paid' : 'Pending';
+                                                                    break;
+                                                                case 'wallet':
+                                                                    paymentLabel = 'Wallet Payment';
+                                                                    break;
+                                                                case 'wallet_cod':
+                                                                    paymentLabel = `Wallet + COD (₹${order.walletAmount.toFixed(2)} from wallet)`;
+                                                                    break;
+                                                                case 'wallet_razorpay':
+                                                                    paymentLabel = `Wallet + Online (₹${order.walletAmount.toFixed(2)} from wallet)`;
+                                                                    paymentStatus = order.paymentDetails.status === 'paid' ? 'Paid' : 'Pending';
+                                                                    break;
+                                                            } %>
+                                                            <span class="payment-method"><%= paymentLabel %></span>
+                                                            <% if (paymentStatus) { %>
+                                                                <span class="payment-status <%= paymentStatus.toLowerCase() %>"><%= paymentStatus %></span>
+                                                            <% } %>
+                                                        </div>
                                                     </div>
                                                     <div class="order-status <%= order.orderStatus.toLowerCase() %>">
                                                         <%= order.orderStatus %>
@@ -161,13 +189,7 @@
                                                             <i class="uil uil-times-circle"></i>
                                                             <span>Order Cancelled</span>
                                                         </div>
-                                                        <% if(order.cancelReason) { %>
-                                                            <div class="cancel-reason">
-                                                                <span>Reason:</span> <%= order.cancelReason %>
-                                                            </div>
-                                                        <% } %>
-                                                        
-                                                        <% if(order.paymentMethod === 'razorpay') { %>
+                                                        <% if(order.refundDetails && ['razorpay', 'wallet', 'wallet_razorpay'].includes(order.paymentMethod)) { %>
                                                             <div class="refund-details">
                                                                 <div class="refund-header">
                                                                     <i class="uil uil-wallet"></i>
@@ -175,23 +197,40 @@
                                                                 </div>
                                                                 <div class="refund-content">
                                                                     <div class="refund-info">
-                                                                        <div class="refund-amount">
-                                                                            <span>Refund Amount:</span>
-                                                                            <strong>₹<%= order.discountTotal.toFixed(2) %></strong>
-                                                                        </div>
-                                                                        <% if(order.refundDetails && order.refundDetails.status) { %>
+                                                                        <% if(order.refundDetails.amount) { %>
+                                                                            <div class="refund-amount">
+                                                                                <div class="amount-details">
+                                                                                    <span>Total Refund:</span>
+                                                                                    <strong>₹<%= order.refundDetails.amount.toFixed(2) %></strong>
+                                                                                </div>
+                                                                                <% if(order.paymentMethod === 'wallet_razorpay') { %>
+                                                                                    <div class="refund-breakdown">
+                                                                                        <div class="breakdown-item">
+                                                                                            <small>Wallet Amount:</small>
+                                                                                            <small>₹<%= order.walletAmount.toFixed(2) %></small>
+                                                                                        </div>
+                                                                                        <div class="breakdown-item">
+                                                                                            <small>Online Payment:</small>
+                                                                                            <small>₹<%= (order.refundDetails.amount - order.walletAmount).toFixed(2) %></small>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                <% } %>
+                                                                            </div>
+                                                                            
                                                                             <div class="refund-status">
                                                                                 <span>Status:</span>
                                                                                 <span class="status-badge <%= order.refundDetails.status.toLowerCase() %>">
                                                                                     <%= order.refundDetails.status %>
                                                                                 </span>
                                                                             </div>
+                                                        
                                                                             <% if(order.refundDetails.processedAt) { %>
                                                                                 <div class="refund-date">
                                                                                     <span>Processed on:</span>
                                                                                     <span><%= new Date(order.refundDetails.processedAt).toLocaleDateString() %></span>
                                                                                 </div>
                                                                             <% } %>
+                                                        
                                                                             <% if(order.refundDetails.status === 'Completed') { %>
                                                                                 <div class="refund-note">
                                                                                     <i class="uil uil-info-circle"></i>
@@ -205,13 +244,17 @@
                                                                             </div>
                                                                         <% } %>
                                                                     </div>
-                                                                    <a href="/dashboard/wallet" class="check-wallet-btn">
-                                                                        <i class="uil uil-wallet"></i>
-                                                                        Check Wallet
-                                                                    </a>
+                                                        
+                                                                    <% if(order.refundDetails.status === 'Completed') { %>
+                                                                        <a href="/dashboard/wallet" class="check-wallet-btn">
+                                                                            <i class="uil uil-wallet"></i>
+                                                                            Check Wallet
+                                                                        </a>
+                                                                    <% } %>
                                                                 </div>
                                                             </div>
                                                         <% } %>
+                                                        
                                                     </div>
                                                 <% } %>
                                                 
@@ -355,6 +398,43 @@
                                                         </div>
                                                     </div>
                                                 <% } %>
+
+                                                <div class="price-breakdown">
+                                                    <h6>Price Details</h6>
+                                                    <div class="price-details">
+                                                        <div class="price-row">
+                                                            <span>Cart Total</span>
+                                                            <span>₹<%= order.total.toFixed(2) %></span>
+                                                        </div>
+                                                        
+                                                        <% if(order.total - order.discountTotal > 0) { %>
+                                                            <div class="price-row discount">
+                                                                <span>Item Discount</span>
+                                                                <span>-₹<%= (order.total - order.discountTotal).toFixed(2) %></span>
+                                                            </div>
+                                                        <% } %>
+                                                        
+                                                        <% if(order.couponDiscount > 0) { %>
+                                                            <div class="price-row coupon">
+                                                                <span>Coupon Discount</span>
+                                                                <span>-₹<%= order.couponDiscount.toFixed(2) %></span>
+                                                            </div>
+                                                        <% } %>
+                                                
+                                                        <% if(order.walletAmount > 0) { %>
+                                                            <div class="price-row wallet">
+                                                                <span>Paid from Wallet</span>
+                                                                <span>-₹<%= order.walletAmount.toFixed(2) %></span>
+                                                            </div>
+                                                        <% } %>
+                                                
+                                                        <div class="price-row final">
+                                                            <% const payableAmount = order.discountTotal - (order.walletAmount || 0); %>
+                                                            <strong>Amount <%= ['cod', 'wallet_cod'].includes(order.paymentMethod) ? 'Payable' : 'Paid' %></strong>
+                                                            <strong>₹<%= payableAmount.toFixed(2) %></strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
          
                                                 <div class="order-footer">
                                                     <div class="order-total">
@@ -431,11 +511,8 @@
                 </div>
             </div>
         </div>
-                </div>
-            </div>
-        </div>
-     
-        
+    
+    
         <%- include('../partials/user/resetResetModal') %>
 
         

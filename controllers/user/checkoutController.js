@@ -154,7 +154,7 @@ const placeOrder = async (req, res) => {
             walletTransaction = {
                 type: 'debit',
                 amount: walletAmount,
-                description: `Payment for order #${orderId}`,
+                description: `Payment for order `,
                 status: 'Pending'
             };
 
@@ -163,7 +163,7 @@ const placeOrder = async (req, res) => {
             await wallet.save();
         }
 
-        // Determine payment method based on wallet and remaining amount
+        // update payment method based on wallet and remaining amount
         let finalPaymentMethod;
         if (remainingAmount === 0) {
             finalPaymentMethod = 'wallet';
@@ -194,6 +194,7 @@ const placeOrder = async (req, res) => {
             const transactionIndex = wallet.transactions.length - 1;
             wallet.transactions[transactionIndex].orderId = order._id;
             wallet.transactions[transactionIndex].status = remainingAmount === 0 ? 'Completed' : 'Pending';
+            wallet.transactions[transactionIndex].description = `Payment for order #${order._id}`;
             await wallet.save();
         }
 

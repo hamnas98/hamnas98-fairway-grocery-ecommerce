@@ -1250,3 +1250,111 @@
     padding-top: 15px;
     border-top: 1px solid #eee;
 }
+
+.payment-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5px;
+    font-size: 0.9rem;
+}
+
+.payment-method {
+    color: #666;
+}
+
+.payment-status {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.payment-status.paid {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.payment-status.pending {
+    background-color: #fff3e0;
+    color: #ef6c00;
+}
+
+.price-breakdown {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.price-breakdown h6 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.price-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #666;
+}
+
+.price-row.discount {
+    color: #28a745;
+}
+
+.price-row.coupon {
+    color: #2196f3;
+}
+
+.price-row.wallet {
+    color: #9c27b0;
+}
+
+.price-row.final {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #dee2e6;
+    color: #333;
+}
+
+.refund-breakdown {
+    margin-top: 8px;
+    padding: 8px;
+    background: rgba(0,0,0,0.03);
+    border-radius: 4px;
+}
+
+.breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.status-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.status-badge.completed {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-badge.pending {
+    background-color: #fff3e0;
+    color: #ef6c00;
+}
+
+.status-badge.failed {
+    background-color: #ffebee;
+    color: #c62828;
+}

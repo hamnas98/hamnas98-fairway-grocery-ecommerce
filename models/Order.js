@@ -158,6 +158,19 @@ const orderSchema = new mongoose.Schema({
             enum: ['Pending', 'Completed', 'Failed','Rejected']
         },
         rejectionReason: String 
+    },
+    refundDetails:{
+        amount: Number,
+        processedAt: Date,
+        status: {
+            type: String,
+            enum: ['Pending', 'Completed', 'Failed'],
+            default: 'Pending'
+        },
+        walletTransactionId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Wallet.transactions'
+        }
     }
 }, { timestamps: true });
 

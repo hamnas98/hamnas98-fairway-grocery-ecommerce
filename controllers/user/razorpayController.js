@@ -87,6 +87,7 @@ const createRazorpayOrder = async (req, res) => {
             createdAt: new Date()
         };
  
+        console.log(req.session.paymentIntent);
         res.json({
             success: true,
             razorpayKey: process.env.RAZORPAY_KEY_ID,
@@ -216,28 +217,57 @@ const createRazorpayOrder = async (req, res) => {
     }
  };
 
-const cancelPayment = async (req, res) => {
+ const cancelPayment = async (req, res) => {
     try {
+        const { useWallet, walletAmount } = req.body;
+        console.log('Cancel Payment Request:', { useWallet, walletAmount, sessionIntent: req.session.paymentIntent });
 
-         // Refund wallet amount if it was used
-         if (req.session.paymentIntent?.useWallet && req.session.paymentIntent.walletAmount > 0) {
-            const wallet = await Wallet.findOne({ user: req.session.user.id });
-            if (wallet) {
-                // Find the pending transaction and mark it as failed
-                const pendingTransaction = wallet.transactions.find(t => 
-                    t.status === 'Pending' && 
-                    t.amount === req.session.paymentIntent.walletAmount
-                );
+        if (useWallet || (req.session.paymentIntent?.walletAmount > 0)) {
+            const actualWalletAmount = walletAmount || req.session.paymentIntent?.walletAmount;
+            
+            if (actualWalletAmount > 0) {
+                const wallet = await Wallet.findOne({ user: req.session.user.id });
                 
-                if (pendingTransaction) {
-                    pendingTransaction.status = 'Failed';
-                    wallet.balance += req.session.paymentIntent.walletAmount;
-                    await wallet.save();
+                if (wallet) {
+                    // Find the most recent pending transaction
+                    const pendingTransaction = wallet.transactions
+                        .slice()
+                        .reverse()
+                        .find(t => t.status === 'Pending' && t.amount === actualWalletAmount);
+                    
+                    if (pendingTransaction) {
+                        console.log('Found pending transaction:', pendingTransaction);
+                        
+                        // Update the pending transaction
+                        pendingTransaction.status = 'Failed';
+                        pendingTransaction.description = `${pendingTransaction.description} (Payment Cancelled)`;
+                        
+                        // Refund the amount
+                        wallet.balance += actualWalletAmount;
+                        
+                        // Add a refund transaction
+                        wallet.transactions.push({
+                            type: 'credit',
+                            amount: actualWalletAmount,
+                            description: 'Refund for cancelled Razorpay payment',
+                            status: 'Completed'
+                        });
+
+                        await wallet.save();
+                        console.log('Wallet updated:', {
+                            refundedAmount: actualWalletAmount,
+                            newBalance: wallet.balance
+                        });
+                    } else {
+                        console.log('No pending transaction found for wallet amount:', actualWalletAmount);
+                    }
                 }
             }
         }
-        // Clear payment intent from session
+
+        // Clear payment intent
         if (req.session.paymentIntent) {
+            console.log('Clearing payment intent from session');
             delete req.session.paymentIntent;
         }
 

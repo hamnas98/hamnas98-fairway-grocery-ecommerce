@@ -356,18 +356,31 @@ function handlePaymentError(error) {
    showErrorNotification(error.message || 'Payment failed');
 }
 
-async function handlePaymentCancel(orderBtn, originalText) {
-   try {
-       await fetch('/cancel-payment', {
-           method: 'POST',
-           headers: { 'Content-Type': 'application/json' }
-       });
-       resetOrderButton(orderBtn, originalText);
-       showErrorNotification('Payment cancelled');
-   } catch (error) {
-       console.error('Error cancelling payment:', error);
-   }
-}
+async function handlePaymentCancel(orderBtn, originalText, orderId) {
+    try {
+        const orderData = window.currentOrderData;
+        await fetch('/cancel-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                useWallet: orderData?.useWallet,
+                walletAmount: orderData?.walletAmount,
+                orderId: orderId
+            })
+        });
+ 
+        window.currentOrderData = null; // Clear stored data
+        resetOrderButton(orderBtn, originalText);
+        showErrorNotification('Payment cancelled');
+        
+        // Reload page to reset the state
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
+    } catch (error) {
+        console.error('Error cancelling payment:', error);
+    }
+ }
 
 function resetOrderButton(button, originalText) {
    button.innerHTML = originalText;

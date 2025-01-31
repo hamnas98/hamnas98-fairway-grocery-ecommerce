@@ -215,7 +215,8 @@ const cancelOrder = async (req, res) => {
             console.log('Processing wallet refund:', {
                 walletRefundAmount,
                 paymentMethod: order.paymentMethod,
-                orderStatus: order.orderStatus
+                orderStatus: order.orderStatus,
+                refundStatus:'completed'
             });
             
             const refundSuccess = await refundToWallet(
