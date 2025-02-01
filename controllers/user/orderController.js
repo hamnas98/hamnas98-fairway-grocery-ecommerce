@@ -3,7 +3,8 @@ const Cart = require('../../models/Cart');
 const Category = require('../../models/Category');
 const Product = require('../../models/Product');
 const Wallet = require('../../models/Wallet');
-const {refundToWallet} = require('../../controllers/user/walletController')
+const {refundToWallet} = require('../../controllers/user/walletController');
+const InvoiceGenerator = require('../../utils/invoiceGenerator');
 
 const getOrders = async (req, res) => {
 
@@ -345,6 +346,60 @@ const processReturn = async (req, res) => {
     }
 };
 
+const downloadInvoice = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+
+        // Find order and populate necessary fields
+        const order = await Order.findOne({
+            _id: orderId,
+            user: req.session.user.id
+        }).populate([
+            {
+                path: 'items.product',
+                select: 'name price'
+            },
+            {
+                path: 'deliveryAddress'
+            }
+        ]);
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found'
+            });
+        }
+
+        // Check if order is in a state where invoice can be generated
+        const validStates = ['Processing', 'Shipped', 'Delivered'];
+        if (!validStates.includes(order.orderStatus)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invoice can only be downloaded for confirmed orders'
+            });
+        }
+
+        // Generate invoice
+        const invoiceGenerator = new InvoiceGenerator(order);
+        const pdfBuffer = await invoiceGenerator.generate();
+
+        // Set response headers
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename=invoice-${orderId}.pdf`);
+
+        // Send the PDF
+        res.send(pdfBuffer);
+
+    } catch (error) {
+        console.error('Download invoice error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to generate invoice'
+        });
+    }
+};
 
 
-module.exports = { getOrders, getOrderDetails, cancelOrder, processReturn }
+
+module.exports = { getOrders, getOrderDetails, cancelOrder, processReturn, downloadInvoice }

@@ -65,6 +65,7 @@
                         <div class="pdpt-bg">
                             <div class="col-md-12">
                                 <div class="order-list-container">
+                                    
                                     <% if(orders && orders.length > 0) { %>
                                         <% orders.forEach(order => { %>
                                             <div class="order-card">
@@ -454,6 +455,20 @@
                                                         <button class="view-details-btn" onclick="viewOrderDetails('<%= order._id %>')">
                                                             View Details
                                                         </button>
+                                                        <% if(orders && orders.length > 0) { %>
+                                                            <% orders.forEach(order => { %>
+                                                                <% if (['Processing', 'Shipped', 'Delivered'].includes(order.orderStatus)) { %>
+                                                                    <div class="invoice-action">
+                                                                        <a href="/orders/invoice/<%= order._id %>" 
+                                                                        class="btn btn-primary download-invoice"
+                                                                        target="_blank">
+                                                                        <i class="uil uil-download-alt"></i>
+                                                                        Download Invoice
+                                                                        </a>
+                                                                    </div>
+                                                                <% } %>
+                                                            <% }) %>
+                                                        <% } %>
                                                         <% if(order.orderStatus === 'Pending' || order.orderStatus === 'Processing') { %>
                                                             <div class="dropdown">
                                                                 <button class="cancel-options-btn" data-bs-toggle="dropdown">
