@@ -273,88 +273,242 @@ async function handleCODPayment(orderData, orderBtn, originalText) {
 }
 
 async function handleRazorpayPayment(orderData, orderBtn, originalText) {
-   try {
-       const response = await fetch('/create-razorpay-order', {
-           method: 'POST',
-           headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify(orderData)
-       });
-
-       const data = await response.json();
-       if (!data.success) {
-           throw new Error(data.message);
-       }
-
-       const options = {
-           key: data.razorpayKey,
-           amount: data.amount,
-           currency: data.currency,
-           order_id: data.orderId,
-           name: 'Fairway Supermarket',
-           description: 'Order Payment',
-           prefill: data.userInfo,
-           handler: async function(response) {
-               try {
-                   orderBtn.innerHTML = '<i class="uil uil-spinner-alt"></i> Verifying Payment...';
-                   
-                   const verifyResponse = await fetch('/verify-payment', {
-                       method: 'POST',
-                       headers: { 'Content-Type': 'application/json' },
-                       body: JSON.stringify({
-                           ...response,
-                           orderId: data.orderId,
-                           couponCode: orderData.couponCode
-                       })
-                   });
-
-                   const verifyData = await verifyResponse.json();
-                   if (verifyData.success) {
-                       showOrderSuccess(); // Changed from showPaymentSuccess
-                   } else {
-                       throw new Error(verifyData.message);
-                   }
-               } catch (error) {
-                   handlePaymentError(error);
-                   resetOrderButton(orderBtn, originalText);
-               }
-           },
-           modal: {
-               ondismiss: async function() {
-                   await handlePaymentCancel(orderBtn, originalText);
-               }
-           },
-           theme: { color: '#2E3192' }
-       };
-
-       const rzp = new Razorpay(options);
-       rzp.on('payment.failed', function(response) {
-           handlePaymentError(response.error);
-           resetOrderButton(orderBtn, originalText);
-       });
-       
-       rzp.open();
-   } catch (error) {
-       handlePaymentError(error);
-       resetOrderButton(orderBtn, originalText);
-       throw error;
-   }
+    try {
+        const response = await fetch('/create-razorpay-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        });
+ 
+        const data = await response.json();
+        if (!data.success) {
+            throw new Error(data.message);
+        }
+ 
+        // Store order data for later use
+        window.currentOrderData = {
+            ...orderData,
+            mongoOrderId: data.mongoOrderId
+        };
+ 
+        const options = {
+            key: data.razorpayKey,
+            amount: data.amount,
+            currency: data.currency,
+            order_id: data.orderId,
+            name: 'Fairway Supermarket',
+            description: 'Order Payment',
+            prefill: data.userInfo,
+            handler: async function(response) {
+                try {
+                    orderBtn.innerHTML = '<i class="uil uil-spinner-alt"></i> Verifying Payment...';
+                    
+                    const verifyResponse = await fetch('/verify-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            ...response,
+                            orderId: data.mongoOrderId,
+                            razorpay_order_id: data.orderId,
+                            couponCode: orderData.couponCode,
+                            useWallet: orderData.useWallet,
+                            walletAmount: orderData.walletAmount
+                        })
+                    });
+ 
+                    const verifyData = await verifyResponse.json();
+                    if (verifyData.success) {
+                        showOrderSuccess();
+                    } else {
+                        throw new Error(verifyData.message);
+                    }
+                } catch (error) {
+                    await handlePaymentError(error, data.mongoOrderId);
+                    resetOrderButton(orderBtn, originalText);
+                }
+            },
+            modal: {
+                ondismiss: async function() {
+                    // Only handle cancellation if no payment error occurred
+                    if (!window.paymentErrorOccurred) {
+                        await handlePaymentCancel(orderBtn, originalText, data.mongoOrderId);
+                    }
+                    window.paymentErrorOccurred = false; // Reset the flag
+                }
+            },
+            theme: { color: '#2E3192' }
+        };
+ 
+        const rzp = new Razorpay(options);
+        rzp.on('payment.failed', async function(response) {
+            window.paymentErrorOccurred = true; // Set flag to prevent cancel handler
+            await handlePaymentError(response.error, data.mongoOrderId);
+            resetOrderButton(orderBtn, originalText);
+        });
+        
+        rzp.open();
+    } catch (error) {
+        handlePaymentError(error);
+        resetOrderButton(orderBtn, originalText);
+        throw error;
+    }
 }
 
-function showOrderSuccess() {
-   Swal.fire({
-       icon: 'success',
-       title: 'Order Placed Successfully!',
-       text: 'Thank you for shopping with us',
-       confirmButtonText: 'View Order',
-       allowOutsideClick: false
-   }).then(() => {
-       window.location.href = '/dashboard/orders';
-   });
+async function handlePaymentError(error, orderId) {
+    try {
+        window.paymentErrorOccurred = true; // Set flag to prevent cancel handler
+
+        if (orderId) {
+            await fetch('/update-payment-status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    orderId,
+                    status: 'payment_pending'
+                })
+            });
+        }
+ 
+        Swal.fire({
+            icon: 'error',
+            title: 'Payment Failed',
+            text: 'Your order has been saved. You can complete the payment from your orders page.',
+            confirmButtonText: 'View Orders',
+            showCancelButton: true,
+            cancelButtonText: 'Close'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/dashboard/orders';
+            }
+        });
+    } catch (err) {
+        showErrorNotification(error.message || 'Payment failed');
+    }
 }
 
-function handlePaymentError(error) {
-   showErrorNotification(error.message || 'Payment failed');
+async function handlePaymentCancel(orderBtn, originalText, orderId) {
+    try {
+        // Don't proceed if payment error occurred
+        if (window.paymentErrorOccurred) {
+            return;
+        }
+
+        const orderData = window.currentOrderData;
+        
+        if (!orderId && orderData?.mongoOrderId) {
+            orderId = orderData.mongoOrderId;
+        }
+
+        await fetch('/cancel-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                useWallet: orderData?.useWallet,
+                walletAmount: orderData?.walletAmount,
+                orderId: orderId
+            })
+        });
+ 
+        window.currentOrderData = null;
+        resetOrderButton(orderBtn, originalText);
+        showErrorNotification('Payment cancelled');
+        
+        // Delete order and redirect to cart
+        if (orderId) {
+            await fetch('/delete-pending-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderId })
+            });
+        }
+
+        setTimeout(() => {
+            window.location.href = '/cart';
+        }, 1500);
+    } catch (error) {
+        console.error('Error cancelling payment:', error);
+        showErrorNotification('Error cancelling payment');
+    } finally {
+        window.paymentErrorOccurred = false; // Reset the flag
+    }
 }
+ 
+ function showOrderSuccess() {
+     Swal.fire({
+         icon: 'success',
+         title: 'Order Placed Successfully!',
+         text: 'Thank you for shopping with us',
+         confirmButtonText: 'View Order',
+         allowOutsideClick: false
+     }).then(() => {
+         window.currentOrderData = null; // Clear stored data
+         window.location.href = '/dashboard/orders';
+     });
+ }
+ 
+//for payemnt continue on from orders page
+ async function continuePayment(orderId) {
+    try {
+        const response = await fetch('/continue-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId })
+        });
+
+        const data = await response.json();
+        if (!data.success) {
+            throw new Error(data.message);
+        }
+
+        const options = {
+            key: data.razorpayKey,
+            amount: data.amount,
+            currency: data.currency,
+            order_id: data.orderId,
+            name: 'Fairway Supermarket',
+            description: 'Complete Payment',
+            prefill: data.userInfo,
+            handler: async function(response) {
+                try {
+                    const verifyResponse = await fetch('/verify-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            ...response,
+                            orderId: data.orderId
+                        })
+                    });
+
+                    const verifyData = await verifyResponse.json();
+                    if (verifyData.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Payment Completed!',
+                            text: 'Your payment has been processed successfully',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        throw new Error(verifyData.message);
+                    }
+                } catch (error) {
+                    showErrorNotification(error.message || 'Payment verification failed');
+                }
+            }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.on('payment.failed', function(response) {
+            showErrorNotification(response.error.description || 'Payment failed');
+        });
+        
+        rzp.open();
+    } catch (error) {
+        showErrorNotification(error.message || 'Failed to initialize payment');
+    }
+}
+
 
 async function handlePaymentCancel(orderBtn, originalText, orderId) {
     try {
@@ -386,6 +540,56 @@ function resetOrderButton(button, originalText) {
    button.innerHTML = originalText;
    button.disabled = false;
    isProcessing = false;
+}
+
+async function cancelPendingOrder(orderId) {
+    try {
+        // Show confirmation dialog
+        const result = await Swal.fire({
+            title: 'Cancel Order?',
+            text: 'Are you sure you want to cancel this order?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, cancel it!',
+            cancelButtonText: 'No, keep it'
+        });
+
+        if (!result.isConfirmed) {
+            return;
+        }
+
+        // Send request to delete pending order
+        const response = await fetch('/delete-pending-order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ orderId })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            Swal.fire({
+                title: 'Order Cancelled',
+                text: 'Your order has been cancelled successfully.',
+                icon: 'success'
+            }).then(() => {
+                // Reload the page to update the orders list
+                window.location.reload();
+            });
+        } else {
+            throw new Error(data.message || 'Failed to cancel order');
+        }
+    } catch (error) {
+        Swal.fire({
+            title: 'Error',
+            text: error.message || 'Failed to cancel order',
+            icon: 'error'
+        });
+    }
 }
 
 function showSuccessNotification(message) {

@@ -65,7 +65,7 @@ const orderSchema = new mongoose.Schema({
         razorpaySignature: String,
         status: {
             type: String,
-            enum: ['pending', 'paid', 'failed'],
+            enum: ['pending', 'paid', 'failed','payment_pending'],
             default: 'pending'
         },
         paidAt: Date
@@ -103,7 +103,8 @@ const orderSchema = new mongoose.Schema({
             'Return Processing',
             'Return Completed',
             'Return Rejected',
-            'Partially Returned'
+            'Partially Returned',
+            'Payment Pending'
         ],
         default: 'Pending'
     },
@@ -140,24 +141,6 @@ const orderSchema = new mongoose.Schema({
     },
     deliveredAt: {
         type: Date
-    },
-    returnDetails: {
-        isReturned: {
-            type: Boolean,
-            default: false
-        },
-        returnedAt: Date,
-        status: {
-            type: String,
-            enum: ['Pending', 'Processing', 'Completed', 'Rejected'],
-            default: 'Pending'
-        },
-        refundAmount: Number,
-        refundStatus: {
-            type: String,
-            enum: ['Pending', 'Completed', 'Failed','Rejected']
-        },
-        rejectionReason: String 
     },
     refundDetails:{
         amount: Number,

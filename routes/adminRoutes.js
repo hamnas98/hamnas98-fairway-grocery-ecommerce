@@ -5,7 +5,7 @@ const { getLoginPage, login, getDashboard , logout } = require('../controllers/a
 const { getAllCategories, getAddCategory, addCategory,getEditCategory,
         updateCategory,listingCategory, deleteCategory } = require('../controllers/admin/categoryController');
 const { categoryUpload, productUpload } = require('../config/multer');
-const adminAuth = require('../middleware/amninAuth');
+const adminAuth = require('../middleware/adminAuth');
 const { getAllProducts, getAddProduct, getParentCategory, addProduct, getEditProduct, 
         updateProduct, listingProduct, deleteProduct, getProductDetails  } = require('../controllers/admin/productController');
 const { getUsers, toggleUserBlock, deleteUser } = require('../controllers/admin/userController');
