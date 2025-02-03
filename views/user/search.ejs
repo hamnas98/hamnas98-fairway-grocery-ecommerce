@@ -212,14 +212,35 @@
 							</div>
 						</div>
 	
-						<!-- Load More Button -->
-						<% if (hasMoreProducts) { %>
-							<div class="load-more-wrapper text-center mt-4">
-								<button class="btn load-more-btn" onclick="loadMoreProducts()">
-									Load More Products
-								</button>
+						<div class="col-12">
+							<div class="pagination-wrapper">
+								<% if (totalPages > 1) { %>
+									<ul class="pagination">
+										<% if (currentPage > 1) { %>
+											<li>
+												<a href="#" class="prev-page" onclick="goToPage(<%= currentPage - 1 %>)">
+													<i class="uil uil-angle-left"></i>
+												</a>
+											</li>
+										<% } %>
+						
+										<% for(let i = startPage; i <= endPage; i++) { %>
+											<li class="<%= i === currentPage ? 'active' : '' %>">
+												<a href="#" onclick="goToPage(<%= i %>)"><%= i %></a>
+											</li>
+										<% } %>
+						
+										<% if (currentPage < totalPages) { %>
+											<li>
+												<a href="#" class="next-page" onclick="goToPage(<%= currentPage + 1 %>)">
+													<i class="uil uil-angle-right"></i>
+												</a>
+											</li>
+										<% } %>
+									</ul>
+								<% } %>
 							</div>
-						<% } %>
+						</div>
 					</div>
 				</div>
 			</div>

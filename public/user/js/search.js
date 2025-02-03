@@ -1,22 +1,23 @@
-// Frontend Search Script (search.js)
-
+// search.js
 let searchTimeout;
 let isSearching = false;
 let currentPage = 1;
-let isLoadingMore = false;
 let currentParams = new URLSearchParams(window.location.search);
 
-// Initialize search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    initializeSearch();
+    initializeFilters();
+});
+
 function initializeSearch() {
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.querySelector('.search-btn');
     const searchResults = document.getElementById('searchResults');
     const searchHistory = document.getElementById('searchHistory');
-    
 
     if (!searchInput) return;
 
-    // Search input handler with debounce
+    // Handle search input with debounce
     searchInput.addEventListener('input', function() {
         clearTimeout(searchTimeout);
         const query = this.value.trim();
@@ -32,49 +33,40 @@ function initializeSearch() {
         searchTimeout = setTimeout(() => performQuickSearch(query), 300);
     });
 
-    // Search form submission
-    searchBtn.addEventListener('click', handleSearchSubmit);
-    searchInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            handleSearchSubmit(e);
-        } else if (e.key === 'Escape') {
-            hideResults();
+    // Show history on input focus when empty
+    searchInput.addEventListener('focus', function() {
+        if (!this.value.trim()) {
+            loadAndShowHistory();
         }
     });
 
-    // Close dropdowns on outside click
+    // Handle search submission
+    searchBtn.addEventListener('click', handleSearchSubmit);
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSearchSubmit(e);
+        }
+    });
+
+    // Handle clicks outside dropdowns
     document.addEventListener('click', function(e) {
-        if (!searchResults.contains(e.target) && 
-            !searchInput.contains(e.target)) {
+        if (!searchResults.contains(e.target) && !searchInput.contains(e.target)) {
             hideResults();
         }
-        if (!searchHistory.contains(e.target) && 
-            !searchInput.contains(e.target)) {
+        if (!searchHistory.contains(e.target) && !searchInput.contains(e.target)) {
             hideSearchHistory();
         }
     });
-
-    // Load search history on focus
-    searchInput.addEventListener('focus', function() {
-        const query = this.value.trim();
-        if (!query) {
-            showSearchHistory();
-        }
-    });
-
-    // Initialize price range inputs
-    initializePriceInputs();
 }
 
-// Quick search functionality
+// Quick Search Functionality
 async function performQuickSearch(query) {
     try {
         const response = await fetch(`/quick-search?query=${encodeURIComponent(query)}`);
         const data = await response.json();
 
-        if (!data.success) {
-            throw new Error(data.message);
-        }
+        if (!data.success) throw new Error(data.message);
 
         displayQuickResults(data.products, query);
     } catch (error) {
@@ -85,134 +77,116 @@ async function performQuickSearch(query) {
     }
 }
 
-// Handle search form submission
-async function handleSearchSubmit(e) {
-    e.preventDefault();
-    if (isSearching) return;
-
-    const searchInput = document.getElementById('searchInput');
-    const query = searchInput.value.trim();
-    
-    if (!query) return;
+async function loadAndShowHistory() {
+    const searchHistory = document.getElementById('searchHistory');
+    const historyList = searchHistory.querySelector('.history-list');
 
     try {
-        isSearching = true;
-        showButtonLoading();
-        
-        // Save search to history if user is logged in
-        await saveSearchHistory(query);
-        
-        // Redirect to search results page
-        window.location.href = `/search?q=${encodeURIComponent(query)}`;
-    } catch (error) {
-        console.error('Search error:', error);
-        showError('Failed to perform search');
-    } finally {
-        isSearching = false;
-        hideButtonLoading();
-    }
-}
-
-// Save search to history
-async function saveSearchHistory(query) {
-    try {
-        const response = await fetch('/search-history', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ query })
-        });
-        const data = await response.json();
-        if (!data.success) {
-            throw new Error(data.message);
-        }
-    } catch (error) {
-        console.error('Failed to save search history:', error);
-    }
-}
-
-// Load and display search history
-async function loadSearchHistory() {
-    try {
-        console.log('Loading search history...');
         const response = await fetch('/search-history');
         const data = await response.json();
-        console.log('Search history data:', data);
 
-        if (!data.success) {
-            throw new Error(data.message);
-        }
-
-        const historyList = document.querySelector('.history-list');
-        console.log('History list element:', historyList);
-
-        if (!historyList) {
-            console.log('History list element not found');
-            hideSearchHistory();
+        if (!data.success || !data.history.length) {
+            searchHistory.style.display = 'none';
             return;
         }
-
-        if (!data.history || !data.history.length) {
-            console.log('No search history found');
-            hideSearchHistory();
-            return;
-        }
-
-        // Log history items before rendering
-        console.log('History items to render:', data.history);
 
         historyList.innerHTML = data.history
-    .map(item => `
-        <div class="history-item" data-id="${item._id}" data-query="${encodeURIComponent(item.query)}">
-            <i class="uil uil-clock-three"></i>
-            <span class="history-query">${item.query}</span>
-            <i class="uil uil-times remove-history"></i>
-        </div>
-    `)
-    .join('');
+            .map(item => `
+                <div class="history-item" data-id="${item._id}">
+                    <button class="history-query" onclick="useHistoryQuery('${encodeURIComponent(item.query)}')">
+                        <i class="uil uil-history"></i>
+                        <span>${item.query}</span>
+                    </button>
+                    <button class="remove-history" onclick="removeHistoryItem('${item._id}', event)">
+                        <i class="uil uil-times"></i>
+                    </button>
+                </div>
+            `).join('');
 
-// Add event listeners after generating the list
-const historyItems = historyList.querySelectorAll('.history-item');
-historyItems.forEach(item => {
-    const querySpan = item.querySelector('.history-query');
-    querySpan.addEventListener('click', (e) => {
-        console.log('History item clicked:', item.dataset.query);
-        e.preventDefault();
-        e.stopPropagation();
-        useHistoryItem(item.dataset.query);
-    });
-
-    const removeBtn = item.querySelector('.remove-history');
-    removeBtn.addEventListener('click', async (e) => {
-        console.log('Remove button clicked for item:', item.dataset.id);
-        e.preventDefault();
-        e.stopPropagation();
-        await removeHistoryItem(item.dataset.id);
-    });
-});
-        
-        showSearchHistory();
+        searchHistory.style.display = 'block';
     } catch (error) {
         console.error('Failed to load search history:', error);
-        hideSearchHistory();
     }
 }
-// Filter and sort functionality
+
+function useHistoryQuery(query) {
+    const searchInput = document.getElementById('searchInput');
+    const decodedQuery = decodeURIComponent(query);
+    searchInput.value = decodedQuery;
+    hideSearchHistory();
+    window.location.href = `/search?q=${encodeURIComponent(decodedQuery)}`;
+}
+
+async function removeHistoryItem(itemId, event) {
+    event.stopPropagation();
+    try {
+        const response = await fetch(`/search-history/${itemId}`, {
+            method: 'DELETE'
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            const historyItem = document.querySelector(`.history-item[data-id="${itemId}"]`);
+            if (historyItem) {
+                historyItem.remove();
+                const historyList = document.querySelector('.history-list');
+                if (!historyList.children.length) {
+                    hideSearchHistory();
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Failed to remove history item:', error);
+        showError('Failed to remove from history');
+    }
+}
+
+// Filter Functions
+function initializeFilters() {
+    // Initialize price range inputs
+    const minPrice = document.getElementById('minPrice');
+    const maxPrice = document.getElementById('maxPrice');
+
+    if (minPrice && maxPrice) {
+        minPrice.addEventListener('change', validatePriceRange);
+        maxPrice.addEventListener('change', validatePriceRange);
+    }
+
+    // Initialize pagination if present
+    const paginationLinks = document.querySelectorAll('.pagination a');
+    paginationLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = e.target.dataset.page;
+            if (page) goToPage(parseInt(page));
+        });
+    });
+}
+
+function validatePriceRange() {
+    const minPrice = document.getElementById('minPrice');
+    const maxPrice = document.getElementById('maxPrice');
+    
+    if (minPrice.value && maxPrice.value) {
+        if (parseInt(minPrice.value) > parseInt(maxPrice.value)) {
+            minPrice.value = maxPrice.value;
+        }
+    }
+}
+
 function updateFilters() {
     const categoryCheckboxes = document.querySelectorAll('.category-filter:checked');
     const showOutOfStock = document.getElementById('showOutOfStock').checked;
     const selectedCategories = Array.from(categoryCheckboxes).map(cb => cb.value);
 
-    // Update URL params
     currentParams.set('outOfStock', showOutOfStock);
     if (selectedCategories.length) {
         currentParams.set('categories', selectedCategories.join(','));
     } else {
         currentParams.delete('categories');
     }
-    currentParams.set('page', '1'); // Reset to first page
-
+    
+    currentParams.set('page', '1');
     reloadWithParams();
 }
 
@@ -226,7 +200,7 @@ function applyPriceFilter() {
     if (maxPrice) currentParams.set('maxPrice', maxPrice);
     else currentParams.delete('maxPrice');
 
-    currentParams.set('page', '1'); // Reset to first page
+    currentParams.set('page', '1');
     reloadWithParams();
 }
 
@@ -236,136 +210,64 @@ function updateSort(sortValue) {
     reloadWithParams();
 }
 
-function clearAllFilters() {
-    const query = currentParams.get('q');
-    currentParams = new URLSearchParams();
-    if (query) currentParams.set('q', query);
+function goToPage(page) {
+    currentParams.set('page', page);
     reloadWithParams();
 }
 
-// Load more products functionality
-async function loadMoreProducts() {
-    if (isLoadingMore) return;
-
-    try {
-        isLoadingMore = true;
-        showLoadMoreLoading();
-
-        currentPage++;
-        currentParams.set('page', currentPage);
-
-        const response = await fetch(`/products/search?${currentParams.toString()}`);
-        const data = await response.json();
-
-        if (!data.success) {
-            throw new Error(data.message);
-        }
-
-        appendProducts(data.products);
-        
-        if (!data.hasMoreProducts) {
-            hideLoadMoreButton();
-        }
-    } catch (error) {
-        console.error('Failed to load more products:', error);
-        showError('Failed to load more products');
-        currentPage--;
-    } finally {
-        isLoadingMore = false;
-        hideLoadMoreLoading();
-        //... continuing from previous code
-
-    }
-}
-
-// Helper functions for UI state management
+// UI Helper Functions
 function showLoadingState() {
     const loadingState = document.querySelector('.search-loading');
-    const resultsList = document.querySelector('.results-list');
-    if (loadingState && resultsList) {
-        loadingState.style.display = 'flex';
-        resultsList.style.display = 'none';
-    }
+    if (loadingState) loadingState.style.display = 'flex';
 }
 
 function hideLoadingState() {
     const loadingState = document.querySelector('.search-loading');
-    const resultsList = document.querySelector('.results-list');
-    if (loadingState && resultsList) {
-        loadingState.style.display = 'none';
-        resultsList.style.display = 'block';
-    }
-}
-
-function showButtonLoading() {
-    const searchBtn = document.querySelector('.search-btn');
-    if (searchBtn) {
-        searchBtn.innerHTML = '<i class="uil uil-spinner-alt fa-spin"></i>';
-        searchBtn.disabled = true;
-    }
-}
-
-function hideButtonLoading() {
-    const searchBtn = document.querySelector('.search-btn');
-    if (searchBtn) {
-        searchBtn.innerHTML = '<i class="uil uil-search"></i>';
-        searchBtn.disabled = false;
-    }
-}
-
-function showLoadMoreLoading() {
-    const loadMoreBtn = document.querySelector('.load-more-btn');
-    if (loadMoreBtn) {
-        loadMoreBtn.innerHTML = '<i class="uil uil-spinner-alt fa-spin"></i> Loading...';
-        loadMoreBtn.classList.add('loading');
-    }
-}
-
-function hideLoadMoreLoading() {
-    const loadMoreBtn = document.querySelector('.load-more-btn');
-    if (loadMoreBtn) {
-        loadMoreBtn.innerHTML = 'Load More Products';
-        loadMoreBtn.classList.remove('loading');
-    }
-}
-
-function hideLoadMoreButton() {
-    const loadMoreBtn = document.querySelector('.load-more-wrapper');
-    if (loadMoreBtn) {
-        loadMoreBtn.style.display = 'none';
-    }
+    if (loadingState) loadingState.style.display = 'none';
 }
 
 function showSearchHistory() {
     const searchHistory = document.getElementById('searchHistory');
-    if (searchHistory) {
-        loadSearchHistory();
-        searchHistory.style.display = 'block';
-    }
+    if (searchHistory) searchHistory.style.display = 'block';
 }
 
 function hideSearchHistory() {
     const searchHistory = document.getElementById('searchHistory');
-    if (searchHistory) {
-        searchHistory.style.display = 'none';
-    }
+    if (searchHistory) searchHistory.style.display = 'none';
 }
 
 function showResults() {
     const searchResults = document.getElementById('searchResults');
-    if (searchResults) {
-        searchResults.style.display = 'block';
-    }
+    if (searchResults) searchResults.style.display = 'block';
 }
 
 function hideResults() {
     const searchResults = document.getElementById('searchResults');
-    if (searchResults) {
-        searchResults.style.display = 'none';
-    }
+    if (searchResults) searchResults.style.display = 'none';
 }
 
-// Display functions
+function showNoResults() {
+    const noResults = document.querySelector('.no-results');
+    if (noResults) noResults.style.display = 'flex';
+}
+
+function showError(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+}
+
+function reloadWithParams() {
+    window.location.href = `${window.location.pathname}?${currentParams.toString()}`;
+}
+
+// Search Results Display
 function displayQuickResults(products, query) {
     const resultsList = document.querySelector('.results-list');
     if (!resultsList) return;
@@ -384,155 +286,51 @@ function displayQuickResults(products, query) {
                 <div class="result-info">
                     <div class="result-name">${product.name}</div>
                     <div class="result-category">${product.category}</div>
+                    <div class="result-price">₹${product.price.toFixed(2)}</div>
                 </div>
-                <div class="result-price">₹${product.price}</div>
             </a>
         `).join('')}
-        <div class="view-all-results">
-            <a href="/search?q=${encodeURIComponent(query)}">
-                View all results <i class="uil uil-arrow-right"></i>
-            </a>
-        </div>
+        <a href="/search?q=${encodeURIComponent(query)}" class="view-all">
+            View all results <i class="uil uil-arrow-right"></i>
+        </a>
     `;
 
     showResults();
 }
 
-function appendProducts(newProducts) {
-    const productsGrid = document.getElementById('productsGrid');
-    if (!productsGrid || !newProducts.length) return;
+async function handleSearchSubmit(e) {
+    e.preventDefault();
+    if (isSearching) return;
 
-    const productsHTML = newProducts.map(product => `
-        <div class="col-lg-3 col-md-6">
-            <!-- Using the same product card template -->
-            ${generateProductCard(product)}
-        </div>
-    `).join('');
-
-    productsGrid.insertAdjacentHTML('beforeend', productsHTML);
-}
-
-function generateProductCard(product) {
-    return `
-        <div class="product-item mb-30">
-            <a href="/product/${product._id}" class="product-img">
-                <img src="${product.images[0]}" alt="${product.name}">
-                ${product.discountPercentage > 0 ? 
-                    `<span class="offer-badge-1">${product.discountPercentage}% off</span>` : 
-                    ''}
-            </a>
-            <div class="product-text-dt">
-                <p>${product.stock > 0 ? '' : '<span>Out of Stock</span>'}</p>
-                <h4>${product.name}</h4>
-                <div class="product-price">
-                    ${product.discountPrice ? 
-                        `₹${product.discountPrice} <span>₹${product.price}</span>` : 
-                        `₹${product.price}`}
-                </div>
-                <!-- Add to cart functionality here -->
-            </div>
-        </div>
-    `;
-}
-
-function showNoResults() {
-    const resultsList = document.querySelector('.results-list');
-    const noResults = document.querySelector('.no-results');
-    if (resultsList && noResults) {
-        resultsList.style.display = 'none';
-        noResults.style.display = 'flex';
-    }
-}
-
-function showError(message) {
-    if (window.Swal) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: message,
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-        });
-    } else {
-        alert(message);
-    }
-}
-
-// Price range input initialization
-function initializePriceInputs() {
-    const minPrice = document.getElementById('minPrice');
-    const maxPrice = document.getElementById('maxPrice');
-
-    if (minPrice && maxPrice) {
-        // Ensure min doesn't exceed max
-        minPrice.addEventListener('change', function() {
-            if (maxPrice.value && parseInt(this.value) > parseInt(maxPrice.value)) {
-                this.value = maxPrice.value;
-            }
-        });
-
-        // Ensure max doesn't go below min
-        maxPrice.addEventListener('change', function() {
-            if (minPrice.value && parseInt(this.value) < parseInt(minPrice.value)) {
-                this.value = minPrice.value;
-            }
-        });
-    }
-}
-
-// URL handling
-function reloadWithParams() {
-    window.location.href = `${window.location.pathname}?${currentParams.toString()}`;
-}
-
-// Search history item handlers
-function useHistoryItem(query) {
-    console.log('Using history item:', query);
     const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.value = decodeURIComponent(query);
-        // Trigger the search
-        const event = new Event('submit', {
-            bubbles: true,
-            cancelable: true
-        });
-        searchInput.form.dispatchEvent(event);
+    const query = searchInput.value.trim();
+    
+    if (!query) return;
+
+    try {
+        isSearching = true;
+        await saveSearchHistory(query);
+        window.location.href = `/search?q=${encodeURIComponent(query)}`;
+    } catch (error) {
+        console.error('Search error:', error);
+        showError('Failed to perform search');
+    } finally {
+        isSearching = false;
     }
 }
 
-
-async function removeHistoryItem(itemId) {
+async function saveSearchHistory(query) {
     try {
-        const response = await fetch(`/search-history/${itemId}`, {
-            method: 'DELETE',
+        const response = await fetch('/search-history', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({ query })
         });
         const data = await response.json();
-
-        if (data.success) {
-            // Remove the item from DOM directly instead of reloading entire history
-            const historyItem = document.querySelector(`.history-item[data-id="${itemId}"]`);
-            if (historyItem) {
-                historyItem.remove();
-                
-                // If no more items, hide the history container
-                const historyList = document.querySelector('.history-list');
-                if (!historyList.children.length) {
-                    hideSearchHistory();
-                }
-            }
-        } else {
-            throw new Error(data.message);
-        }
+        if (!data.success) throw new Error(data.message);
     } catch (error) {
-        console.error('Failed to remove history item:', error);
-        showError('Failed to remove from history');
+        console.error('Failed to save search history:', error);
     }
 }
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', initializeSearch);

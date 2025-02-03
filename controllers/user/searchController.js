@@ -57,15 +57,16 @@ const getSearchPage = async (req, res) => {
             isDeleted: false,
             listed: true 
         });
+
         // Get and sanitize query parameters
-        const query = req.query.q || ''
-        const page = parseInt(req.query.page) || 1;
+        const query = req.query.q || '';
+        const page = Math.max(1, parseInt(req.query.page) || 1);
         const sort = req.query.sort || 'featured';
         const showOutOfStock = req.query.outOfStock === 'true';
         const categories = req.query.categories ? req.query.categories.split(',') : [];
         const minPrice = parseFloat(req.query.minPrice) || 0;
         const maxPrice = parseFloat(req.query.maxPrice) || Infinity;
-        const limit = 12;
+        const limit = 12; // Items per page
         const skip = (page - 1) * limit;
 
         // Build search query
@@ -76,8 +77,12 @@ const getSearchPage = async (req, res) => {
             ],
             isDeleted: false,
             listed: true,
-            price: { $gte: minPrice, $lte: maxPrice }
+            price: { $gte: minPrice }
         };
+
+        if (maxPrice !== Infinity) {
+            searchQuery.price.$lte = maxPrice;
+        }
 
         // Add category filter
         if (categories.length > 0) {
@@ -89,62 +94,109 @@ const getSearchPage = async (req, res) => {
             searchQuery.stock = { $gt: 0 };
         }
 
-        // Sort options
+        // Define sort options
         const sortOptions = {
             featured: { featured: -1 },
             popularity: { soldCount: -1 },
-            priceLow: { price: 1 },
-            priceHigh: { price: -1 },
+            priceLow: { discountPrice: 1, price: 1 },
+            priceHigh: { discountPrice: -1, price: -1 },
             rating: { averageRating: -1 },
             newest: { createdAt: -1 },
             nameAsc: { name: 1 },
             nameDesc: { name: -1 }
         };
 
-        // Get products
-        const products = await Product.find(searchQuery)
-            .populate('category')
-            .sort(sortOptions[sort] || sortOptions.featured)
-            .skip(skip)
-            .limit(limit);
+        // Execute queries in parallel
+        const [products, totalProducts, allCategories] = await Promise.all([
+            // Get products
+            Product.find(searchQuery)
+                .populate('category')
+                .sort(sortOptions[sort] || sortOptions.featured)
+                .skip(skip)
+                .limit(limit),
 
-        // Get total count
-        const totalProducts = await Product.countDocuments(searchQuery);
-        const hasMoreProducts = totalProducts > skip + products.length;
+            // Get total count
+            Product.countDocuments(searchQuery),
 
-        // Get all categories for filter
-        const allCategories = await Category.find({ 
-            parent: { $ne: null },
-            isDeleted: false, 
-            listed: true 
-        }).select('name');
+            // Get all categories for filter
+            Category.find({ 
+                parent: { $ne: null },
+                isDeleted: false, 
+                listed: true 
+            }).select('name')
+        ]);
 
-        // Save search history if user is logged in
-        if (req.user && query) {
-            await SaveSearchHistory(req.user._id, query);
+        // Calculate pagination data
+        const totalPages = Math.ceil(totalProducts / limit);
+        const hasNextPage = page < totalPages;
+        const hasPrevPage = page > 1;
+
+        // Calculate pagination range
+        let startPage = Math.max(1, page - 2);
+        let endPage = Math.min(totalPages, page + 2);
+
+        // Adjust range if at edges
+        if (startPage <= 3) {
+            endPage = Math.min(5, totalPages);
+        }
+        if (endPage >= totalPages - 2) {
+            startPage = Math.max(1, totalPages - 4);
         }
 
+        // Save search to history if user is logged in and has a query
+        if (req.session.user && query) {
+            try {
+                await SearchHistory.addSearch(req.session.user.id, query);
+            } catch (error) {
+                console.error('Failed to save search history:', error);
+            }
+        }
+
+        // Calculate category counts for display
+        const categoryCountMap = new Map();
+        if (products.length > 0) {
+            const categoryCounts = await Product.aggregate([
+                { $match: searchQuery },
+                { $group: { _id: '$category', count: { $sum: 1 } } }
+            ]);
+            categoryCounts.forEach(item => categoryCountMap.set(item._id.toString(), item.count));
+        }
+
+        // Render the search page
         res.render('search', {
             parentCategories,
             query,
             products,
-            currentPage: page,
             totalProducts,
-            hasMoreProducts,
+            currentPage: page,
+            totalPages,
+            hasNextPage,
+            hasPrevPage,
+            startPage,
+            endPage,
             currentSort: sort,
             showOutOfStock,
             categories: allCategories,
             selectedCategories: categories,
+            categoryCountMap,
             minPrice,
             maxPrice,
+            limit,
             pageTitle: `Search Results for "${query}"`,
-            user:req.session.user || null
+            user: req.session.user || null,
+            path: '/search',
+            // Add price range stats
+            priceStats: {
+                min: products.length ? Math.min(...products.map(p => p.discountPrice || p.price)) : 0,
+                max: products.length ? Math.max(...products.map(p => p.discountPrice || p.price)) : 0
+            }
         });
 
     } catch (error) {
         console.error('Search page error:', error);
         res.status(500).render('error', { 
-            message: 'Failed to load search results'
+            message: 'Failed to load search results',
+            error: process.env.NODE_ENV === 'development' ? error : {}
         });
     }
 };
