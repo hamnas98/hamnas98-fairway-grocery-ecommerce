@@ -9,6 +9,7 @@
   
 
 </head>
+<link rel="stylesheet" href="/admin/css/dashboard.css">
 <body class="sb-nav-fixed">
     <%- include('../partials/admin/topnav') %>
     
@@ -23,23 +24,221 @@
                         <li class="breadcrumb-item active">Dashboard</li>
                     </ol>
                     
-                    <!-- Dashboard Content -->
+                    <!-- Stats Cards Row -->
                     <div class="row">
-                        <!-- Stats Cards -->
                         <div class="col-xl-3 col-md-6">
-                            <div class="dashboard-report-card purple">
-                                <div class="card-content">
-                                    <span class="card-title">Orders Pending</span>
-                                    <span class="card-count" id="pendingOrders">0</span>
-                                </div>
-                                <div class="card-media">
-                                    <i class="fab fa-rev"></i>
+                            <div class="dashboard-card gradient-purple">
+                                <div class="card-body">
+                                    <div class="card-media">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="card-content">
+                                        <h3 class="card-count"><%= stats.pendingOrders %></h3>
+                                        <p class="card-title">Pending Orders</p>
+                                        <div class="trend up">
+                                            <i class="fas fa-arrow-up"></i>
+                                            <span>12% from last week</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-             
+                        <div class="col-xl-3 col-md-6">
+                            <div class="dashboard-card gradient-red">
+                                <div class="card-body">
+                                    <div class="card-media">
+                                        <i class="fas fa-times-circle"></i>
+                                    </div>
+                                    <div class="card-content">
+                                        <h3 class="card-count"><%= stats.cancelledOrders %></h3>
+                                        <p class="card-title">Cancelled Orders</p>
+                                        <div class="trend down">
+                                            <i class="fas fa-arrow-down"></i>
+                                            <span>8% from last week</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="dashboard-card gradient-blue">
+                                <div class="card-body">
+                                    <div class="card-media">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </div>
+                                    <div class="card-content">
+                                        <h3 class="card-count"><%= stats.processingOrders %></h3>
+                                        <p class="card-title">Processing Orders</p>
+                                        <div class="trend up">
+                                            <i class="fas fa-arrow-up"></i>
+                                            <span>15% from last week</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="dashboard-card gradient-green">
+                                <div class="card-body">
+                                    <div class="card-media">
+                                        <i class="fas fa-indian-rupee-sign"></i>
+                                    </div>
+                                    <div class="card-content">
+                                        <h3 class="card-count">₹<%= stats.todayIncome.toFixed(2) %></h3>
+                                        <p class="card-title">Today's Revenue</p>
+                                        <div class="trend up">
+                                            <i class="fas fa-arrow-up"></i>
+                                            <span>20% from yesterday</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                
+                   
+                
+                    <!-- Top Products and Categories Row -->
+                    <div class="row mt-4">
+                        <div class="col-xl-4">
+                            <div class="card shadow">
+                                <div class="card-header">
+                                    <h5 class="card-title">Top Products</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="top-products-list">
+                                        <% topProducts.forEach((product, index) => { %>
+                                            <div class="product-item">
+                                                <div class="rank"><%= index + 1 %></div>
+                                                <div class="product-info">
+                                                    <h6><%= product.product.name %></h6>
+                                                    <p>Sold: <%= product.totalQuantity %> units</p>
+                                                </div>
+                                                <div class="product-revenue">
+                                                    ₹<%= product.revenue.toFixed(2) %>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="card shadow">
+                                <div class="card-header">
+                                    <h5 class="card-title">Top Categories</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="category-list">
+                                        <% topCategories.forEach((category, index) => { %>
+                                            <div class="category-item">
+                                                <div class="category-info">
+                                                    <h6><%= category.name %></h6>
+                                                    <div class="progress">
+                                                        <div class="progress-bar" style="width: <%= (category.count / topCategories[0].count) * 100 %>%"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="category-count">
+                                                    <%= category.count %> orders
+                                                </div>
+                                            </div>
+                                        <% }); %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="card shadow">
+                                <div class="card-header">
+                                    <h5 class="card-title">Recent Orders</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="recent-orders-list">
+                                        <% recentOrders.forEach(order => { %>
+                                            <div class="order-item">
+                                                <div class="order-info">
+                                                    <h6>#<%= order._id.toString().slice(-6) %></h6>
+                                                    <p><%= order.user.name %></p>
+                                                </div>
+                                                <div class="order-status <%= order.orderStatus.toLowerCase() %>">
+                                                    <%= order.orderStatus %>
+                                                </div>
+                                                <div class="order-amount">
+                                                    ₹<%= order.discountTotal.toFixed(2) %>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Status and Low Stock Row -->
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-5">
+                            <div class="card shadow">
+                                <div class="card-header">
+                                    <h5 class="card-title">Order Status</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="orderStatusChart" height="260"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-8 col-lg-7">
+                            <div class="card shadow">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title">Low Stock Products</h5>
+                                    <a href="/admin/products" class="btn btn-sm btn-primary">View All</a>
+                                </div>
+                                <div class="card-body">
+                                    <div class="low-stock-list">
+                                        <% lowStockProducts.forEach(product => { %>
+                                            <div class="low-stock-item">
+                                                <div class="product-image">
+                                                    <img src="<%= product.images[0] %>" alt="<%= product.name %>">
+                                                </div>
+                                                <div class="product-info">
+                                                    <h6><%= product.name %></h6>
+                                                    <p class="price">₹<%= product.price.toFixed(2) %></p>
+                                                </div>
+                                                <div class="stock-info">
+                                                    <div class="stock-count <%= product.stock <= 5 ? 'critical' : 'warning' %>">
+                                                        <%= product.stock %> left
+                                                    </div>
+                                                    <a href="/admin/products/edit/<%= product._id %>" class="restock-btn">Restock</a>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sales Chart Row -->
+                    <div class="row mt-4">
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="card shadow">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title">Sales Overview</h5>
+                                    <div class="chart-filters">
+                                        <select id="timeRangeFilter" class="form-select">
+                                            <option value="daily">Daily</option>
+                                            <option value="monthly">Monthly</option>
+                                            <option value="yearly">Yearly</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="salesChart" height="300"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                </div>                
             </main>
             
             <%- include('../partials/admin/footer') %>
@@ -49,25 +248,226 @@
     <%- include('../partials/admin/scripts') %>
     
     <!-- Dashboard specific scripts -->
-    <script src="/admin/js/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Add your dashboard specific JavaScript here
-        async function loadDashboardData() {
-            try {
-                const response = await fetch('/admin/api/dashboard-data');
-                const data = await response.json();
-
-                if (data.success) {
-                    document.getElementById('pendingOrders').textContent = data.pendingOrders;
-                    // Update other stats
+    document.addEventListener('DOMContentLoaded', function() {
+        let salesChart = null;
+        const salesData = <%- salesData %>;
+        const yearlySalesData = <%- yearlySalesData %>;
+        const monthlySalesData = <%- monthlySalesData %>;
+    
+        // Initialize Sales Chart
+        function initSalesChart(data, labels) {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            
+            if (salesChart) {
+                salesChart.destroy();
+            }
+    
+            salesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sales',
+                        data: data,
+                        borderColor: '#4dabf7',
+                        backgroundColor: 'rgba(77, 171, 247, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return '₹' + context.parsed.y.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                maxTicksLimit: 7,
+                                callback: function(value, index, values) {
+                                    const label = this.getLabelForValue(value);
+                                    return formatDate(label);
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                borderDash: [2, 2]
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '₹' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
                 }
-            } catch (error) {
-                console.error('Error loading dashboard data:', error);
+            });
+        }
+    
+        // Initialize Order Status Chart
+        const orderStatusChart = new Chart(document.getElementById('orderStatusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending', 'Processing', 'Completed', 'Cancelled'],
+                datasets: [{
+                    data: [
+                        <%= stats.pendingOrders %>,
+                        <%= stats.processingOrders %>,
+                        0,
+                        <%= stats.cancelledOrders %>
+                    ],
+                    backgroundColor: [
+                        '#ffd43b', // Pending - Yellow
+                        '#4dabf7', // Processing - Blue
+                        '#51cf66', // Completed - Green
+                        '#ff6b6b'  // Cancelled - Red
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '75%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? ((value * 100) / total).toFixed(1) : 0;
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    
+        // Handle time range filter changes
+        document.getElementById('timeRangeFilter').addEventListener('change', function(e) {
+            let data, labels;
+            switch(e.target.value) {
+                case 'yearly':
+                    data = yearlySalesData.map(d => d.total);
+                    labels = yearlySalesData.map(d => d._id.toString());
+                    break;
+                case 'monthly':
+                    data = monthlySalesData.map(d => d.total);
+                    labels = monthlySalesData.map(d => {
+                        return `${d._id.year}-${String(d._id.month).padStart(2, '0')}`;
+                    });
+                    break;
+                default: // daily
+                    data = salesData.map(d => d.total);
+                    labels = salesData.map(d => d._id);
+            }
+            initSalesChart(data, labels);
+        });
+    
+        // Initialize with daily data
+        initSalesChart(
+            salesData.map(d => d.total),
+            salesData.map(d => d._id)
+        );
+    
+        // Add number animation to stats cards
+        const countElements = document.querySelectorAll('.card-count');
+        countElements.forEach(element => {
+            const targetValue = parseFloat(element.textContent.replace(/[^0-9.-]+/g, ''));
+            let startValue = 0;
+            const duration = 1500;
+            const startTime = performance.now();
+    
+            function updateCount(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+    
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const currentValue = startValue + (targetValue - startValue) * easeOutQuart;
+    
+                if (element.textContent.includes('₹')) {
+                    element.textContent = '₹' + currentValue.toFixed(2);
+                } else {
+                    element.textContent = Math.round(currentValue).toString();
+                }
+    
+                if (progress < 1) {
+                    requestAnimationFrame(updateCount);
+                }
+            }
+    
+            requestAnimationFrame(updateCount);
+        });
+    
+        // Add hover effects
+        document.querySelectorAll('.product-item, .category-item, .order-item, .low-stock-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(10px)';
+            });
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+    
+        // Helper function to format dates
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            switch(document.getElementById('timeRangeFilter').value) {
+                case 'yearly':
+                    return date.getFullYear();
+                case 'monthly':
+                    return date.toLocaleDateString('default', { 
+                        month: 'short',
+                        year: 'numeric'
+                    });
+                default:
+                    return date.toLocaleDateString('default', { 
+                        month: 'short',
+                        day: 'numeric'
+                    });
             }
         }
-
-        // Load dashboard data on page load
-        loadDashboardData();
-    </script>
+    
+        // Helper function to format currency
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 2
+            }).format(value);
+        }
+    });
+</script>
 </body>
 </html>

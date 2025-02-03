@@ -104,6 +104,14 @@
                                                     <div class="order-status <%= order.orderStatus.toLowerCase() %>">
                                                         <%= order.orderStatus %>
                                                     </div>
+                                                    <% if (['Processing', 'Shipped', 'Delivered'].includes(order.orderStatus)) { %>
+                                                        <div class="ms-5 invoice-action">
+                                                            <a href="/orders/invoice/<%= order._id %>" class="download-invoice" target="_blank">
+                                                                <i class="uil uil-download-alt"></i>
+                                                                Download
+                                                            </a>
+                                                        </div>
+                                                    <% } %>
                                                     <% if (order.orderStatus === 'Payment Pending') { %>
                                                         <div class="payment-pending-actions">
                                                             <button class="btn btn-primary" onclick="continuePayment('<%= order._id %>')">
@@ -454,21 +462,8 @@
                                                     <div class="order-actions">
                                                         <button class="view-details-btn" onclick="viewOrderDetails('<%= order._id %>')">
                                                             View Details
-                                                        </button>
-                                                        <% if(orders && orders.length > 0) { %>
-                                                            <% orders.forEach(order => { %>
-                                                                <% if (['Processing', 'Shipped', 'Delivered'].includes(order.orderStatus)) { %>
-                                                                    <div class="invoice-action">
-                                                                        <a href="/orders/invoice/<%= order._id %>" 
-                                                                        class="btn btn-primary download-invoice"
-                                                                        target="_blank">
-                                                                        <i class="uil uil-download-alt"></i>
-                                                                        Download Invoice
-                                                                        </a>
-                                                                    </div>
-                                                                <% } %>
-                                                            <% }) %>
-                                                        <% } %>
+                                                        </button>  
+
                                                         <% if(order.orderStatus === 'Pending' || order.orderStatus === 'Processing') { %>
                                                             <div class="dropdown">
                                                                 <button class="cancel-options-btn" data-bs-toggle="dropdown">

@@ -15,7 +15,6 @@ class InvoiceGenerator {
             .text('Fairway Supermarket', 110, 57)
             .fontSize(10)
             .text('Kanakpura Road', 450, 50)
-            .text('Bangalore, Karnataka, 560061', 450, 65);
     }
 
     generateCustomerInformation(doc) {

@@ -448,7 +448,7 @@ input[type=text] {
 }
 
 .main_logo {
-    width: 125px;
+    width: 250px;
     margin-left: 10px;
 }
 
@@ -495,9 +495,34 @@ input[type=text] {
     height: 60px;
 }
 
-.main_logo img {
-    width: 100%;
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    background: linear-gradient(to right, #2b2f4c, #3d4266);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.logo-container img {
+    width: 20%;
 	padding-top: 0;
+}
+
+.logo-text {
+    font-size: 24px;
+    letter-spacing: 2px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.logo-container:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
 }
 
 .res_main_logo {
