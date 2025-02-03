@@ -809,3 +809,36 @@
             transform: rotate(360deg);
         }
     }
+
+    .product-sort {
+        position: relative;
+    }
+    
+    .product-sort .selectpicker {
+        padding: 8px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        background-color: white;
+        min-width: 200px;
+        cursor: pointer;
+    }
+    
+    .product-sort .dropdown-menu {
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .product-sort .dropdown-item {
+        padding: 8px 12px;
+        color: #4a5568;
+    }
+    
+    .product-sort .dropdown-item:hover {
+        background-color: #f7fafc;
+    }
+    
+    .product-sort .dropdown-item.active {
+        background-color: #2E3192;
+        color: white;
+    }

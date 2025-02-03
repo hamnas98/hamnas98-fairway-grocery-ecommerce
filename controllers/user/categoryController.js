@@ -2,12 +2,12 @@ const Category = require('../../models/Category');
 const Product = require('../../models/Product');
 
 
-
 const getCategoryProducts = async (req, res) => {
     try {
         const categoryId = req.params.id;
-        const page = parseInt(req.query.page) || 1; // Get page from query params
-        const limit = 1; // Products per page
+        const page = parseInt(req.query.page) || 1;
+        const sort = req.query.sort || 'popularity'; // Get sort parameter
+        const limit = 2; // Products per page
         const skip = (page - 1) * limit;
         
         const category = await Category.findById(categoryId);
@@ -17,74 +17,72 @@ const getCategoryProducts = async (req, res) => {
         let products = [];
         let totalProducts = 0;
 
+        // Define sort options
+        const sortOptions = {
+            popularity: { soldCount: -1 },
+            priceLow: { discountPrice: 1, price: 1 },
+            priceHigh: { discountPrice: -1, price: -1 },
+            nameAsc: { name: 1 },
+            nameDesc: { name: -1 },
+            discount: { discountPercentage: -1 },
+            newest: { createdAt: -1 }
+        };
+
+        // Build base query
+        let baseQuery = {
+            isDeleted: false,
+            listed: true
+        };
+
         // If clicked category is a parent category
         if (!category.parent) {
             parentCategory = category;
-            // Get all subcategories of this parent
             subcategories = await Category.find({
                 parent: category._id,
                 isDeleted: false,
                 listed: true
             });
             
-            // Get all products from parent and all its subcategories with pagination
             const categoryIds = [category._id, ...subcategories.map(sub => sub._id)];
-            
-            // Get total count for pagination
-            totalProducts = await Product.countDocuments({
-                category: { $in: categoryIds },
-                isDeleted: false,
-                listed: true
-            });
-            
-            // Get paginated products
-            products = await Product.find({
-                category: { $in: categoryIds },
-                isDeleted: false,
-                listed: true
-            })
-            .skip(skip)
-            .limit(limit);
-        } 
-        // If clicked category is a subcategory
-        else {
-            // Get parent category
+            baseQuery.category = { $in: categoryIds };
+        } else {
             parentCategory = await Category.findById(category.parent);
-            // Get all subcategories of the parent
             subcategories = await Category.find({
                 parent: parentCategory._id,
                 isDeleted: false,
                 listed: true
             });
             
-            // Get total count for pagination
-            totalProducts = await Product.countDocuments({
-                category: category._id,
-                isDeleted: false,
-                listed: true
-            });
-            
-            // Get paginated products
-            products = await Product.find({
-                category: category._id,
-                isDeleted: false,
-                listed: true
-            })
-            .skip(skip)
-            .limit(limit);
+            baseQuery.category = category._id;
         }
 
-        // Get all parent categories for the header
-        const parentCategories = await Category.find({ 
-            parent: null,
-            isDeleted: false,
-            listed: true 
-        });
+        // Execute queries with sorting
+        const [productResults, countResult, parentCategories] = await Promise.all([
+            Product.find(baseQuery)
+                .sort(sortOptions[sort] || sortOptions.popularity)
+                .skip(skip)
+                .limit(limit),
+            
+            Product.countDocuments(baseQuery),
+            
+            Category.find({ 
+                parent: null,
+                isDeleted: false,
+                listed: true 
+            })
+        ]);
 
-        // Calculate pagination values
+        products = productResults;
+        totalProducts = countResult;
+
+        // Calculate pagination
         const totalPages = Math.ceil(totalProducts / limit);
         const hasNextPage = page < totalPages;
         const hasPreviousPage = page > 1;
+
+        // Format pagination parameters to include sort
+        const paginationParams = new URLSearchParams();
+        if (sort !== 'popularity') paginationParams.set('sort', sort);
 
         res.render('category', {
             category,          
@@ -92,16 +90,18 @@ const getCategoryProducts = async (req, res) => {
             subcategories,    
             products,
             parentCategories,
+            currentSort: sort,
             pageTitle: category.name,
             pagination: {
                 currentPage: page,
-                totalPages: totalPages,
-                hasNextPage: hasNextPage,
-                hasPreviousPage: hasPreviousPage,
+                totalPages,
+                hasNextPage,
+                hasPreviousPage,
                 nextPage: hasNextPage ? page + 1 : null,
                 previousPage: hasPreviousPage ? page - 1 : null,
-                limit: limit,
-                totalProducts: totalProducts
+                limit,
+                totalProducts,
+                urlParams: paginationParams.toString()
             },
             user: req.session.user || null,
         });
@@ -111,6 +111,7 @@ const getCategoryProducts = async (req, res) => {
         res.status(500).render('error', { message: 'Failed to load category page' });
     }
 };
+
 
 module.exports = { getCategoryProducts };
 

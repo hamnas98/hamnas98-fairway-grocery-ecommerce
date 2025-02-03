@@ -90,14 +90,14 @@
 								<h2><%= category.name %></h2>
 							</div>
 							<div class="product-sort main-form">
-								<select class="selectpicker" data-width="25%">
-									<option value="0">Popularity</option>
-									<option value="1">Price - Low to High</option>
-									<option value="2">Price - High to Low</option>
-									<option value="3">Alphabetical</option>
-									<option value="4">Saving - High to Low</option>
-									<option value="5">Saving - Low to High</option>
-									<option value="6">% Off - High to Low</option>
+								<select class="selectpicker" onchange="updateSort(this.value)">
+									<option value="popularity" <%= currentSort === 'popularity' ? 'selected' : '' %>>Popularity</option>
+									<option value="priceLow" <%= currentSort === 'priceLow' ? 'selected' : '' %>>Price - Low to High</option>
+									<option value="priceHigh" <%= currentSort === 'priceHigh' ? 'selected' : '' %>>Price - High to Low</option>
+									<option value="nameAsc" <%= currentSort === 'nameAsc' ? 'selected' : '' %>>Name (A-Z)</option>
+									<option value="nameDesc" <%= currentSort === 'nameDesc' ? 'selected' : '' %>>Name (Z-A)</option>
+									<option value="discount" <%= currentSort === 'discount' ? 'selected' : '' %>>Discount - High to Low</option>
+									<option value="newest" <%= currentSort === 'newest' ? 'selected' : '' %>>Newest First</option>
 								</select>
 							</div>
 						</div>
@@ -171,38 +171,35 @@
 						</div>
 						<div class="row">
 							<div class="col-md-12">
-								<% if (pagination.totalPages > 1) { %>
-									<div class="pagination-bar">
-										<nav>
-											<ul class="pagination justify-content-center">
-												<!-- Previous Page -->
-												<% if (pagination.hasPreviousPage) { %>
-													<li class="page-item">
-														<a class="page-link" href="?page=<%= pagination.previousPage %>" aria-label="Previous">
-															<span aria-hidden="true">&laquo;</span>
-														</a>
-													</li>
-												<% } %>
-						
-												<!-- Page Numbers -->
-												<% for(let i = 1; i <= pagination.totalPages; i++) { %>
-													<li class="page-item <%= pagination.currentPage === i ? 'active' : '' %>">
-														<a class="page-link" href="?page=<%= i %>"><%= i %></a>
-													</li>
-												<% } %>
-						
-												<!-- Next Page -->
-												<% if (pagination.hasNextPage) { %>
-													<li class="page-item">
-														<a class="page-link" href="?page=<%= pagination.nextPage %>" aria-label="Next">
-															<span aria-hidden="true">&raquo;</span>
-														</a>
-													</li>
-												<% } %>
-											</ul>
-										</nav>
-									</div>
-								<% } %>
+								<div class="pagination-bar">
+									<nav>
+										<ul class="pagination justify-content-center">
+											<% if (pagination.hasPreviousPage) { %>
+												<li class="page-item">
+													<a class="page-link" href="?page=<%= pagination.previousPage %><%= pagination.urlParams ? '&' + pagination.urlParams : '' %>" aria-label="Previous">
+														<span aria-hidden="true">&laquo;</span>
+													</a>
+												</li>
+											<% } %>
+								
+											<% for(let i = 1; i <= pagination.totalPages; i++) { %>
+												<li class="page-item <%= pagination.currentPage === i ? 'active' : '' %>">
+													<a class="page-link" href="?page=<%= i %><%= pagination.urlParams ? '&' + pagination.urlParams : '' %>">
+														<%= i %>
+													</a>
+												</li>
+											<% } %>
+								
+											<% if (pagination.hasNextPage) { %>
+												<li class="page-item">
+													<a class="page-link" href="?page=<%= pagination.nextPage %><%= pagination.urlParams ? '&' + pagination.urlParams : '' %>" aria-label="Next">
+														<span aria-hidden="true">&raquo;</span>
+													</a>
+												</li>
+											<% } %>
+										</ul>
+									</nav>
+								</div>
 							</div>
 						</div>
 						
@@ -232,6 +229,33 @@
 	<script src="/user/js/offset_overlay.js"></script>
 	<script src="/user/js/night-mode.js"></script>
 	<script src="/user/js/cart.js"></script>
+	<script>
+		// Add this to your category.js or a new script file
+function updateSort(sortValue) {
+    const currentUrl = new URL(window.location.href);
+    const searchParams = currentUrl.searchParams;
+    
+    // Update sort parameter
+    if (sortValue === 'popularity') {
+        searchParams.delete('sort');
+    } else {
+        searchParams.set('sort', sortValue);
+    }
+    
+    // Reset to first page when sorting changes
+    searchParams.set('page', '1');
+    
+    // Reload with new params
+    window.location.href = `${currentUrl.pathname}?${searchParams.toString()}`;
+}
+
+// Initialize selectpicker if you're using bootstrap-select
+document.addEventListener('DOMContentLoaded', function() {
+    if ($.fn.selectpicker) {
+        $('.selectpicker').selectpicker();
+    }
+});
+	</script>
 	
 </body>
 </html>

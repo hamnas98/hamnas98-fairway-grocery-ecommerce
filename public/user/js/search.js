@@ -1,4 +1,4 @@
-// search.js
+
 let searchTimeout;
 let isSearching = false;
 let currentPage = 1;
@@ -142,26 +142,26 @@ async function removeHistoryItem(itemId, event) {
 }
 
 // Filter Functions
-function initializeFilters() {
-    // Initialize price range inputs
-    const minPrice = document.getElementById('minPrice');
-    const maxPrice = document.getElementById('maxPrice');
+// function initializeFilters() {
+//     // Initialize price range inputs
+//     const minPrice = document.getElementById('minPrice');
+//     const maxPrice = document.getElementById('maxPrice');
 
-    if (minPrice && maxPrice) {
-        minPrice.addEventListener('change', validatePriceRange);
-        maxPrice.addEventListener('change', validatePriceRange);
-    }
+//     if (minPrice && maxPrice) {
+//         minPrice.addEventListener('change', validatePriceRange);
+//         maxPrice.addEventListener('change', validatePriceRange);
+//     }
 
-    // Initialize pagination if present
-    const paginationLinks = document.querySelectorAll('.pagination a');
-    paginationLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const page = e.target.dataset.page;
-            if (page) goToPage(parseInt(page));
-        });
-    });
-}
+//     // Initialize pagination if present
+//     const paginationLinks = document.querySelectorAll('.pagination a');
+//     paginationLinks.forEach(link => {
+//         link.addEventListener('click', (e) => {
+//             e.preventDefault();
+//             const page = e.target.dataset.page;
+//             if (page) goToPage(parseInt(page));
+//         });
+//     });
+// }
 
 function validatePriceRange() {
     const minPrice = document.getElementById('minPrice');

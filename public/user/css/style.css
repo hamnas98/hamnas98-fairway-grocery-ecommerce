@@ -6972,8 +6972,7 @@ textarea {
     -o-transition: all 0.2s ease-in-out;
     -ms-transition: all 0.2s ease-in-out;
     -webkit-transition: all 0.2s ease-in-out;
-	background-image: -webkit-linear-gradient(left, rgba(230, 92, 91, 0.9), rgba(245, 93, 44, 0.9));
-    background-image: linear-gradient(to right, rgba(230, 92, 91, 0.9), rgba(245, 93, 44, 0.9));
+	
 }
 
 .bootstrap-select.dropdown-item.active, .bootstrap-select .dropdown-item:active {
@@ -7052,4 +7051,51 @@ textarea {
     right: -20px;
 }
 
+/* Search History Styles */
+.search-history {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    margin-top: 0.5rem;
+}
 
+.history-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+}
+
+.history-item:hover {
+    background: #f7fafc;
+}
+
+.history-query {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border: none;
+    background: none;
+    padding: 0;
+    text-align: left;
+    color: #4a5568;
+}
+
+.remove-history {
+    padding: 0.25rem;
+    border: none;
+    background: none;
+    color: #718096;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.history-item:hover .remove-history {
+    opacity: 1;
+}

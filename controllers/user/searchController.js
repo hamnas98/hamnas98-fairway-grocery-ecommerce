@@ -66,7 +66,7 @@ const getSearchPage = async (req, res) => {
         const categories = req.query.categories ? req.query.categories.split(',') : [];
         const minPrice = parseFloat(req.query.minPrice) || 0;
         const maxPrice = parseFloat(req.query.maxPrice) || Infinity;
-        const limit = 12; // Items per page
+        const limit = 2; // Items per page
         const skip = (page - 1) * limit;
 
         // Build search query

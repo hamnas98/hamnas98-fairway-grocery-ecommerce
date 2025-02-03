@@ -34,7 +34,7 @@ function updateCartCount(count) {
 document.addEventListener('DOMContentLoaded', function() {
     fetchCartCount();
 });
-let isProcessing = false; // Prevent multiple simultaneous requests
+isProcessing = false; // Prevent multiple simultaneous requests
 
 // Function to toggle quantity selector
 function toggleQuantitySelector(button, productId) {
