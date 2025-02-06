@@ -84,10 +84,10 @@ const getAddProduct = async (req, res) => {
             return acc;
         }, {});
 
-        // Change this line to match your view path
-        res.render('addProduct', {  // Changed from 'addProduct' to 'admin/products/add'
+  
+        res.render('addProduct', {  
             admin: req.session.admin,
-            categoryStructure, // Just pass the entire structure
+            categoryStructure, 
             path: '/admin/products/add'
         });
     } catch (error) {
@@ -126,8 +126,6 @@ const addProduct = async (req, res) => {
             stock, unit, quantity, highlights,
             aboutProduct, listed
         } = req.body;
-        console.log(discountPrice,discountPercentage);
-        
         // Validate required fields
         if (!name || !category || !price || !stock || !unit || !quantity || !aboutProduct || !parentCategory) {
             return res.json({
@@ -180,7 +178,7 @@ const addProduct = async (req, res) => {
             brand: brand || undefined,
             category,
             parentCategory,
-            price: parseFloat(price),
+            price: parseInt(price),
             discountPrice: finalDiscountPrice,
             discountPercentage: finalDiscountPercentage,
             stock: parseInt(stock),
@@ -333,7 +331,7 @@ const updateProduct = async (req, res) => {
             brand: brand || undefined,
             category,
             parentCategory,
-            price: parseFloat(price),
+            price: parseInt(price),
             discountPrice: finalDiscountPrice,
             discountPercentage: finalDiscountPercentage,
             stock: parseInt(stock),

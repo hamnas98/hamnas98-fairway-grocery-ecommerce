@@ -291,8 +291,14 @@ function updateCartSummary(cart) {
 
     // Update discount
     const discountElement = document.querySelector('.summary-item.discount span:last-child');
-    if (discountElement && cart.total - cart.discountTotal > 0) {
-        discountElement.textContent = `-₹${(cart.total - cart.discountTotal).toFixed(2)}`;
+    if (discountElement) {
+        const discount = cart.total - cart.discountTotal;
+        if (discount > 0) {
+            discountElement.closest('.summary-item').style.display = 'flex';
+            discountElement.textContent = `-₹${discount.toFixed(2)}`;
+        } else {
+            discountElement.closest('.summary-item').style.display = 'none';
+        }
     }
 
     // Update total
@@ -306,6 +312,18 @@ function updateCartSummary(cart) {
     if (itemCountElement) {
         itemCountElement.textContent = `${cart.items.length} items`;
     }
+
+    cart.items.forEach(item => {
+        const itemElement = document.querySelector(`.cart-item[data-product-id="${item.product._id}"]`);
+        if (itemElement) {
+            const totalPriceElement = itemElement.querySelector('.item-total');
+            if (totalPriceElement) {
+                const price = item.product.discountPrice || item.product.price;
+                const totalPrice = price * item.quantity;
+                totalPriceElement.textContent = totalPrice.toFixed(2);
+            }
+        }
+    });
 }
 
 function checkEmptyCart() {

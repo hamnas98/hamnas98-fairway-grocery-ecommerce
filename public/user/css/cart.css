@@ -341,3 +341,31 @@
         justify-content: center;
     }
 }
+.price-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.item-price {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.total-price {
+    font-weight: 500;
+    color: #2E3192;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.9em;
+}
+
+.discount {
+    color: #4CAF50;
+    font-size: 0.9em;
+}

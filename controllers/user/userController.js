@@ -71,13 +71,9 @@ const getHome = async (req, res) => {
 
     } catch (error) {
         console.error('Homepage error:', error);
-        res.render('home', {
-            parentCategories: [],
-            fruitsVegProducts: [],
-            featuredProducts: [],
-            newProducts: [],
-            user: req.session.user || null,
-            pageTitle: 'Fairway Supermarket',
+        return res.status(500).json({
+            status: 'error',
+            message: 'Internal server error'
         });
     }
 };
@@ -86,41 +82,27 @@ const signup = async (req, res) => {
     try {
         const { name, email, phone, password } = req.body;
 
-
-        // Check if user exists
-        const existingUser = await User.findOne({
-            $or: [{ email }, { phone }]
-        });
-
+        const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
         if (existingUser) {
-            return res.json({
-                success: false,
-                message: 'Email or mobile already registered'
-            });
+            return res.status(409).json({ success: false, message: 'Email or phone already registered' });
         }
 
-        // Generate OTP and store in session
         const otp = generateOTP();
         req.session.userData = {
-            otp: otp,
+            otp,
             phone,
             email,
             name,
             password,
-            expiresAt: Date.now() + 10 * 60 * 1000 // 10 minutes
+            expiresAt: Date.now() + 10 * 60 * 1000 
         };
-        const emailSent = await sendOTP(email,otp);
- 
-        res.json({
-            success: true,
-            message: 'OTP sent successfully'
-        });
+
+        await sendOTP(email, otp);
+        return res.status(200).json({ success: true, message: 'OTP sent successfully' });
+
     } catch (error) {
-        console.error(error);
-        res.json({
-            success: false,
-            message: 'Error in signup'
-        });
+        console.error('Signup error:', error);
+        return res.status(500).json({ success: false, message: 'Server error' });
     }
 };
 
@@ -150,7 +132,7 @@ const resendOTP = async (req, res) => {
  
 
 
-        res.json({
+        res.status(200).json({
             success: true,
             message: 'OTP resent successfully'
         });
@@ -168,14 +150,14 @@ const verifySignupOTP = async (req, res) => {
         const { otp } = req.body;
     
 
-        if (!userData || userData.expiresAt < Date.now()) {
+        if (!req.session.userData || req.session.userData.expiresAt < Date.now()) {
             return res.json({
                 success: false,
                 message: 'OTP expired. Please try again.'
             });
         }
 
-        if (otp !== userData.otp) {
+        if (otp !== req.session.userData.otp) {
             return res.json({
                 success: false,
                 message: 'Invalid OTP'
@@ -184,10 +166,10 @@ const verifySignupOTP = async (req, res) => {
 
         // Create new user
         const user = new User({
-            name: userData.name,
-            email: userData.email,
-            phone: userData.phone,
-            password: userData.password,
+            name: req.session.userData.name,
+            email: req.session.userData.email,
+            phone: req.session.userData.phone,
+            password: req.session.userData.password,
             isVerified: true
         });
 
@@ -233,7 +215,7 @@ const login = async (req, res) => {
 
 
         if (user.isBlocked) {
-            return res.json({
+            return res.status(409).json({
                 success: false,
                 message: 'Account is blocked'
             });
@@ -260,13 +242,13 @@ const login = async (req, res) => {
         // console.log(req.session.userData)
 
 
-        res.json({
+        res.staus(200).json({
             success: true,
             message: 'OTP sent successfully'
         });
     } catch (error) {
         console.error(error);
-        res.json({
+        res.staus(500).json({
             success: false,
             message: 'Error in login'
         });
@@ -302,14 +284,14 @@ const verifyLoginOTP = async (req, res) => {
         // Clear login OTP from session
         delete req.session.userData.otp;
 
-        res.json({
+        res.staus(200).json({
             success: true,
             message: 'Login successful',
             redirectUrl: '/'
         });
     } catch (error) {
         console.error(error);
-        res.json({
+        res.staus(500).json({
             success: false,
             message: 'Error in verification'
         });
@@ -355,14 +337,14 @@ const forgotPasswordSubmit = async (req, res) => {
         // Send OTP to email
         await sendOTP(email, otp);
 
-        res.json({ 
+        res.staus(200).json({ 
             success: true, 
             message: 'OTP sent to your email' 
         });
 
     } catch (error) {
         console.error(error);
-        res.json({ success: false, message: 'Failed to process request' });
+        res.staus(500).json({ success: false, message: 'Failed to process request' });
     }
 };
 const verifyForgotPasswordOTP = async (req, res) => {
@@ -385,11 +367,11 @@ const verifyForgotPasswordOTP = async (req, res) => {
             });
         }
 
-        res.json({ success: true });
+        res.staus(200).json({ success: true });
 
     } catch (error) {
         console.error(error);
-        res.json({ success: false, message: 'Error verifying OTP' });
+        res.staus(500).json({ success: false, message: 'Error verifying OTP' });
     }
 };
 
@@ -406,14 +388,14 @@ const resetPassword = async (req, res) => {
         // Clear session
         delete req.session.userData;
 
-        res.json({ 
+        res.staus(200).json({ 
             success: true, 
             message: 'Password reset successfully',
         });
 
     } catch (error) {
         console.error(error);
-        res.json({ success: false, message: 'Failed to reset password' });
+        res.staus(500).json({ success: false, message: 'Failed to reset password' });
     }
 };
 

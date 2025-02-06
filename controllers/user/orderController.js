@@ -72,24 +72,40 @@ const getOrderDetails = async (req, res) => {
 };
 
 
-const calculateRefundAmount = (order, items) => {
-    // Get total discounted price of items being cancelled/returned
-    const itemsTotal = items.reduce((sum, item) => 
-        sum + ((item.discountPrice || item.price) * item.quantity), 0);
+const calculateRefundAmount = (order, itemsToRefund) => {
+    try {
 
-    if (!order.coupon) return itemsTotal;
+        const orderTotal = order.items.reduce((sum, item) => 
+            sum + ((item.discountPrice || item.price) * item.quantity), 0);
 
-    // Calculate proportional coupon discount
-    if (order.coupon.discountType === 'percentage') {
-        const discountPercent = order.coupon.discountAmount;
-        return itemsTotal - (itemsTotal * (discountPercent / 100));
-    } else {
-        // For fixed amount coupons, divide evenly among items
-        const totalItems = order.items.length;
-        const discountPerItem = order.couponDiscount / totalItems;
-        return itemsTotal - (discountPerItem * items.length);
+   
+        const refundItemsTotal = itemsToRefund.reduce((sum, item) => 
+            sum + ((item.discountPrice || item.price) * item.quantity), 0);
+
+      
+        if (!order.couponDiscount || order.couponDiscount === 0) {
+            return refundItemsTotal;
+        }
+
+      
+        const refundProportion = refundItemsTotal / orderTotal;
+
+
+        const proportionalCouponDiscount = order.couponDiscount * refundProportion;
+
+      
+        const finalRefundAmount = refundItemsTotal - proportionalCouponDiscount;
+
+     
+        return Math.max(finalRefundAmount, 0);
+    } catch (error) {
+        console.error('Error calculating refund amount:', error);
+        // Return original items total as fallback
+        return itemsToRefund.reduce((sum, item) => 
+            sum + ((item.discountPrice || item.price) * item.quantity), 0);
     }
 };
+
 
 
 const cancelOrder = async (req, res) => {

@@ -1,15 +1,11 @@
-
 let searchTimeout;
 let isSearching = false;
-let currentPage = 1;
-let currentParams = new URLSearchParams(window.location.search);
 
 document.addEventListener('DOMContentLoaded', function() {
-    initializeSearch();
-    initializeFilters();
+    initializeHeaderSearch();
 });
 
-function initializeSearch() {
+function initializeHeaderSearch() {
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.querySelector('.search-btn');
     const searchResults = document.getElementById('searchResults');
@@ -109,6 +105,7 @@ async function loadAndShowHistory() {
     }
 }
 
+// Helper functions for search history
 function useHistoryQuery(query) {
     const searchInput = document.getElementById('searchInput');
     const decodedQuery = decodeURIComponent(query);
@@ -139,80 +136,6 @@ async function removeHistoryItem(itemId, event) {
         console.error('Failed to remove history item:', error);
         showError('Failed to remove from history');
     }
-}
-
-// Filter Functions
-// function initializeFilters() {
-//     // Initialize price range inputs
-//     const minPrice = document.getElementById('minPrice');
-//     const maxPrice = document.getElementById('maxPrice');
-
-//     if (minPrice && maxPrice) {
-//         minPrice.addEventListener('change', validatePriceRange);
-//         maxPrice.addEventListener('change', validatePriceRange);
-//     }
-
-//     // Initialize pagination if present
-//     const paginationLinks = document.querySelectorAll('.pagination a');
-//     paginationLinks.forEach(link => {
-//         link.addEventListener('click', (e) => {
-//             e.preventDefault();
-//             const page = e.target.dataset.page;
-//             if (page) goToPage(parseInt(page));
-//         });
-//     });
-// }
-
-function validatePriceRange() {
-    const minPrice = document.getElementById('minPrice');
-    const maxPrice = document.getElementById('maxPrice');
-    
-    if (minPrice.value && maxPrice.value) {
-        if (parseInt(minPrice.value) > parseInt(maxPrice.value)) {
-            minPrice.value = maxPrice.value;
-        }
-    }
-}
-
-function updateFilters() {
-    const categoryCheckboxes = document.querySelectorAll('.category-filter:checked');
-    const showOutOfStock = document.getElementById('showOutOfStock').checked;
-    const selectedCategories = Array.from(categoryCheckboxes).map(cb => cb.value);
-
-    currentParams.set('outOfStock', showOutOfStock);
-    if (selectedCategories.length) {
-        currentParams.set('categories', selectedCategories.join(','));
-    } else {
-        currentParams.delete('categories');
-    }
-    
-    currentParams.set('page', '1');
-    reloadWithParams();
-}
-
-function applyPriceFilter() {
-    const minPrice = document.getElementById('minPrice').value;
-    const maxPrice = document.getElementById('maxPrice').value;
-
-    if (minPrice) currentParams.set('minPrice', minPrice);
-    else currentParams.delete('minPrice');
-
-    if (maxPrice) currentParams.set('maxPrice', maxPrice);
-    else currentParams.delete('maxPrice');
-
-    currentParams.set('page', '1');
-    reloadWithParams();
-}
-
-function updateSort(sortValue) {
-    currentParams.set('sort', sortValue);
-    currentParams.set('page', '1');
-    reloadWithParams();
-}
-
-function goToPage(page) {
-    currentParams.set('page', page);
-    reloadWithParams();
 }
 
 // UI Helper Functions
@@ -263,11 +186,6 @@ function showError(message) {
     });
 }
 
-function reloadWithParams() {
-    window.location.href = `${window.location.pathname}?${currentParams.toString()}`;
-}
-
-// Search Results Display
 function displayQuickResults(products, query) {
     const resultsList = document.querySelector('.results-list');
     if (!resultsList) return;

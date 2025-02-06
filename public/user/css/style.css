@@ -1187,7 +1187,7 @@ i.icon1 {
 .main-gambo-model {
     background-image: -webkit-linear-gradient(left, rgba(43, 47, 76, 0.9), rgba(65, 71, 115, 0.9));
     background-image: linear-gradient(to right, rgba(43, 47, 76, 0.9), rgba(65, 71, 115, 0.9));
-    opacity: 50%;
+    opacity: 75%;
 }
 
 .category-area-inner .modal-header {
@@ -6986,8 +6986,7 @@ textarea {
     -o-transition: all 0.2s ease-in-out;
     -ms-transition: all 0.2s ease-in-out;
     -webkit-transition: all 0.2s ease-in-out;
-	background-image: -webkit-linear-gradient(left, rgba(230, 92, 91, 0.9), rgba(245, 93, 44, 0.9));
-    background-image: linear-gradient(to right, rgba(230, 92, 91, 0.9), rgba(245, 93, 44, 0.9));
+
 }
 
 .bootstrap-select .dropdown-item {

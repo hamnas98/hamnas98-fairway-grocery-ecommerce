@@ -486,7 +486,7 @@
                                                                 </ul>
                                                             </div>
                                                         <% } %>
-                                                        <% if(order.orderStatus === 'Delivered' && 
+                                                        <% if(order.orderStatus === 'Delivered' || 'Partially Cancelled'  && 
                                                         new Date() - new Date(order.deliveredAt) <= 7 * 24 * 60 * 60 * 1000) { %>
                                                             <div class="dropdown">
                                                                 <button class="return-options-btn" data-bs-toggle="dropdown">

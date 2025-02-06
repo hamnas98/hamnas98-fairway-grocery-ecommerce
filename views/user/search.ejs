@@ -249,13 +249,6 @@
 	
 	
 
-	<!-- Body End -->
-	<!-- Footer Start -->
-	
-	<!-- Footer End -->
-
-	<!-- Javascripts -->
-
 	<script src="/user/js/jquery.min.js"></script>
 	<script src="/user/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 	<script src="/user/vendor/bootstrap-select/js/bootstrap-select.min.js"></script>
@@ -264,6 +257,154 @@
 	<script src="/user/js/custom.js"></script>
 	<script src="/user/js/offset_overlay.js"></script>
 	<script src="/user/js/night-mode.js"></script>
+	<script>
+		let currentPage = 1;
+let currentParams = new URLSearchParams(window.location.search);
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Only initialize if we're on the search page
+    if (document.querySelector('.search-page')) {
+        initializeFilters();
+    }
+});
+
+// Filter Functions
+function initializeFilters() {
+    // Initialize price range inputs
+	const minPrice = document.getElementById('minPrice');
+    const maxPrice = document.getElementById('maxPrice');
+
+    if (minPrice && maxPrice) {
+        // Prevent negative values on input
+        minPrice.addEventListener('input', function() {
+            if (this.value < 0) this.value = 0;
+        });
+
+        maxPrice.addEventListener('input', function() {
+            if (this.value < 0) this.value = 0;
+        });
+
+        // Validate on change
+        minPrice.addEventListener('change', validatePriceRange);
+        maxPrice.addEventListener('change', validatePriceRange);
+    }
+
+    // Initialize pagination if present
+    const paginationLinks = document.querySelectorAll('.pagination a');
+    paginationLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = e.target.dataset.page;
+            if (page) goToPage(parseInt(page));
+        });
+    });
+}
+
+function validatePriceRange() {
+    const minPrice = document.getElementById('minPrice');
+    const maxPrice = document.getElementById('maxPrice');
+    
+    let minVal = Math.max(0, parseInt(minPrice.value) || 0);
+    let maxVal = Math.max(0, parseInt(maxPrice.value) || 0);
+
+
+    minPrice.value = minVal;
+    maxPrice.value = maxVal;
+    
+
+    if (maxVal && maxVal < minVal) {
+        maxPrice.value = minVal;
+    }
+
+    // If min is greater than max, set min equal to max
+    if (minVal && minVal > maxVal && maxVal !== 0) {
+        minPrice.value = maxVal;
+    }
+}
+
+
+function updateFilters() {
+    const categoryCheckboxes = document.querySelectorAll('.category-filter:checked');
+    const showOutOfStock = document.getElementById('showOutOfStock').checked;
+    const selectedCategories = Array.from(categoryCheckboxes).map(cb => cb.value);
+
+    currentParams.set('outOfStock', showOutOfStock);
+    if (selectedCategories.length) {
+        currentParams.set('categories', selectedCategories.join(','));
+    } else {
+        currentParams.delete('categories');
+    }
+    
+    currentParams.set('page', '1');
+    reloadWithParams();
+}
+
+function applyPriceFilter() {
+    const minPrice = document.getElementById('minPrice');
+    const maxPrice = document.getElementById('maxPrice');
+
+    // Ensure final validation before applying filter
+    let minVal = Math.max(0, parseInt(minPrice.value) || 0);
+    let maxVal = Math.max(0, parseInt(maxPrice.value) || 0);
+
+    if (minVal) currentParams.set('minPrice', minVal);
+    else currentParams.delete('minPrice');
+
+    if (maxVal) currentParams.set('maxPrice', maxVal);
+    else currentParams.delete('maxPrice');
+
+    currentParams.set('page', '1');
+    reloadWithParams();
+}
+function updateSort(sortValue) {
+    currentParams.set('sort', sortValue);
+    currentParams.set('page', '1');
+    reloadWithParams();
+}
+
+function goToPage(page) {
+    currentParams.set('page', page);
+    reloadWithParams();
+}
+
+function reloadWithParams() {
+    window.location.href = `${window.location.pathname}?${currentParams.toString()}`;
+}
+
+function clearAllFilters() {
+    // Get all checkboxes and uncheck them
+    document.querySelectorAll('.category-filter:checked').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+
+    // Reset price inputs
+    const minPrice = document.getElementById('minPrice');
+    const maxPrice = document.getElementById('maxPrice');
+    if (minPrice) minPrice.value = '';
+    if (maxPrice) maxPrice.value = '';
+
+    // Reset out of stock checkbox if exists
+    const outOfStockCheckbox = document.getElementById('showOutOfStock');
+    if (outOfStockCheckbox) outOfStockCheckbox.checked = false;
+
+    // Reset sort dropdown if exists
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) sortSelect.value = sortSelect.options[0].value;
+
+    // Clear all params except search query
+    const searchQuery = currentParams.get('q');
+    currentParams = new URLSearchParams();
+    
+    // Preserve search query if exists
+    if (searchQuery) {
+        currentParams.set('q', searchQuery);
+    }
+
+    // Reset to page 1 and reload
+    currentParams.set('page', '1');
+    reloadWithParams();
+}
+	</script>
 
 	
 </body>

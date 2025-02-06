@@ -148,8 +148,8 @@ async function updateProductDiscountPrice(productId) {
 
     // Set discount price to lowest (best) valid offer
     if (prices.length > 0) {
-        product.discountPrice = Math.min(...prices);
-        product.discountPercentage = Math.ceil(((product.price - product.discountPrice) / product.price) * 100);
+        product.discountPrice = Math.min(...prices).toFixed(2);
+        product.discountPercentage = Math.ceil(((product.price - product.discountPrice) / product.price) * 100).toFixed(2);
     } else {
         product.discountPrice = null;
         product.discountPercentage = 0;
@@ -286,8 +286,8 @@ async function updateCategoryProductsPrices(categoryId) {
         }
 
         if (prices.length > 0) {
-            product.discountPrice = Math.min(...prices);
-            product.discountPercentage = Math.ceil(((product.price - product.discountPrice) / product.price) * 100);
+            product.discountPrice = Math.min(...prices).toFixed(2);
+            product.discountPercentage = Math.ceil(((product.price - product.discountPrice) / product.price) * 100).toFixed(2);
             results.updatedProducts++;
             await product.save();
         } else {
