@@ -1,0 +1,202 @@
+<!-- Status Tracker Modal -->
+<div class="modal fade" id="orderTrackingModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Track Order Status</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="orderTrackingContent">
+                <div class="order-tracking-steps">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showOrderTracking(order) {
+    const trackingContent = document.getElementById('orderTrackingContent');
+    
+    trackingContent.innerHTML = `
+        <div class="tracking-header">
+            <div class="tracking-meta">
+                <div>Order #${order._id.toString().slice(-6)}</div>
+                <div class="status ${order.orderStatus.toLowerCase()}">${order.orderStatus}</div>
+            </div>
+        </div>
+        <div class="tracking-timeline">
+            <div class="timeline-step ${order.createdAt ? 'completed' : ''}">
+                <div class="step-icon">
+                    <i class="uil uil-shopping-cart"></i>
+                </div>
+                <div class="step-content">
+                    <h6>Order Placed</h6>
+                    <p>${order.createdAt ? new Date(order.createdAt).toLocaleString() : 'Pending'}</p>
+                </div>
+            </div>
+
+            <div class="timeline-step ${order.processingAt ? 'completed' : order.orderStatus === 'Cancelled' ? 'cancelled' : ''}">
+                <div class="step-icon">
+                    <i class="uil uil-process"></i>
+                </div>
+                <div class="step-content">
+                    <h6>Processing</h6>
+                    <p>${order.processingAt ? new Date(order.processingAt).toLocaleString() : 'Pending'}</p>
+                </div>
+            </div>
+
+            <div class="timeline-step ${order.shippedAt ? 'completed' : order.orderStatus === 'Cancelled' ? 'cancelled' : ''}">
+                <div class="step-icon">
+                    <i class="uil uil-truck"></i>
+                </div>
+                <div class="step-content">
+                    <h6>Shipped</h6>
+                    <p>${order.shippedAt ? new Date(order.shippedAt).toLocaleString() : 'Pending'}</p>
+                </div>
+            </div>
+
+            <div class="timeline-step ${order.deliveredAt ? 'completed' : order.orderStatus === 'Cancelled' ? 'cancelled' : ''}">
+                <div class="step-icon">
+                    <i class="uil uil-check-circle"></i>
+                </div>
+                <div class="step-content">
+                    <h6>Delivered</h6>
+                    <p>${order.deliveredAt ? new Date(order.deliveredAt).toLocaleString() : 'Pending'}</p>
+                </div>
+            </div>
+        </div>
+
+        ${order.orderStatus === 'Cancelled' ? `
+            <div class="cancellation-info">
+                <i class="uil uil-times-circle"></i>
+                <h6>Order Cancelled</h6>
+                <p>${order.cancelReason || 'No reason provided'}</p>
+                <small>Cancelled on ${new Date(order.cancelledAt).toLocaleString()}</small>
+            </div>
+        ` : ''}
+    `;
+
+    const modal = new bootstrap.Modal(document.getElementById('orderTrackingModal'));
+    modal.show();
+}
+</script>
+
+<style>
+.tracking-header {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.tracking-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tracking-meta .status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.tracking-timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline-step {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    padding-bottom: 30px;
+}
+
+.timeline-step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 40px;
+    bottom: 0;
+    width: 2px;
+    background: #e0e0e0;
+}
+
+.timeline-step.completed:not(:last-child)::before {
+    background: #2e3192;
+}
+
+.timeline-step.cancelled:not(:last-child)::before {
+    background: #dc3545;
+}
+
+.step-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    font-size: 1.5rem;
+    color: #666;
+    position: relative;
+    z-index: 1;
+}
+
+.timeline-step.completed .step-icon {
+    background: #2e3192;
+    color: white;
+}
+
+.timeline-step.cancelled .step-icon {
+    background: #dc3545;
+    color: white;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-content h6 {
+    margin: 0 0 5px;
+    font-weight: 600;
+}
+
+.step-content p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.cancellation-info {
+    margin-top: 20px;
+    padding: 20px;
+    background: #fff5f5;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.cancellation-info i {
+    font-size: 2rem;
+    color: #dc3545;
+    margin-bottom: 10px;
+}
+
+.cancellation-info h6 {
+    margin-bottom: 10px;
+    color: #dc3545;
+}
+
+.cancellation-info p {
+    margin-bottom: 5px;
+}
+
+.cancellation-info small {
+    color: #666;
+}
+</style>

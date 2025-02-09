@@ -14,7 +14,7 @@ const getReturns = async (req, res) => {
         // Calculate stats
         const totalReturns = allReturns.length;
         const pendingReturns = allReturns.filter(order => order.returnDetails.status === 'Pending');
-        const processingReturns = allReturns.filter(order => order.returnDetails.status === 'Processing');
+        const processingReturns = allReturns.filter(order => order.returnDetails.status === 'Approved');
         const completedReturns = allReturns.filter(order => order.returnDetails.status === 'Completed');
 
         res.render('adminReturns', {
@@ -80,10 +80,23 @@ const approveReturn = async (req, res) => {
             });
         }
 
-        // Update return status
+ 
+        let allItemsBeingReturned = true;
+        order.items = order.items.map(item => {
+            if (item.returned && item.returnStatus === 'Pending') {
+                item.returnStatus = 'Approved';
+            }
+            if (!item.returned && !item.cancelled) {
+                allItemsBeingReturned = false;
+            }
+            return item;
+        });
+
+        // Update return details status
         order.returnDetails.status = 'Processing';
-        order.orderStatus = order.items.every(item => item.returned) ? 
-            'Return Processing' : 'Partially Returned';
+
+        
+        order.orderStatus = allItemsBeingReturned ? 'Return Processing' : 'Partially Returned';
 
         await order.save();
 
@@ -127,11 +140,33 @@ const completeReturn = async (req, res) => {
             });
         }
 
-        // Update order status
+        // Count items and update their status
+        let allItemsReturned = true;
+        let allReturnedItemsCompleted = true;
+
+        order.items = order.items.map(item => {
+            if (item.returned && item.returnStatus === 'Approved') {
+                item.returnStatus = 'Completed';
+            }
+            if (!item.returned && !item.cancelled) {
+                allItemsReturned = false;
+            }
+            if (item.returned && item.returnStatus !== 'Completed') {
+                allReturnedItemsCompleted = false;
+            }
+            return item;
+        });
+
+        // Update return details
         order.returnDetails.status = 'Completed';
         order.returnDetails.refundStatus = 'Completed';
-        order.orderStatus = order.items.every(item => item.returned) ? 
-            'Return Completed' : 'Partially Returned';
+
+        // Update order status based on return state
+        if (allItemsReturned && allReturnedItemsCompleted) {
+            order.orderStatus = 'Return Completed';
+        } else {
+            order.orderStatus = 'Partially Returned';
+        }
 
         await order.save();
 
@@ -161,19 +196,33 @@ const rejectReturn = async (req, res) => {
             });
         }
 
-        // Update return status
+        // Update return status for individual items
+        let hasOtherActiveReturns = false;
+        order.items = order.items.map(item => {
+            if (item.returned && item.returnStatus === 'Pending') {
+                item.returnStatus = 'Rejected';
+            } else if (item.returned && ['Approved', 'Completed'].includes(item.returnStatus)) {
+                hasOtherActiveReturns = true;
+            }
+            return item;
+        });
+
+        // Update return details
         order.returnDetails.status = 'Rejected';
         order.returnDetails.refundStatus = 'Rejected';
         order.returnDetails.rejectionReason = reason;
-        order.orderStatus = 'Return Rejected';
 
-        // Update individual items
-        order.items.forEach(item => {
-            if (item.returned) {
-                item.returned = false;
-                item.returnStatus = 'Rejected';
-            }
-        });
+        // Update order status
+        if (hasOtherActiveReturns) {
+            // If there are other items with active returns, keep as partially returned
+            order.orderStatus = 'Partially Returned';
+        } else if (order.items.some(item => !item.cancelled && !item.returned)) {
+            // If there are non-cancelled, non-returned items, set to Delivered
+            order.orderStatus = 'Delivered';
+        } else {
+            // If all items were rejected, set to Return Rejected
+            order.orderStatus = 'Return Rejected';
+        }
 
         await order.save();
 

@@ -162,7 +162,7 @@ const createRazorpayOrder = async (req, res) => {
             deliveryAddress: address._id,
             paymentMethod: walletPaymentAmount > 0 ? 'wallet_razorpay' : 'razorpay',
             total: cart.total,
-            discountTotal: cart.discountTotal,
+            discountTotal: finalAmount,
             walletAmount: walletPaymentAmount,
             coupon: coupon?._id,
             couponDiscount: coupon ? (cart.discountTotal - finalAmount) : 0,

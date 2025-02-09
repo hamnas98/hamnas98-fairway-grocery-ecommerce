@@ -19,7 +19,6 @@ const getOrders = async (req, res) => {
             .populate('items.product')
             .populate('deliveryAddress')
             .sort({ createdAt: -1 });
-
         // Add partial cancellation status
         orders.forEach(order => {
             const cancelledItems = order.items.filter(item => item.cancelled).length;
@@ -27,7 +26,6 @@ const getOrders = async (req, res) => {
                 order.orderStatus = 'Partially Cancelled';
             }
         });
-
         
         res.render('orders', {
             parentCategories,
@@ -275,54 +273,140 @@ const processReturn = async (req, res) => {
     try {
         const { orderId, returnType, items, reason, description } = req.body;
         const order = await Order.findOne({ _id: orderId, user: req.session.user.id });
- 
+
         if (!order) {
             return res.status(404).json({ success: false, message: 'Order not found' });
         }
- 
+        if (order.returnDetails.status== 'Rejected') {
+            return res.status(400).json({
+                success: false,
+                message: 'Your return request has been alrady rejected'
+            });
+        }
+        // // Check if order is delivered
+        // if (order.orderStatus !== 'Delivered') {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: 'Only delivered orders can be returned'
+        //     });
+        // }
+
+        // Validate return window (7 days)
         const returnWindow = new Date(order.deliveredAt);
         returnWindow.setDate(returnWindow.getDate() + 7);
- 
+
         if (new Date() > returnWindow) {
-            return res.status(400).json({ success: false, message: 'Return window has expired' });
+            return res.status(400).json({
+                success: false,
+                message: 'Return window has expired'
+            });
         }
- 
+
+        // For full return, validate all items
+        if (returnType === 'full') {
+            const hasIneligibleItems = order.items.some(item => {
+                if (item.cancelled) return true;
+                if (item.returned && ['Pending', 'Processing', 'Completed'].includes(item.returnStatus)) return true;
+                return false;
+            });
+
+            if (hasIneligibleItems) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Some items are not eligible for return'
+                });
+            }
+        } else {
+            // For partial return, validate selected items
+            for (const itemId of items) {
+                const item = order.items.find(i => i._id.toString() === itemId);
+
+                if (!item) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Invalid item selected for return'
+                    });
+                }
+
+                if (item.cancelled) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `Cannot return cancelled item ${item.product.name}`
+                    });
+                }
+
+                if (item.returned && ['Pending', 'Processing', ].includes(item.returnStatus)) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `Item ${item.product.name} has already been returned or has a pending return request`
+                    });
+                }
+                if (item.returned && ['Completed' ].includes(item.returnStatus)) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `Item ${item.product.name}  already returned`
+                    });
+                }
+                if (item.returned && [ 'rejected'].includes(item.returnStatus)) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `Item ${item.product.name} can not be returned`
+                    });
+                }
+            }
+        }
+
         let refundAmount = 0;
         let walletRefundAmount = 0;
- 
+
         if (returnType === 'full') {
-            refundAmount = order.discountTotal;
-            
-            if (['wallet_cod', 'wallet_razorpay', 'wallet'].includes(order.paymentMethod)) {
-                walletRefundAmount = order.walletAmount;
-            } else if (order.paymentMethod === 'razorpay' && order.paymentDetails.status === 'paid') {
-                walletRefundAmount = refundAmount;
+            // Calculate refund for all eligible items (not cancelled and either not returned or rejected returns)
+            const eligibleItems = order.items.filter(item => 
+                !item.cancelled && (!item.returned || item.returnStatus === 'Rejected')
+            );
+            refundAmount = calculateRefundAmount(order, eligibleItems);
+
+            if (['wallet', 'wallet_cod', 'wallet_razorpay'].includes(order.paymentMethod)) {
+                const walletProportion = order.walletAmount / order.discountTotal;
+                walletRefundAmount = refundAmount * walletProportion;
+            }
+            if (['razorpay', 'wallet_razorpay'].includes(order.paymentMethod) && 
+                order.paymentDetails.status === 'paid') {
+                const nonWalletAmount = refundAmount - walletRefundAmount;
+                walletRefundAmount += nonWalletAmount;
             }
 
-            order.items.forEach(item => {
-                if (!item.cancelled && !item.returned) {
+            // Update all eligible items
+            order.items = order.items.map(item => {
+                if (!item.cancelled && (!item.returned || item.returnStatus === 'Rejected')) {
                     item.returned = true;
                     item.returnedAt = new Date();
                     item.returnReason = reason;
                     item.returnDescription = description;
                     item.returnStatus = 'Pending';
                 }
+                return item;
             });
         } else {
+            // Handle partial return
             const itemsToReturn = order.items.filter(item => 
-                items.includes(item._id.toString()) && !item.cancelled && !item.returned
+                items.includes(item._id.toString()) && !item.cancelled
             );
             refundAmount = calculateRefundAmount(order, itemsToReturn);
- 
-            if (['wallet_cod', 'wallet_razorpay', 'wallet'].includes(order.paymentMethod)) {
+
+            if (['wallet', 'wallet_cod', 'wallet_razorpay'].includes(order.paymentMethod)) {
                 const walletProportion = order.walletAmount / order.discountTotal;
                 walletRefundAmount = refundAmount * walletProportion;
-            } else if (order.paymentMethod === 'razorpay' && order.paymentDetails.status === 'paid') {
-                walletRefundAmount = refundAmount;
+            }
+            if (['razorpay', 'wallet_razorpay'].includes(order.paymentMethod) && 
+                order.paymentDetails.status === 'paid') {
+                const nonWalletAmount = refundAmount - walletRefundAmount;
+                walletRefundAmount += nonWalletAmount;
             }
 
+            // Update selected items
             order.items = order.items.map(item => {
-                if (items.includes(item._id.toString()) && !item.cancelled && !item.returned) {
+                if (items.includes(item._id.toString()) && !item.cancelled) {
                     item.returned = true;
                     item.returnedAt = new Date();
                     item.returnReason = reason;
@@ -332,35 +416,51 @@ const processReturn = async (req, res) => {
                 return item;
             });
         }
- 
-        // Update return details with separate refund amounts
+
+        // Update order return details
         order.returnDetails = {
             isReturned: true,
             returnedAt: new Date(),
             status: 'Pending',
-            refundAmount: refundAmount,  // Total refund amount
-            walletRefundAmount: walletRefundAmount,  // Wallet portion
+            refundAmount: refundAmount,
+            walletRefundAmount: walletRefundAmount,
             refundStatus: 'Pending'
         };
- 
-        order.orderStatus = order.items.every(item => item.returned || item.cancelled) ? 
-            'Return Pending' : 'Partially Returned';
- 
+
+        // Update order status based on return status
+        const allItemsReturnedOrCancelled = order.items.every(item => 
+            item.returned || item.cancelled
+        );
+        const someItemsReturnedOrCancelled = order.items.some(item => 
+            item.returned || item.cancelled
+        );
+
+        if (allItemsReturnedOrCancelled) {
+            order.orderStatus = 'Return Pending';
+        } else if (someItemsReturnedOrCancelled) {
+            order.orderStatus = 'Partially Returned';
+        }
+
         await order.save();
- 
-        res.json({ 
-            success: true, 
+
+        res.json({
+            success: true,
             message: 'Return request submitted successfully',
             refundDetails: {
                 total: refundAmount,
                 wallet: walletRefundAmount
             }
         });
+
     } catch (error) {
         console.error('Process return error:', error);
-        res.status(500).json({ success: false, message: 'Failed to process return request' });
+        res.status(500).json({ 
+            success: false, 
+            message: 'Failed to process return request' 
+        });
     }
 };
+
 
 const downloadInvoice = async (req, res) => {
     try {

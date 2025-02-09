@@ -1,16 +1,381 @@
-<!-- Order Details Modal -->
+
 <div class="modal fade" id="orderDetailsModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Order Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" id="orderDetailsContent">
-                <!-- Content will be loaded dynamically -->
+                <div class="order-details-container">
+                    <!-- Content will be dynamically loaded -->
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<link  href="/user/css/ordermodal.css"  rel="stylesheet">
+<script>
+async function viewOrderDetails(orderId) {
+    try {
+        const response = await fetch(`/orders/${orderId}`);
+        const data = await response.json();
+
+        if (data.success) {
+            const order = data.order;
+            const modalContent = document.getElementById('orderDetailsContent');
+
+            modalContent.innerHTML = `
+                <div class="order-info-section">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Order ID</label>
+                            <span>#${order._id.toString().slice(-6)}</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Order Date</label>
+                            <span>${new Date(order.createdAt).toLocaleString()}</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Status</label>
+                            <span class="status-badge ${order.orderStatus.toLowerCase()}">${order.orderStatus}</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Payment Method</label>
+                            <span>${getPaymentMethodLabel(order.paymentMethod)}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="address-section">
+                    <h6>Delivery Address</h6>
+                    <div class="address-box">
+                        <div class="name">${order.deliveryAddress.name}</div>
+                        <div class="phone">${order.deliveryAddress.mobile}</div>
+                        <div class="address">
+                            ${order.deliveryAddress.flat}, 
+                            ${order.deliveryAddress.addressLine}<br>
+                            ${order.deliveryAddress.city}, 
+                            ${order.deliveryAddress.state} - 
+                            ${order.deliveryAddress.pincode}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="items-section">
+                    <h6>Order Items</h6>
+                    <div class="items-list">
+                        ${order.items.map(item => `
+                            <div class="order-item ${item.cancelled ? 'cancelled' : ''} ${item.returned ? 'returned' : ''}">
+                                <div class="item-image">
+                                    <img src="${item.product.images[0]}" alt="${item.product.name}">
+                                    ${getItemStatusOverlay(item)}
+                                </div>
+                                <div class="item-details">
+                                    <h5>${item.product.name}</h5>
+                                    <div class="item-meta">
+                                        <span class="quantity">${item.quantity} × ₹${item.product.discountPrice || item.product.price}</span>
+                                        ${getItemStatusInfo(item)}
+                                    </div>
+                                </div>
+                                <div class="item-total">
+                                    ₹${((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2)}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="price-section">
+                    <h6>Price Details</h6>
+                    <div class="price-breakdown">
+                        <div class="price-row">
+                            <span>Cart Total</span>
+                            <span>₹${order.total.toFixed(2)}</span>
+                        </div>
+                        ${getPriceBreakdown(order)}
+                        <div class="price-row total">
+                            <strong>Total Amount</strong>
+                            <strong>₹${order.discountTotal.toFixed(2)}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                ${getRefundSection(order)}
+            `;
+
+            // Show the modal
+            const orderModal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+            orderModal.show();
+        }
+    } catch (error) {
+        console.error('View order details error:', error);
+        showErrorNotification('Failed to load order details');
+    }
+}
+
+function getPaymentMethodLabel(method) {
+    const labels = {
+        'cod': 'Cash on Delivery',
+        'razorpay': 'Online Payment',
+        'wallet': 'Wallet Payment',
+        'wallet_cod': 'Wallet + COD',
+        'wallet_razorpay': 'Wallet + Online Payment'
+    };
+    return labels[method] || method;
+}
+
+function getItemStatusOverlay(item) {
+    if (item.cancelled) {
+        return '<div class="status-overlay cancelled">Cancelled</div>';
+    }
+    if (item.returned) {
+        return `<div class="status-overlay returned">Returned${item.returnStatus ? ` (${item.returnStatus})` : ''}</div>`;
+    }
+    return '';
+}
+
+function getItemStatusInfo(item) {
+    if (item.cancelled) {
+        return `
+            <div class="status-info cancelled">
+                <span>Cancelled on ${new Date(item.cancelledAt).toLocaleDateString()}</span>
+                <p>Reason: ${item.cancelReason}</p>
+            </div>
+        `;
+    }
+    if (item.returned) {
+        return `
+            <div class="status-info returned">
+                <span>Returned on ${new Date(item.returnedAt).toLocaleDateString()}</span>
+                <p>Reason: ${item.returnReason}</p>
+                ${item.returnStatus ? `<span class="return-status ${item.returnStatus.toLowerCase()}">${item.returnStatus}</span>` : ''}
+            </div>
+        `;
+    }
+    return '';
+}
+
+function getPriceBreakdown(order) {
+    let breakdown = '';
+    
+    if (order.total - order.discountTotal > 0) {
+        breakdown += `
+            <div class="price-row discount">
+                <span>Item Discount</span>
+                <span>-₹${(order.total - order.discountTotal).toFixed(2)}</span>
+            </div>
+        `;
+    }
+
+    if (order.couponDiscount > 0) {
+        breakdown += `
+            <div class="price-row coupon">
+                <span>Coupon Discount</span>
+                <span>-₹${order.couponDiscount.toFixed(2)}</span>
+            </div>
+        `;
+    }
+
+    if (order.walletAmount > 0) {
+        breakdown += `
+            <div class="price-row wallet">
+                <span>Paid from Wallet</span>
+                <span>-₹${order.walletAmount.toFixed(2)}</span>
+            </div>
+        `;
+    }
+
+    return breakdown;
+}
+
+function getRefundSection(order) {
+    if (!order.refundDetails || !order.refundDetails.amount) return '';
+
+    return `
+        <div class="refund-section">
+            <h6>Refund Information</h6>
+            <div class="refund-details">
+                <div class="refund-row">
+                    <span>Refund Amount</span>
+                    <strong>₹${order.refundDetails.amount.toFixed(2)}</strong>
+                </div>
+                <div class="refund-row">
+                    <span>Status</span>
+                    <span class="refund-status ${order.refundDetails.status.toLowerCase()}">
+                        ${order.refundDetails.status}
+                    </span>
+                </div>
+                ${order.refundDetails.processedAt ? `
+                    <div class="refund-row">
+                        <span>Processed on</span>
+                        <span>${new Date(order.refundDetails.processedAt).toLocaleDateString()}</span>
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+}
+</script>
+
+<style>
+.order-details-container {
+    padding: 20px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.info-item {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.info-item label {
+    display: block;
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.info-item span {
+    font-weight: 500;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+}
+
+h6 {
+    font-weight: 600;
+    margin: 20px 0 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.address-box {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.address-box .name {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.address-box .phone {
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.items-list {
+    margin-top: 15px;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.item-image {
+    width: 70px;
+    height: 70px;
+    position: relative;
+    margin-right: 15px;
+}
+
+.item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.status-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 4px;
+    text-align: center;
+    color: white;
+    font-size: 0.75rem;
+    background: rgba(0,0,0,0.7);
+}
+
+.item-details {
+    flex: 1;
+}
+
+.item-details h5 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+}
+
+.status-info {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.price-breakdown {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+}
+
+.price-row.total {
+    border-top: 2px dashed #ddd;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.refund-details {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.refund-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.refund-status {
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+}
+
+/* Status Colors */
+.status-badge.delivered { background: #e8f5e9; color: #2e7d32; }
+.status-badge.processing { background: #e3f2fd; color: #1976d2; }
+.status-badge.pending { background: #fff3e0; color: #e65100; }
+.status-badge.cancelled { background: #ffebee; color: #d32f2f; }
+.status-badge.shipped { background: #f3e5f5; color: #7b1fa2; }
+
+.refund-status.completed { background: #e8f5e9; color: #2e7d32; }
+.refund-status.pending { background: #fff3e0; color: #e65100; }
+.refund-status.failed { background: #ffebee; color: #d32f2f; }
+</style>
