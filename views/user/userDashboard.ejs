@@ -25,6 +25,7 @@
 		<link href="/user/css/customstyle.css" rel="stylesheet">
 		<link  href="/user/css/signupmodals.css"  rel="stylesheet">
         <link  href="/user/css/editProfileModal.css"  rel="stylesheet">
+		<link rel="stylesheet" href="/user/css/overview.css">
 		
 		<!-- Vendor Stylesheets -->
 		<link href="/user/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
@@ -54,9 +55,110 @@
 									<div class="col-md-12">
 										<div class="main-title-tab">
 											<h4><i class="uil uil-apps"></i>Overview</h4>
-										</div>
-										<div class="welcome-text">
-											<h2>Hi <%= user.name %></h2>
+										</div>											
+											<!-- Dashboard Overview Section -->
+											<div class="dashboard-overview">
+												<div class="container">
+													<div class="row">
+														<div class="col-xl-9 col-lg-8 col-md-12">
+															<div class="dashboard-right">
+																<!-- Welcome Section -->
+																<div class="welcome-section">
+																	<h2>Welcome back, <%= user.name.split(' ')[0] %>! 👋</h2>
+																	<p class="text-muted">Here's what's happening with your account today.</p>
+																	<div class="user-contact">
+																		<span><i class="uil uil-envelope-alt"></i><%= user.email%></span>
+																		<% if(user.phone) { %>
+																			<span><i class="uil uil-phone"></i><%= user.phone %></span>
+																		<% } %>
+																	</div>
+																	<div class="profile-actions">
+																		<button class="btn btn-edit" onclick="openEditModal()">
+																			<i class="uil uil-edit"></i> Edit Profile
+																		</button>
+																		<% if (user.password) { %>
+																			<button class="btn btn-reset" onclick="openResetPasswordModal()">
+																				<i class="uil uil-key-skeleton"></i> Reset Password
+																			</button>
+																		<% } %>
+																	</div>
+																</div>
+																
+											
+																<!-- Stats Cards -->
+																<div class="stats-grid">
+																	<div class="stat-card orders">
+																		<div class="stat-icon">
+																			<i class="uil uil-box"></i>
+																		</div>
+																		<div class="stat-details">
+																			<h3><%= stats.totalOrders || 0 %></h3>
+																			<p>Total Orders</p>
+																		</div>
+																	</div>
+											
+																	<div class="stat-card pending">
+																		<div class="stat-icon">
+																			<i class="uil uil-clock-three"></i>
+																		</div>
+																		<div class="stat-details">
+																			<h3><%= stats.pendingOrders || 0 %></h3>
+																			<p>Pending Orders</p>
+																		</div>
+																	</div>
+											
+																	<div class="stat-card wallet">
+																		<div class="stat-icon">
+																			<i class="uil uil-wallet"></i>
+																		</div>
+																		<div class="stat-details">
+																			<h3>₹<%= stats.walletBalance?.toFixed(2) || '0.00' %></h3>
+																			<p>Wallet Balance</p>
+																		</div>
+																	</div>
+											
+																	<div class="stat-card wishlist">
+																		<div class="stat-icon">
+																			<i class="uil uil-heart"></i>
+																		</div>
+																		<div class="stat-details">
+																			<h3><%= stats.wishlistItems || 0 %></h3>
+																			<p>Wishlist Items</p>
+																		</div>
+																	</div>
+																</div>
+											
+																<!-- Recent Activity Section -->
+																<div class="recent-activity">
+																	<div class="section-header">
+																		<h4><i class="uil uil-clock-three"></i>Recent Activity</h4>
+																	</div>
+																	<div class="activity-list">
+																		<% if(recentActivities && recentActivities.length > 0) { %>
+																			<% recentActivities.forEach(activity => { %>
+																				<div class="activity-item">
+																					<div class="activity-icon">
+																						<i class="uil <%= activity.icon %>"></i>
+																					</div>
+																					<div class="activity-details">
+																						<p><%= activity.description %></p>
+																						<small><%= activity.time %></small>
+																					</div>
+																				</div>
+																			<% }) %>
+																		<% } else { %>
+																			<div class="no-activity">
+																				<p>No recent activity to show</p>
+																			</div>
+																		<% } %>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											
 										</div>
 									</div>
 								</div>

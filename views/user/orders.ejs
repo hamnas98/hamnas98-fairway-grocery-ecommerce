@@ -33,8 +33,6 @@
 		<link href="/user/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 		<link href="/user/vendor/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">	
         
-		
-		
 	</head>
 
 
@@ -135,70 +133,84 @@
                                                     </div>
                                                 </div>
                                             </div>
-        
                                             <!-- Order Actions -->
                                             <div class="order-actions">
-                                                <button class="btn btn-outline-primary" onclick="viewOrderDetails('<%= order._id %>')">
-                                                    <i class="uil uil-eye"></i> View Details
-                                                </button>
-                                                <button class="btn btn-outline-info" onclick='showOrderTracking(<%= JSON.stringify(order) %>)'>
-                                                    <i class="uil uil-location-point"></i> Track Order
-                                                </button>
-        
-                                                <% if (['Processing', 'Shipped', 'Delivered'].includes(order.orderStatus)) { %>
-                                                    <a href="/orders/invoice/<%= order._id %>" class="btn btn-outline-dark" target="_blank">
-                                                        <i class="uil uil-download-alt"></i> Invoice
-                                                    </a>
-                                                <% } %>
-        
-                                                <% if(order.orderStatus === 'Pending' || order.orderStatus === 'Processing') { %>
-                                                    <div class="dropdown">
-                                                        <button class="btn btn-outline-danger dropdown-toggle" data-bs-toggle="dropdown">
-                                                            <i class="uil uil-times"></i> Cancel
+                                                <% if (order.orderStatus === 'Payment Pending') { %>
+                                                    <div class="payment-pending-actions">
+                                                        <button class="btn btn-primary" onclick="continuePayment('<%= order._id %>')">
+                                                            <i class="uil uil-credit-card"></i>
+                                                            Complete Payment
                                                         </button>
-                                                        <ul class="dropdown-menu dropdown-menu-end">
-                                                            <li>
-                                                                <a class="dropdown-item" href="#" onclick="showCancelModal('<%= order._id %>', 'full')">
-                                                                    Cancel Entire Order
-                                                                </a>
-                                                            </li>
-                                                            <% if(order.items.length > 1) { %>
+                                                        <button class="btn btn-danger" onclick="cancelPendingOrder('<%= order._id %>')">
+                                                            <i class="uil uil-times-circle"></i>
+                                                            Cancel Order
+                                                        </button>
+                                                    </div>
+                                                <% } else { %>
+                                                    <button class="btn btn-outline-primary" onclick="viewOrderDetails('<%= order._id %>')">
+                                                        <i class="uil uil-eye"></i> View Details
+                                                    </button>
+                                                    <button class="btn btn-outline-info" onclick='showOrderTracking(<%= JSON.stringify(order) %>)'>
+                                                        <i class="uil uil-location-point"></i> Track Order
+                                                    </button>
+                                            
+                                                    <% if (['Processing', 'Shipped', 'Delivered'].includes(order.orderStatus)) { %>
+                                                        <a href="/orders/invoice/<%= order._id %>" class="btn btn-outline-dark" target="_blank">
+                                                            <i class="uil uil-download-alt"></i> Invoice
+                                                        </a>
+                                                    <% } %>
+                                            
+                                                    <% if(order.orderStatus === 'Pending' || order.orderStatus === 'Processing') { %>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-outline-danger dropdown-toggle" data-bs-toggle="dropdown">
+                                                                <i class="uil uil-times"></i> Cancel
+                                                            </button>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
                                                                 <li>
-                                                                    <a class="dropdown-item" href="#" onclick="showCancelModal('<%= order._id %>', 'partial')">
-                                                                        Cancel Selected Items
+                                                                    <a class="dropdown-item" href="#" onclick="showCancelModal('<%= order._id %>', 'full')">
+                                                                        Cancel Entire Order
                                                                     </a>
                                                                 </li>
-                                                            <% } %>
-                                                        </ul>
-                                                    </div>
-                                                <% } %>
-        
-                                                <% if(order.orderStatus === 'Delivered' || 'Partially Cancelled'  ||
-                                                        new Date() - new Date(order.deliveredAt) <= 7 * 24 * 60 * 60 * 1000) { %>
-                                                            <div class="dropdown">
-                                                                <button class="return-options-btn" data-bs-toggle="dropdown">
-                                                                    <i class="uil uil-exchange"></i> 
-                                                                    <span>Return</span>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                                <% if(order.items.length > 1) { %>
                                                                     <li>
-                                                                        <a class="dropdown-item" href="#" onclick="showReturnModal('<%= order._id %>', 'full')">
-                                                                            Return Entire Order
+                                                                        <a class="dropdown-item" href="#" onclick="showCancelModal('<%= order._id %>', 'partial')">
+                                                                            Cancel Selected Items
                                                                         </a>
                                                                     </li>
-                                                                    <% if(order.items.length > 1) { %>
-                                                                        <li>
-                                                                            <a class="dropdown-item" href="#" onclick="showReturnModal('<%= order._id %>', 'partial')">
-                                                                                Return Selected Items
-                                                                            </a>
-                                                                        </li>
-                                                                    <% } %>
-                                                                </ul>
-                                                            </div>
-                                                        <% } %>
-                                                    </div>
-                                                </div>
+                                                                <% } %>
+                                                            </ul>
+                                                        </div>
+                                                    <% } %>
                                             
+                                                    <% if(order.orderStatus === 'Delivered' ||order.orderStatus === 'Partially Cancelled' && order.deliveredAt && 
+                                                            new Date() - new Date(order.deliveredAt) <= 7 * 24 * 60 * 60 * 1000) { %>
+                                                        <div class="dropdown">
+                                                            <button class="return-options-btn" data-bs-toggle="dropdown">
+                                                                <i class="uil uil-exchange"></i> 
+                                                                <span>Return</span>
+                                                            </button>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li>
+                                                                    <a class="dropdown-item" href="#" onclick="showReturnModal('<%= order._id %>', 'full')">
+                                                                        Return Entire Order
+                                                                    </a>
+                                                                </li>
+                                                                <% if(order.items.length > 1) { %>
+                                                                    <li>
+                                                                        <a class="dropdown-item" href="#" onclick="showReturnModal('<%= order._id %>', 'partial')">
+                                                                            Return Selected Items
+                                                                        </a>
+                                                                    </li>
+                                                                <% } %>
+                                                            </ul>
+                                                        </div>
+                                                    <% } %>
+                                                <% } %>
+                                            </div>
+                                            
+        
+                                        
+                                        </div>
                                     <% }); %>
                                 <% } else { %>
                                     <div class="no-orders">
