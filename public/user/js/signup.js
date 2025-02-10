@@ -14,6 +14,11 @@ const SIGNUP_VALIDATION_RULES = {
     password: {
         pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
         message: "Password min 8 characters with letters, numbers and special character"
+    },
+    referralCode: {
+        pattern: /^[A-Z0-9]{8}$/,
+        message: "Invalid referral code format",
+        optional: true // Makes this field optional
     }
  };
  
@@ -25,7 +30,13 @@ const SIGNUP_VALIDATION_RULES = {
  function initializeSignupForm() {
     const signupForm = document.getElementById('signupForm');
     if (!signupForm) return;
- 
+
+    const referralInput = signupForm.querySelector('[name="referralCode"]');
+    if (referralInput) {
+        referralInput.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+    }
     signupForm.addEventListener('submit', handleSignupSubmit);
  }
  
@@ -39,7 +50,8 @@ const SIGNUP_VALIDATION_RULES = {
         name: this.querySelector('[name="name"]').value,
         email: this.querySelector('[name="email"]').value,
         phone: this.querySelector('[name="phone"]').value,
-        password: this.querySelector('[name="password"]').value
+        password: this.querySelector('[name="password"]').value,
+        referralCode: this.querySelector('[name="referralCode"]').value.trim() || null
     };
  
     try {
@@ -75,22 +87,28 @@ const SIGNUP_VALIDATION_RULES = {
         const input = form.querySelector(`[name="${field}"]`);
         if (!input) continue;
         
-        if (!SIGNUP_VALIDATION_RULES[field].pattern.test(input.value)) {
-            showError(input, SIGNUP_VALIDATION_RULES[field].message);
+        const rule = SIGNUP_VALIDATION_RULES[field];
+        const value = input.value.trim();
+        
+        // Skip validation if field is optional and empty
+        if (rule.optional && !value) continue;
+        
+        if (value && !rule.pattern.test(value)) {
+            showError(input, rule.message);
             isValid = false;
         }
     }
- 
+
     const password = form.querySelector('[name="password"]');
     const confirmPassword = form.querySelector('[name="confirmPassword"]');
     if (password.value !== confirmPassword.value) {
         showError(confirmPassword, "Passwords do not match");
         isValid = false;
     }
- 
+
     return isValid;
- }
- 
+}
+
  function initializeOTPHandling() {
     // OTP input handling
     document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {

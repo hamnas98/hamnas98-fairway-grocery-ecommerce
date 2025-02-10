@@ -3,6 +3,7 @@ const { generateOTP , sendOTP } = require('../../utils/otpUtils');
 const bcrypt = require('bcryptjs');
 const Category = require('../../models/Category');
 const Product = require('../../models/Product');
+const ReferralService = require('../../utils/referralService');
 
 
 const getHome = async (req, res) => {
@@ -80,7 +81,7 @@ const getHome = async (req, res) => {
 
 const signup = async (req, res) => {
     try {
-        const { name, email, phone, password } = req.body;
+        const { name, email, phone, password, referralCode } = req.body;
 
         const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
         if (existingUser) {
@@ -94,11 +95,12 @@ const signup = async (req, res) => {
             email,
             name,
             password,
-            expiresAt: Date.now() + 10 * 60 * 1000 
+            expiresAt: Date.now() + 10 * 60 * 1000,
+            referralCode 
         };
 
         await sendOTP(email, otp);
-        return res.status(200).json({ success: true, message: 'OTP sent successfully' });
+        return res.status(200).json({ success: true, message: 'OTP sent successfully' });     
 
     } catch (error) {
         console.error('Signup error:', error);
@@ -172,8 +174,17 @@ const verifySignupOTP = async (req, res) => {
             password: req.session.userData.password,
             isVerified: true
         });
+        // Process referral if code provided
+        if (req.session.userData.referralCode) {
+             await ReferralService.processReferral(req.session.userData.referralCode, user._id);
+        }
+            
+        // Generate referral code for new user
+        await ReferralService.generateReferralCode(user._id);
 
         await user.save();
+
+  
 
         
         delete req.session.userData;
@@ -242,13 +253,13 @@ const login = async (req, res) => {
         // console.log(req.session.userData)
 
 
-        res.staus(200).json({
+        return res.status(200).json({
             success: true,
             message: 'OTP sent successfully'
         });
     } catch (error) {
         console.error(error);
-        res.staus(500).json({
+       return res.status(500).json({
             success: false,
             message: 'Error in login'
         });
@@ -284,14 +295,14 @@ const verifyLoginOTP = async (req, res) => {
         // Clear login OTP from session
         delete req.session.userData.otp;
 
-        res.staus(200).json({
+        res.status(200).json({
             success: true,
             message: 'Login successful',
             redirectUrl: '/'
         });
     } catch (error) {
         console.error(error);
-        res.staus(500).json({
+        res.status(500).json({
             success: false,
             message: 'Error in verification'
         });
@@ -337,14 +348,14 @@ const forgotPasswordSubmit = async (req, res) => {
         // Send OTP to email
         await sendOTP(email, otp);
 
-        res.staus(200).json({ 
+        res.status(200).json({ 
             success: true, 
             message: 'OTP sent to your email' 
         });
 
     } catch (error) {
         console.error(error);
-        res.staus(500).json({ success: false, message: 'Failed to process request' });
+        res.status(500).json({ success: false, message: 'Failed to process request' });
     }
 };
 const verifyForgotPasswordOTP = async (req, res) => {
@@ -367,11 +378,11 @@ const verifyForgotPasswordOTP = async (req, res) => {
             });
         }
 
-        res.staus(200).json({ success: true });
+        res.status(200).json({ success: true });
 
     } catch (error) {
         console.error(error);
-        res.staus(500).json({ success: false, message: 'Error verifying OTP' });
+        res.status(500).json({ success: false, message: 'Error verifying OTP' });
     }
 };
 
@@ -388,14 +399,14 @@ const resetPassword = async (req, res) => {
         // Clear session
         delete req.session.userData;
 
-        res.staus(200).json({ 
+        res.status(200).json({ 
             success: true, 
             message: 'Password reset successfully',
         });
 
     } catch (error) {
         console.error(error);
-        res.staus(500).json({ success: false, message: 'Failed to reset password' });
+        res.status(500).json({ success: false, message: 'Failed to reset password' });
     }
 };
 

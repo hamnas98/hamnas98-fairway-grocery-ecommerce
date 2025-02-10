@@ -42,12 +42,11 @@ const userSchema = new mongoose.Schema({
     deletedAt: { 
         type: Date 
     },
-    googleId: { 
-        type: String, 
-        unique: true ,
-        dafault: null,
-        required: false
-    }
+    googleId: {
+        type: String,
+        sparse: true, 
+        unique: true   
+      },
 }, { timestamps: true });
 
 // Hash & Salt password before saving

@@ -5,6 +5,7 @@ const Order = require('../../models/Order');
 const Product = require('../../models/Product');
 const Coupon = require('../../models/Coupon')
 const Wallet = require('../../models/Wallet');
+const ReferralService = require('../../utils/referralService');
 
 const getCheckoutPage = async (req, res) => {
     try {
@@ -172,6 +173,8 @@ const placeOrder = async (req, res) => {
         } else {
             finalPaymentMethod = paymentMethod;
         }
+
+        await ReferralService.processFirstPurchaseReward(req.session.user.id);
 
         // Create order
         const order = new Order({

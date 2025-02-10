@@ -18,7 +18,8 @@ const { getOrders, getOrderDetails, cancelOrder, processReturn, downloadInvoice 
 const { quickSearch, getSearchPage, getSearchHistory, saveSearchHistory, deleteSearchHistory } = require("../controllers/user/searchController")
 const { getWishlist, toggleWishlist, removeFromWishlist } = require("../controllers/user/wishlistController")
 const { createRazorpayOrder, verifyPayment, cancelPayment, continuePayment, updatePaymentStatus, deletePendingOrder } = require("../controllers/user/razorpayController");
-const { getWallet } = require('../controllers/user/walletController')
+const { getWallet } = require('../controllers/user/walletController');
+const { getReferralDetails, applyReferralCode } = require('../controllers/user/referralController');
 
 
 
@@ -65,6 +66,11 @@ router.get('/products/best-value-products', getBestvalueProducts)
 router.get('/dashboard',userAuth, getDashboard);
 router.post('/dashboard/update-profile',userAuth , updateProfile);
 router.post('/dashboard/reset-password', userAuth, resetDashPassword);
+
+//referral routes
+router.get('/dashboard/referral', userAuth, getReferralDetails);
+router.post('/dashboard/apply-referral-code', userAuth, applyReferralCode);
+
 //address routes
 router.get('/dashboard/addresses', userAuth, getAllAddresses);
 router.post('/dashboard/address', userAuth, addAddress);

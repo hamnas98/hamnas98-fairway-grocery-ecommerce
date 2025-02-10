@@ -7,6 +7,7 @@ const Product = require('../../models/Product');
 const Coupon = require('../../models/Coupon');
 const Wallet = require('../../models/Wallet');
 const crypto = require('crypto');
+const ReferralService = require('../../utils/referralService');
 
 
 
@@ -45,6 +46,7 @@ const verifyPayment = async (req, res) => {
             status: 'paid',
             paidAt: new Date()
         };
+        
 
         await order.save();
 
@@ -183,6 +185,7 @@ const createRazorpayOrder = async (req, res) => {
             walletAmount: walletPaymentAmount,
             createdAt: new Date()
         };
+        await ReferralService.processFirstPurchaseReward(req.session.user.id);
 
         res.json({
             success: true,
