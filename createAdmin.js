@@ -1,3 +1,16 @@
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const Admin = require('./models/Admin'); // Path to your Admin model
+
+// Predefined Admin Data
+const adminData = {
+    name: "Fairway",
+    email: "hamnascp98@gmail.com",
+    password: "fairway@123", // A plain password for now
+    phone: "9562558847",
+    role: "admin"
+};
+
 const createAdmin = async () => {
     try {
         // Check if the admin already exists
