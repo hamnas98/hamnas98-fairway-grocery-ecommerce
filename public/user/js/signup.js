@@ -37,6 +37,7 @@ const SIGNUP_VALIDATION_RULES = {
             this.value = this.value.toUpperCase();
         });
     }
+ 
     signupForm.addEventListener('submit', handleSignupSubmit);
  }
  
@@ -87,28 +88,25 @@ const SIGNUP_VALIDATION_RULES = {
         const input = form.querySelector(`[name="${field}"]`);
         if (!input) continue;
         
-        const rule = SIGNUP_VALIDATION_RULES[field];
-        const value = input.value.trim();
-        
-        // Skip validation if field is optional and empty
-        if (rule.optional && !value) continue;
-        
-        if (value && !rule.pattern.test(value)) {
-            showError(input, rule.message);
+        if (!SIGNUP_VALIDATION_RULES[field].pattern.test(input.value)) {
+            if(SIGNUP_VALIDATION_RULES[field].optional && !input.value) {
+                continue;
+            }
+            showError(input, SIGNUP_VALIDATION_RULES[field].message);
             isValid = false;
         }
     }
-
+ 
     const password = form.querySelector('[name="password"]');
     const confirmPassword = form.querySelector('[name="confirmPassword"]');
     if (password.value !== confirmPassword.value) {
         showError(confirmPassword, "Passwords do not match");
         isValid = false;
     }
-
+ 
     return isValid;
-}
-
+ }
+ 
  function initializeOTPHandling() {
     // OTP input handling
     document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {

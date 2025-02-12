@@ -35,7 +35,7 @@ const createAdmin = async () => {
 };
 
 // Connect to MongoDB and create the admin
-mongoose.connect('mongodb://localhost:27017/fairway_supermarket',)
+mongoose.connect(process.env.MONGODB_URI,)
     .then(() => {
         console.log("Connected to MongoDB");
         createAdmin(); // Call the function to insert the predefined data
