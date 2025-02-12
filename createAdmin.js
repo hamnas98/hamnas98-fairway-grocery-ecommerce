@@ -1,16 +1,20 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const Admin = require('./models/Admin'); // Path to your Admin model
+const Admin = require('./models/Admin');
+
+// MongoDB Connection URI
+const MONGODB_URI = process.env.MONGODB_URI
 
 // Predefined Admin Data
 const adminData = {
     name: "Fairway",
     email: "hamnascp98@gmail.com",
-    password: "fairway@123", // A plain password for now
+    password: "fairway@123",
     phone: "9562558847",
     role: "admin"
 };
 
+// Hash the password before saving
 const createAdmin = async () => {
     try {
         // Check if the admin already exists
