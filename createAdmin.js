@@ -1,9 +1,10 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Admin = require('./models/Admin');
 
-// MongoDB Connection URI
-const MONGODB_URI = process.env.MONGODB_URI
+
+const MONGODB_URI = process.env.MONGODB_URI;
 
 // Predefined Admin Data
 const adminData = {
