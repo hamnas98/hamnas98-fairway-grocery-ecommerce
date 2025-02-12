@@ -5,7 +5,7 @@ const LOGIN_VALIDATION_RULES = {
     },
     password: {
         pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        message: "Invalid password format"
+        message: "min 8 characters with letters, numbers and special character"
     }
 };
 
