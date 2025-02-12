@@ -1,17 +1,3 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const Admin = require('./models/Admin'); // Path to your Admin model
-
-// Predefined Admin Data
-const adminData = {
-    name: "Fairway",
-    email: "hamnascp98@gmail.com",
-    password: "fairway@123", // A plain password for now
-    phone: "9562558847",
-    role: "admin"
-};
-
-// Hash the password before saving
 const createAdmin = async () => {
     try {
         // Check if the admin already exists
@@ -35,11 +21,14 @@ const createAdmin = async () => {
 };
 
 // Connect to MongoDB and create the admin
-mongoose.connect(process.env.MONGODB_URI,)
-    .then(() => {
-        console.log("Connected to MongoDB");
-        createAdmin(); // Call the function to insert the predefined data
-    })
-    .catch(err => {
-        console.error("MongoDB connection error:", err);
-    });
+mongoose.connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => {
+    console.log("Connected to MongoDB");
+    createAdmin();
+})
+.catch(err => {
+    console.error("MongoDB connection error:", err);
+});
