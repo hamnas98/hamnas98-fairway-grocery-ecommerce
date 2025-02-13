@@ -53,8 +53,14 @@ app.set('views', [
     path.join(__dirname, 'views/user')
 ]);
 
-
-
+// Error handler should include admin data
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).render('error', { 
+        error: err.message,
+        admin: req.session.admin 
+    });
+});
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -64,41 +70,10 @@ app.use('/admin', adminRoutes);
 
 app.use('/', userRoutes)
 
-
-app.use((req, res) => {
-    // Check if the request path starts with /admin
-    if (req.path.startsWith('/admin')) {
-        res.status(404).render('error', { 
-            error: 'Page not found',
-            admin: req.session.admin || null
-        });
-    } else {
-        res.status(404).render('error', { 
-            error: 'Page not found',
-            user: req.session.user || null
-        });
-    }
-});
-
-// Error Handler - Add this LAST
+// Error handler
 app.use((err, req, res, next) => {
-    console.error('Error:', err);
-    
-    const statusCode = err.statusCode || 500;
-    const errorMessage = process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong';
-
-    // Check if it's an admin route
-    if (req.path.startsWith('/admin')) {
-        res.status(statusCode).render('error', {
-            error: errorMessage,
-            admin: req.session.admin || null
-        });
-    } else {
-        res.status(statusCode).render('error', {
-            error: errorMessage,
-            user: req.session.user || null
-        });
-    }
+    console.error(err.stack);
+    res.status(500).render('error', { error: err });
 });
 
 const PORT = process.env.PORT || 3000;
