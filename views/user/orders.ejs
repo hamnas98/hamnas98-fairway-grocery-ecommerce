@@ -421,7 +421,7 @@ function showReturnModal(orderId, type) {
                         case 'Rejected':
                             statusBadge = 'rejected-badge';
                             statusText = 'Return Rejected';
-                            isDisabled = true; // Changed to true to prevent resubmission after rejection
+                            isDisabled = true; 
                             break;
                         case 'Completed':
                             statusBadge = 'completed-badge';
@@ -436,6 +436,11 @@ function showReturnModal(orderId, type) {
                         case 'Processing':
                             statusBadge = 'processing-badge';
                             statusText = 'Return Processing';
+                            isDisabled = true;
+                            break;
+                            case 'Approved':
+                            statusBadge = 'processing-badge';
+                            statusText = 'Return Approved';
                             isDisabled = true;
                             break;
                     }

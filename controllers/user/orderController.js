@@ -306,7 +306,7 @@ const processReturn = async (req, res) => {
         if (returnType === 'full') {
             const hasIneligibleItems = order.items.some(item => {
                 if (item.cancelled) return true;
-                if (item.returned && ['Pending', 'Processing', 'Completed'].includes(item.returnStatus)) return true;
+                if (item.returned && ['Pending', 'Processing','Approved', 'Completed'].includes(item.returnStatus)) return true;
                 return false;
             });
 
@@ -339,6 +339,12 @@ const processReturn = async (req, res) => {
                     return res.status(400).json({
                         success: false,
                         message: `Item ${item.product.name} has already been returned or has a pending return request`
+                    });
+                }
+                if (item.returned && ['Approved' ].includes(item.returnStatus)) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `Item ${item.product.name}  Your return request has been alrady approved`
                     });
                 }
                 if (item.returned && ['Completed' ].includes(item.returnStatus)) {
