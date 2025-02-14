@@ -13,6 +13,7 @@
     <meta http-equiv="Expires" content="0">
 </head>
 <link href="/user/css/header-search.css" rel="stylesheet">
+<link rel="stylesheet" href="/user/css/signupmodals.css">
 <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.9/css/unicons.css">
 
 <script>
@@ -150,59 +151,27 @@
                     </div>
                     <div class="offcanvas-body">
                         <div class="offcanvas-category mb-4 d-block d-lg-none">
+                            <div class="offcanvas-search position-relative">
+                                <input class="canvas_search" type="text" placeholder="Search for products..">
+                                <i class="uil uil-search hover-btn canvas-icon"></i>
+                            </div>
                             <button class="category_drop_canvas hover-btn mt-4" data-bs-toggle="modal" data-bs-target="#category_model" title="Categories">
                                 <i class="uil uil-apps"></i><span class="cate__icon">Select Category</span>
                             </button>
                         </div>
-                        <div class="offcanvas-body">
-                           
-                                <ul class="navbar-nav justify-content-start flex-grow-1 pe_5">
-                                    <li class="nav-item">
-                                        <a class="nav-link <%= locals.activePage === 'home' ? 'active' : '' %>" 
-                                           href="/" aria-current="page">Home</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link <%= locals.activePage === 'new-products' ? 'active' : '' %>" 
-                                           href="/products/new">New Products</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link <%= locals.activePage === 'featured' ? 'active' : '' %>" 
-                                           href="/products/best-value-products">Best Value Products</a>
-                                    </li>
-                                    
-                         
-                                <!-- Mobile-only login/signup buttons -->
-                               
-                        
-                        <% if (!locals.user) { %>
-                                <li class="nav-item d-lg-none">
-                                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
-                                        <i class="uil-lock-open-alt icon__1"></i> Login
-                                    </a>
-                                </li>
-                                <li class="nav-item d-lg-none">
-                                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#signupModal">
-                                        <i class="uil uil-user-plus icon__1"></i> Signup
-                                    </a>
-                                </li>
-                            <% } else { %>
-                                <!-- Mobile-only user menu items -->
-                                <li class="nav-item d-lg-none">
-                                    <a class="nav-link" href="/dashboard">
-                                        <i class="uil uil-apps icon__1"></i> Dashboard
-                                    </a>
-                                </li>
-                                <li class="nav-item d-lg-none">
-                                    <a class="nav-link" href="/dashboard/Cart">
-                                        <i class="fas fa-shopping-cart"></i> My Cart
-                                    </a>
-                                </li>
-                                <li class="nav-item d-lg-none">
-                                    <a class="nav-link" href="/logout">
-                                        <i class="uil uil-lock-alt icon__1"></i> Logout
-                                    </a>
-                                </li>
-                            <% } %>
+                        <ul class="navbar-nav justify-content-start flex-grow-1 pe_5">
+                            <li class="nav-item">
+                                <a class="nav-link <%= locals.activePage === 'home' ? 'active' : '' %>" 
+                                   href="/" aria-current="page">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link <%= locals.activePage === 'new-products' ? 'active' : '' %>" 
+                                   href="/products/new">New Products</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link <%= locals.activePage === 'featured' ? 'active' : '' %>" 
+                                   href="/products/best-value-products">Best Value Products</a>
+                            </li>
                         </ul>
                     </div>
                 </div>

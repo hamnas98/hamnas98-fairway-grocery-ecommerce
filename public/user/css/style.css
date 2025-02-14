@@ -7098,21 +7098,3 @@ textarea {
 .history-item:hover .remove-history {
     opacity: 1;
 }
-@media (max-width: 991px) {
-    .d-lg-none {
-        display: block !important;
-    }
-    
-    .d-none.d-lg-block {
-        display: none !important;
-    }
-    
-    .navbar-nav .nav-link {
-        padding: 0.8rem 1rem;
-        border-bottom: 1px solid #eee;
-    }
-    
-    .navbar-nav .nav-link i {
-        margin-right: 10px;
-    }
-}
