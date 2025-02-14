@@ -32,14 +32,15 @@
  <!-- signup form -->
  
  <!-- Header -->
- <header class="header clearfix">
+<header class="header clearfix">
     <div class="top-header-group">
         <div class="top-header">
             <div class="main_logo" id="logo">
                 <a href="/" class="logo-container">
                     <img src="/user/images/fairway-logo.jpg" alt="Fairway">
-                    <span class="logo-text col-md-3">FAIRWAY</span>
+                    <span class="logo-text col-md-0">FAIRWAY</span>
                 </a>
+                
             </div>
             <!-- Search Component in Header -->
             <div class="header-search">
@@ -89,16 +90,20 @@
                             </a>
                         <% } %>
                     </li>
-                    <li class="dropdown account-dropdown d-none d-lg-block">
+                    <li class="dropdown account-dropdown">
                         <a href="#" class="opts_account" role="button" id="accountClick" data-bs-auto-close="outside" data-bs-toggle="dropdown" aria-expanded="false">
                             <% if (locals.user) { %>
+                            
                                 <span class="user__name"><%= user.name %></span>
                             <% } else { %>
+
                                 <span class="user__name">Login/Signup</span>
                             <% } %>
                             <i class="uil uil-angle-down"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-account dropdown-menu-end" aria-labelledby="accountClick" data-bs-popper="none">
+                     
+                            
                             <% if (locals.user) { %>
                                 <a href="/dashboard" class="channel_item"><i class="uil uil-apps icon__1"></i>Dashboard</a>		
                                 <a href="/dashboard/Cart" class="channel_item"><i class="fas fa-shopping-cart"></i>My Cart</a>					
@@ -106,15 +111,16 @@
                                 <a href="/dashboard/wishlist" class="channel_item"><i class="uil uil-heart icon__1"></i>My Wishlist</a>
                                 <a href="/dashboard/wallet" class="channel_item"><i class="uil uil-usd-circle icon__1"></i>My Wallet</a>
                                 <a href="/dashboard/addresses" class="channel_item"><i class="uil uil-location-point icon__1"></i>My Address</a>
+
                                 <a href="/logout" class="channel_item"><i class="uil uil-lock-alt icon__1"></i>Logout</a>
-                            <% } else { %>
-                                <a href="#" class="channel_item" data-bs-toggle="modal" data-bs-target="#signupModal">
-                                    <i class="uil uil-user-plus icon__1"></i>Signup
-                                </a>
-                                <a href="#" class="channel_item" data-bs-toggle="modal" data-bs-target="#loginModal">
-                                    <i class="uil-lock-open-alt icon__1"></i>Login
-                                </a>
-                            <% } %>
+                                <% } else { %>
+                                    <a href="#" class="channel_item" data-bs-toggle="modal" data-bs-target="#signupModal">
+                                        <i class="uil uil-user-plus icon__1"></i>Signup
+                                    </a>
+                                    <a href="#" class="channel_item" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                        <i class=" uil-lock-open-alt icon__1"></i>Login
+                                    </a>
+                                <% } %>
                         </div>
                     </li>
                 </ul>
@@ -122,7 +128,7 @@
         </div>
     </div>
 
-    <!-- Sub Header Section -->
+       <!-- Sub Header Section -->
     <div class="sub-header-group">
         <div class="sub-header">
             <nav class="navbar navbar-expand-lg bg-gambo gambo-head navbar justify-content-lg-start pt-0 pb-0">
@@ -143,22 +149,32 @@
                         </button>
                     </div>
                     <div class="offcanvas-body">
-                        <ul class="navbar-nav justify-content-start flex-grow-1 pe_5">
-                            <ul class="navbar-nav justify-content-start flex-grow-1 pe_5">
-                                <li class="nav-item">
-                                    <a class="nav-link <%= locals.activePage === 'home' ? 'active' : '' %>" 
-                                       href="/" aria-current="page">Home</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link <%= locals.activePage === 'new-products' ? 'active' : '' %>" 
-                                       href="/products/new">New Products</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link <%= locals.activePage === 'featured' ? 'active' : '' %>" 
-                                       href="/products/best-value-products">Best Value Products</a>
-                                </li>
-                            <!-- Mobile-only login/signup buttons -->
-                            <% if (!locals.user) { %>
+                        <div class="offcanvas-category mb-4 d-block d-lg-none">
+                            <button class="category_drop_canvas hover-btn mt-4" data-bs-toggle="modal" data-bs-target="#category_model" title="Categories">
+                                <i class="uil uil-apps"></i><span class="cate__icon">Select Category</span>
+                            </button>
+                        </div>
+                        <div class="offcanvas-body">
+                           
+                                <ul class="navbar-nav justify-content-start flex-grow-1 pe_5">
+                                    <li class="nav-item">
+                                        <a class="nav-link <%= locals.activePage === 'home' ? 'active' : '' %>" 
+                                           href="/" aria-current="page">Home</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link <%= locals.activePage === 'new-products' ? 'active' : '' %>" 
+                                           href="/products/new">New Products</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link <%= locals.activePage === 'featured' ? 'active' : '' %>" 
+                                           href="/products/best-value-products">Best Value Products</a>
+                                    </li>
+                                    
+                         
+                                <!-- Mobile-only login/signup buttons -->
+                               
+                        
+                        <% if (!locals.user) { %>
                                 <li class="nav-item d-lg-none">
                                     <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
                                         <i class="uil-lock-open-alt icon__1"></i> Login
@@ -193,7 +209,7 @@
                 <% if (locals.user) { %>
                 <div class="sub_header_right">
                     <div class="header_cart">
-                        <a href="/dashboard/cart" class="cart__btn hover-btn">
+                        <a href="/dashboard/cart"  class="cart__btn hover-btn" >
                             <i class="uil uil-shopping-cart-alt"></i>
                             <span>Cart</span>
                             <ins id="cartCount">0</ins>
@@ -205,7 +221,6 @@
         </div>
     </div>
 </header>
-
 
 <script src="/user/js/cart.js"></script>
 <script src="/user/js/wishlist.js"></script>
