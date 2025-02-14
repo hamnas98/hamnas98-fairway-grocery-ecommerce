@@ -172,6 +172,18 @@
                                 <a class="nav-link <%= locals.activePage === 'featured' ? 'active' : '' %>" 
                                    href="/products/best-value-products">Best Value Products</a>
                             </li>
+                            <% if (locals.user) { %>
+                            <li class="nav-item">
+                                <a href="/dashboard" class="channel_item"><i class="uil uil-apps icon__1"></i>Dashboard</a>	
+                            </li>
+                            <% } else { %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#signupModal">Signup</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
+                            </li>
+                            <% } %>
                         </ul>
                     </div>
                 </div>
