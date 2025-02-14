@@ -144,10 +144,19 @@
                     </div>
                     <div class="offcanvas-body">
                         <ul class="navbar-nav justify-content-start flex-grow-1 pe_5">
-                            <li class="nav-item">
-                                <a class="nav-link <%= locals.activePage === 'home' ? 'active' : '' %>" 
-                                   href="/" aria-current="page">Home</a>
-                            </li>
+                            <ul class="navbar-nav justify-content-start flex-grow-1 pe_5">
+                                <li class="nav-item">
+                                    <a class="nav-link <%= locals.activePage === 'home' ? 'active' : '' %>" 
+                                       href="/" aria-current="page">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link <%= locals.activePage === 'new-products' ? 'active' : '' %>" 
+                                       href="/products/new">New Products</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link <%= locals.activePage === 'featured' ? 'active' : '' %>" 
+                                       href="/products/best-value-products">Best Value Products</a>
+                                </li>
                             <!-- Mobile-only login/signup buttons -->
                             <% if (!locals.user) { %>
                                 <li class="nav-item d-lg-none">
@@ -197,27 +206,6 @@
     </div>
 </header>
 
-<style>
-/* Add these styles to your existing CSS */
-@media (max-width: 991px) {
-    .d-lg-none {
-        display: block !important;
-    }
-    
-    .d-none.d-lg-block {
-        display: none !important;
-    }
-    
-    .navbar-nav .nav-link {
-        padding: 0.8rem 1rem;
-        border-bottom: 1px solid #eee;
-    }
-    
-    .navbar-nav .nav-link i {
-        margin-right: 10px;
-    }
-}
-</style>
 
 <script src="/user/js/cart.js"></script>
 <script src="/user/js/wishlist.js"></script>
