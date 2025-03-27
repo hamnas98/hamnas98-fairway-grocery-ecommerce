@@ -9,9 +9,6 @@ const bcrypt = require('bcrypt');
 
 const getDashboard = async (req, res) => {
     try {
-        // Log the user ID to ensure it's valid
-        console.log('User ID from session:', req.session.user.id);
-
         // Get all parent categories for the header
         const parentCategories = await Category.find({ 
             parent: null,
@@ -21,27 +18,17 @@ const getDashboard = async (req, res) => {
 
         // Get user details
         const user = await User.findById(req.session.user.id);
-        
-        // Add null check for user
-        if (!user) {
-            console.error('User not found');
-            return res.status(404).render('error', { message: 'User not found' });
-        }
 
-        // Get order statistics
-        const orders = await Order.find({ user: req.session.user.id });
+        // Get order statistics with null checks
+        const orders = await Order.find({ user: req.session.user.id }) || [];
         const pendingOrders = await Order.find({ 
             user: req.session.user.id,
             orderStatus: { $in: ['Pending', 'Processing', 'Payment Pending'] }
-        });
+        }) || [];
 
         // Get wishlist count
         const wishlistItems = await Wishlist.findOne({ user: req.session.user.id });
         const wishlistCount = wishlistItems ? wishlistItems.items.length : 0;
-
-        // Add logging for wishlist items
-        console.log('Wishlist items:', wishlistItems);
-        console.log('Wishlist count:', wishlistCount);
 
         // Get wallet balance
         const wallet = await Wallet.findOne({ user: req.session.user.id });
@@ -84,7 +71,6 @@ const getDashboard = async (req, res) => {
 
     } catch (error) {
         console.error('Dashboard error:', error);
-        console.error('Full error details:', JSON.stringify(error, null, 2));
         res.status(500).render('error', { message: 'Failed to load Dashboard page' });
     }
 };
