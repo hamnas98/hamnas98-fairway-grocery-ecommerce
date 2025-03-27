@@ -74,8 +74,8 @@ const getDashboard = async (req, res) => {
             pageTitle: 'Fairway Supermarket - Dashboard',
             user: req.session.user,
             stats: {
-                totalOrders: orders.length,
-                pendingOrders: pendingOrders.length,
+                totalOrders: orders ? orders.length : 0,
+                pendingOrders: pendingOrders ? pendingOrders.length : 0,
                 walletBalance,
                 wishlistItems: wishlistCount
             },
